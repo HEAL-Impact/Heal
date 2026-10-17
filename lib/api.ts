@@ -83,7 +83,8 @@ class ApiClient {
 
   private async request<T>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
+    isRetry: boolean = false
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseURL}${endpoint}`;
     
@@ -109,13 +110,24 @@ class ApiClient {
       const data = await response.json();
 
       if (!response.ok) {
+        // On 401, attempt a token refresh once then retry
+        if (response.status === 401 && !isRetry && !endpoint.includes('/auth/')) {
+          const refreshed = await this.attemptTokenRefresh();
+          if (refreshed) {
+            return this.request<T>(endpoint, options, true);
+          }
+          // Refresh failed – clear stored credentials
+          this.removeToken();
+          return { error: 'Session expired. Please sign in again.' };
+        }
+
         let errorMessage = data.error || data.message || 'An error occurred';
         
         // Handle specific HTTP status codes
         if (response.status === 409) {
           errorMessage = 'An account with this email already exists';
         } else if (response.status === 401) {
-          errorMessage = 'Invalid email or password';
+          errorMessage = data.error || 'Invalid email or password';
         } else if (response.status === 400) {
           errorMessage = data.message || 'Invalid request data';
         }
@@ -128,6 +140,32 @@ class ApiClient {
       console.error('API request failed:', error);
       return { error: 'Network error occurred' };
     }
+  }
+
+  private async attemptTokenRefresh(): Promise<boolean> {
+    if (typeof window === 'undefined') return false;
+    const refreshToken = localStorage.getItem('heal_refresh_token');
+    if (!refreshToken) return false;
+
+    try {
+      const response = await fetch(`${this.baseURL}/auth/refresh`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken }),
+      });
+
+      if (!response.ok) return false;
+
+      const data = await response.json();
+      if (data.accessToken) {
+        this.setToken(data.accessToken);
+        localStorage.setItem('heal_refresh_token', data.refreshToken);
+        return true;
+      }
+    } catch {
+      // network error during refresh
+    }
+    return false;
   }
 
   private getToken(): string | null {
@@ -195,6 +233,17 @@ class ApiClient {
     });
     this.removeToken();
     return response;
+  }
+
+  async refreshAccessToken(refreshToken: string) {
+    return this.request<{
+      user: any;
+      accessToken: string;
+      refreshToken: string;
+    }>('/auth/refresh', {
+      method: 'POST',
+      body: JSON.stringify({ refreshToken }),
+    }, true); // isRetry=true to skip recursive refresh loops
   }
 
   // User methods

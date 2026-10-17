@@ -36,7 +36,7 @@ func (s *ChatService) GetAIResponse(message string) (string, error) {
 	}
 	defer client.Close()
 
-	model := client.GenerativeModel("gemini-1.5-flash")
+	model := client.GenerativeModel("gemini-2.5-flash")
 	// Add context for the AI
 	contexto := "Your name is Nia,You are a compassionate AI mental health companion. Provide supportive, empathetic responses while maintaining professional boundaries. If the user expresses thoughts of self-harm, gently guide them to seek professional help."
 	resp, err := model.GenerateContent(ctx, genai.Text(contexto), genai.Text(message))
@@ -78,7 +78,7 @@ func (s *ChatService) GetOrCreateSession(userID, sessionID string) (*models.Chat
 
 	_, err := s.db.Exec(`
 		INSERT INTO chat_sessions (id, user_id, title, created_at, updated_at)
-		VALUES (?, ?, ?, ?, ?)
+		VALUES ($1, $2, $3, $4, $5)
 	`, sessionID, userID, title, now, now)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create chat session: %w", err)
@@ -98,7 +98,7 @@ func (s *ChatService) getChatSession(userID, sessionID string) (*models.ChatSess
 	err := s.db.QueryRow(`
 		SELECT id, user_id, title, created_at, updated_at
 		FROM chat_sessions
-		WHERE id = ? AND user_id = ?
+		WHERE id = $1 AND user_id = $2
 	`, sessionID, userID).Scan(&session.ID, &session.UserID, &session.Title,
 		&session.CreatedAt, &session.UpdatedAt)
 	if err != nil {
@@ -113,7 +113,7 @@ func (s *ChatService) SaveMessage(sessionID, userID, content, senderType, messag
 
 	_, err := s.db.Exec(`
 		INSERT INTO chat_messages (id, session_id, user_id, content, sender_type, message_type, created_at)
-		VALUES (?, ?, ?, ?, ?, ?, ?)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
 	`, messageID, sessionID, userID, content, senderType, messageType, now)
 	if err != nil {
 		return nil, fmt.Errorf("failed to save message: %w", err)
@@ -121,7 +121,7 @@ func (s *ChatService) SaveMessage(sessionID, userID, content, senderType, messag
 
 	// Update session timestamp
 	_, err = s.db.Exec(`
-		UPDATE chat_sessions SET updated_at = ? WHERE id = ?
+		UPDATE chat_sessions SET updated_at = $1 WHERE id = $2
 	`, now, sessionID)
 	if err != nil {
 		// Log error but don't fail the message save
@@ -150,9 +150,9 @@ func (s *ChatService) GetChatHistory(userID, sessionID string, limit, offset int
 		SELECT id, session_id, user_id, content, sender_type, message_type, 
 		       COALESCE(metadata, '{}'), created_at
 		FROM chat_messages
-		WHERE session_id = ?
+		WHERE session_id = $1
 		ORDER BY created_at ASC
-		LIMIT ? OFFSET ?
+		LIMIT $2 OFFSET $3
 	`
 
 	rows, err := s.db.Query(query, sessionID, limit, offset)
@@ -180,9 +180,9 @@ func (s *ChatService) GetChatSessions(userID string, limit, offset int) ([]model
 	query := `
 		SELECT id, user_id, title, created_at, updated_at
 		FROM chat_sessions
-		WHERE user_id = ?
+		WHERE user_id = $1
 		ORDER BY updated_at DESC
-		LIMIT ? OFFSET ?
+		LIMIT $2 OFFSET $3
 	`
 
 	rows, err := s.db.Query(query, userID, limit, offset)
@@ -213,13 +213,13 @@ func (s *ChatService) DeleteChatSession(userID, sessionID string) error {
 	}
 
 	// Delete messages first (due to foreign key constraint)
-	_, err = s.db.Exec("DELETE FROM chat_messages WHERE session_id = ?", sessionID)
+	_, err = s.db.Exec("DELETE FROM chat_messages WHERE session_id = $1", sessionID)
 	if err != nil {
 		return fmt.Errorf("failed to delete messages: %w", err)
 	}
 
 	// Delete session
-	_, err = s.db.Exec("DELETE FROM chat_sessions WHERE id = ? AND user_id = ?", sessionID, userID)
+	_, err = s.db.Exec("DELETE FROM chat_sessions WHERE id = $1 AND user_id = $2", sessionID, userID)
 	if err != nil {
 		return fmt.Errorf("failed to delete session: %w", err)
 	}
@@ -241,8 +241,8 @@ func (s *ChatService) SubmitFeedback(userID, sessionID, messageID string, rating
 
 	_, err = s.db.Exec(`
 		UPDATE chat_messages 
-		SET metadata = ? 
-		WHERE id = ? AND session_id = ?
+		SET metadata = $1 
+		WHERE id = $2 AND session_id = $3
 	`, feedbackJSON, messageID, sessionID)
 	if err != nil {
 		return fmt.Errorf("failed to save feedback: %w", err)

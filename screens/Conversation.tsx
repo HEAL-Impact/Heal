@@ -1,13 +1,14 @@
 import { DialogWrapper } from "@/components/DialogWrapper";
 import {
   DailyAudio,
+  useDailyEvent,
   useDaily,
   useLocalSessionId,
   useParticipantIds,
   useVideoTrack,
   useAudioTrack,
 } from "@daily-co/daily-react";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Video from "@/components/Video";
 import { conversationAtom } from "@/store/conversation";
 import { useAtom } from "jotai";
@@ -59,57 +60,103 @@ export const Conversation: React.FC = () => {
   const [isJoining, setIsJoining] = useState(false);
   const [joinError, setJoinError] = useState<string | null>(null);
 
+  const joinAttempt = useRef<{ daily: NonNullable<typeof daily>; url: string } | null>(null);
+  const timerConversation = useRef<string | null>(null);
+  const isLeaving = useRef(false);
+
+  // A ref locks the join synchronously, including React Strict Mode effect replay.
   // Join the conversation when conversation URL is available
   useEffect(() => {
-    console.log("Joining conversation:", conversation?.conversation_url, daily, isJoining);
-    if (conversation?.conversation_url && daily && !isJoining) {
-      setIsJoining(true);
-      setJoinError(null);
-      
-      daily
-        .join({
-          url: conversation.conversation_url,
-          startVideoOff: false,
-          startAudioOff: true,
-        })
-        .then(() => {
-          console.log("Successfully joined conversation");
-          daily.setLocalVideo(true);
-          daily.setLocalAudio(false);
-          setIsJoining(false);
-        })
-        .catch((error) => {
-          console.error("Failed to join conversation:", error);
-          setJoinError(error.message || "Failed to join conversation");
-          setIsJoining(false);
-        });
-    }
-  }, [conversation?.conversation_url, daily, isJoining]);
+    const url = conversation?.conversation_url;
+    if (!url || !daily) return;
+    const previousAttempt = joinAttempt.current;
+    if (previousAttempt && previousAttempt.daily === daily && previousAttempt.url === url) return;
+    joinAttempt.current = { daily, url };
+    if (daily.meetingState() === "joined-meeting") return;
+    setIsJoining(true);
+    setJoinError(null);
+
+    daily
+      .join({
+        url,
+        startVideoOff: false,
+        startAudioOff: true,
+      })
+      .then(() => {
+        console.log("Successfully joined conversation");
+        daily.setLocalVideo(true);
+        daily.setLocalAudio(false);
+        setIsJoining(false);
+      })
+      .catch((error: Error) => {
+        console.error("Failed to join conversation:", error);
+        setJoinError(error.message || "Failed to join conversation");
+        setIsJoining(false);
+      });
+  }, [conversation?.conversation_url, daily]);
 
   // Handle remote participant joining
   useEffect(() => {
     if (remoteParticipantIds.length && !start) {
       console.log("Remote participant joined, starting conversation");
       setStart(true);
-      // Enable audio after a short delay
-      setTimeout(() => {
-        if (daily) {
-          daily.setLocalAudio(true);
-        }
-      }, 2000);
     }
-  }, [remoteParticipantIds, start, daily]);
+  }, [remoteParticipantIds.length, start]);
+
+  useEffect(() => {
+    if (!start || !daily) return;
+    const timeout = setTimeout(() => daily.setLocalAudio(true), 2000);
+    return () => clearTimeout(timeout);
+  }, [start, daily]);
+
+  const leaveConversation = useCallback(async () => {
+    if (isLeaving.current) return;
+    isLeaving.current = true;
+    try {
+      await daily?.leave();
+    } catch (error) {
+      console.error("Error leaving Daily room:", error);
+    }
+    try {
+      if (conversation?.conversation_id) {
+        await endConversation(conversation.conversation_id);
+      }
+    } catch (error) {
+      console.error("Error ending Tavus conversation:", error);
+    } finally {
+      setConversation(null);
+      clearSessionTime();
+      setScreenState({ currentScreen: "introLoading" });
+    }
+  }, [daily, conversation?.conversation_id, setConversation, setScreenState]);
+
+  useDailyEvent("error", useCallback((event) => {
+    if (isLeaving.current) return;
+    setIsJoining(false);
+    setJoinError(event?.errorMsg || "The video session ended. Start a new conversation to reconnect.");
+  }, []));
+
+  useDailyEvent("left-meeting", useCallback(() => {
+    if (isLeaving.current) return;
+    setIsJoining(false);
+    setJoinError("This video session has ended. Start a new conversation to reconnect.");
+  }, []));
 
   // Timer and session management
   useEffect(() => {
     if (!remoteParticipantIds.length || !start) return;
 
     console.log("Starting session timer");
-    setSessionStartTime();
-    
+    if (timerConversation.current !== conversation?.conversation_id) {
+      timerConversation.current = conversation?.conversation_id || null;
+      clearSessionTime();
+      setSessionStartTime();
+    }
+
     const interval = setInterval(() => {
+      updateSessionEndTime();
       const time = getSessionTime();
-      
+
       if (time === TIME_LIMIT - 60) {
         daily?.sendAppMessage({
           message_type: "conversation",
@@ -121,7 +168,7 @@ export const Conversation: React.FC = () => {
           },
         });
       }
-      
+
       if (time === TIME_LIMIT - 10) {
         daily?.sendAppMessage({
           message_type: "conversation",
@@ -133,18 +180,16 @@ export const Conversation: React.FC = () => {
           },
         });
       }
-      
+
       if (time >= TIME_LIMIT) {
         console.log("Time limit reached, ending conversation");
         leaveConversation();
         clearInterval(interval);
-      } else {
-        updateSessionEndTime();
       }
     }, 1000);
-    
+
     return () => clearInterval(interval);
-  }, [remoteParticipantIds, start, daily, conversation?.conversation_id]);
+  }, [remoteParticipantIds.length, start, daily, conversation?.conversation_id, leaveConversation]);
 
   const toggleVideo = useCallback(() => {
     if (daily) {
@@ -157,28 +202,6 @@ export const Conversation: React.FC = () => {
       daily.setLocalAudio(!isMicEnabled);
     }
   }, [daily, isMicEnabled]);
-
-  const leaveConversation = useCallback(async () => {
-    console.log("Leaving conversation");
-    
-    try {
-      if (daily) {
-        await daily.leave();
-        daily.destroy();
-      }
-      
-      if (conversation?.conversation_id) {
-        console.log("Ending conversation via API");
-        await endConversation(conversation.conversation_id);
-      }
-    } catch (error) {
-      console.error("Error ending conversation:", error);
-    } finally {
-      setConversation(null);
-      clearSessionTime();
-      setScreenState({ currentScreen: "introLoading" });
-    }
-  }, [daily, conversation?.conversation_id, setConversation, setScreenState]);
 
   // Show loading until Daily is ready
   if (!daily) {
@@ -253,7 +276,7 @@ export const Conversation: React.FC = () => {
             </div>
           </div>
         )}
-        
+
         {localSessionId && (
           <Video
             id={localSessionId}
@@ -263,7 +286,7 @@ export const Conversation: React.FC = () => {
             )}
           />
         )}
-        
+
         <div className="absolute bottom-8 right-1/2 z-10 flex translate-x-1/2 justify-center gap-4">
           <Button
             size="icon"

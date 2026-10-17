@@ -18,7 +18,7 @@ func Load() *Config {
 	godotenv.Load()
 
 	return &Config{
-		DatabaseURL: getEnv("DATABASE_URL", "heal.db"),
+		DatabaseURL: getEnv("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/heal?sslmode=disable"),
 		JWTSecret:   getEnv("JWT_SECRET", "your-super-secret-jwt-key-change-in-production"),
 		Port:        getEnv("PORT", "8080"),
 		Environment: getEnv("ENVIRONMENT", "development"),

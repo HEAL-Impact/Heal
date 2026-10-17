@@ -4,11 +4,11 @@ import (
 	"database/sql"
 	"fmt"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/lib/pq"
 )
 
 func Initialize(databaseURL string) (*sql.DB, error) {
-	db, err := sql.Open("sqlite3", databaseURL)
+	db, err := sql.Open("postgres", databaseURL)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %w", err)
 	}
@@ -33,8 +33,8 @@ func createTables(db *sql.DB) error {
 			first_name TEXT NOT NULL,
 			last_name TEXT NOT NULL,
 			email_verified BOOLEAN DEFAULT FALSE,
-			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 		)`,
 
 		`CREATE TABLE IF NOT EXISTS user_profiles (
@@ -52,8 +52,8 @@ func createTables(db *sql.DB) error {
 			id TEXT PRIMARY KEY,
 			user_id TEXT NOT NULL,
 			title TEXT,
-			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 		)`,
 
@@ -65,7 +65,7 @@ func createTables(db *sql.DB) error {
 			sender_type TEXT NOT NULL, -- 'user' or 'ai'
 			message_type TEXT DEFAULT 'text', -- 'text', 'audio', 'video'
 			metadata TEXT, -- JSON for additional data
-			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			FOREIGN KEY (session_id) REFERENCES chat_sessions(id) ON DELETE CASCADE,
 			FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 		)`,
@@ -81,8 +81,8 @@ func createTables(db *sql.DB) error {
 			duration_minutes INTEGER,
 			rating REAL DEFAULT 0,
 			featured BOOLEAN DEFAULT FALSE,
-			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 		)`,
 
 		`CREATE TABLE IF NOT EXISTS user_resource_progress (
@@ -92,7 +92,7 @@ func createTables(db *sql.DB) error {
 			progress REAL DEFAULT 0, -- 0-100
 			completed BOOLEAN DEFAULT FALSE,
 			favorited BOOLEAN DEFAULT FALSE,
-			last_accessed DATETIME DEFAULT CURRENT_TIMESTAMP,
+			last_accessed TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
 			FOREIGN KEY (resource_id) REFERENCES resources(id) ON DELETE CASCADE,
 			UNIQUE(user_id, resource_id)
@@ -103,7 +103,7 @@ func createTables(db *sql.DB) error {
 			user_id TEXT NOT NULL,
 			mood_score INTEGER NOT NULL, -- 1-10
 			notes TEXT,
-			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 		)`,
 
@@ -114,8 +114,8 @@ func createTables(db *sql.DB) error {
 			message TEXT,
 			location TEXT, -- JSON with lat/lng
 			status TEXT DEFAULT 'active', -- 'active', 'resolved', 'escalated'
-			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-			resolved_at DATETIME,
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			resolved_at TIMESTAMP,
 			FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 		)`,
 
@@ -127,8 +127,8 @@ func createTables(db *sql.DB) error {
 			support_contacts TEXT, -- JSON array
 			professional_contacts TEXT, -- JSON array
 			environment_safety TEXT, -- JSON
-			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 		)`,
 
@@ -139,7 +139,7 @@ func createTables(db *sql.DB) error {
 			phone TEXT NOT NULL,
 			relationship TEXT,
 			is_primary BOOLEAN DEFAULT FALSE,
-			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 		)`,
 	}
@@ -274,7 +274,7 @@ func insertSampleData(db *sql.DB) error {
 	for _, r := range resources {
 		_, err := db.Exec(`
 			INSERT INTO resources (id, title, description, content, type, category, difficulty, duration_minutes, rating, featured)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 		`, r.id, r.title, r.description, r.content, r.rType, r.category, r.difficulty, r.duration, r.rating, r.featured)
 		if err != nil {
 			return err

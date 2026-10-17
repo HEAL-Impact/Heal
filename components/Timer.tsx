@@ -12,13 +12,13 @@ const formatTime = (duration: number) => {
 export const Timer = () => {
   const [time, setTime] = useState(() => {
     const sessionTime = getSessionTime();
-    return TIME_LIMIT - sessionTime;
+    return Math.max(0, TIME_LIMIT - sessionTime);
   });
 
   useEffect(() => {
     const interval = setInterval(() => {
       const sessionTime = getSessionTime();
-      setTime(TIME_LIMIT - sessionTime);
+      setTime(Math.max(0, TIME_LIMIT - sessionTime));
     }, 1000);
     return () => clearInterval(interval);
   }, []);

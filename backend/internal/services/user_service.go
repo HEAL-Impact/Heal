@@ -3,6 +3,7 @@ package services
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -23,7 +24,7 @@ func (s *UserService) GetProfile(userID string) (*models.UserProfile, error) {
 		SELECT user_id, COALESCE(avatar_url, ''), COALESCE(phone, ''), 
 		       COALESCE(date_of_birth, ''), COALESCE(emergency_contact_name, ''),
 		       COALESCE(emergency_contact_phone, ''), COALESCE(preferences, '{}')
-		FROM user_profiles WHERE user_id = ?
+		FROM user_profiles WHERE user_id = $1
 	`, userID).Scan(&profile.UserID, &profile.AvatarURL, &profile.Phone,
 		&profile.DateOfBirth, &profile.EmergencyContactName,
 		&profile.EmergencyContactPhone, &profile.Preferences)
@@ -35,45 +36,48 @@ func (s *UserService) GetProfile(userID string) (*models.UserProfile, error) {
 }
 
 func (s *UserService) UpdateProfile(userID string, updates map[string]interface{}) error {
-	// Build dynamic update query
+	// Build dynamic update query with numbered PostgreSQL placeholders
 	setParts := []string{}
 	args := []interface{}{}
+	argCount := 1
 
 	if avatarURL, ok := updates["avatarUrl"]; ok {
-		setParts = append(setParts, "avatar_url = ?")
+		setParts = append(setParts, fmt.Sprintf("avatar_url = $%d", argCount))
 		args = append(args, avatarURL)
+		argCount++
 	}
 	if phone, ok := updates["phone"]; ok {
-		setParts = append(setParts, "phone = ?")
+		setParts = append(setParts, fmt.Sprintf("phone = $%d", argCount))
 		args = append(args, phone)
+		argCount++
 	}
 	if dob, ok := updates["dateOfBirth"]; ok {
-		setParts = append(setParts, "date_of_birth = ?")
+		setParts = append(setParts, fmt.Sprintf("date_of_birth = $%d", argCount))
 		args = append(args, dob)
+		argCount++
 	}
 	if emergencyName, ok := updates["emergencyContactName"]; ok {
-		setParts = append(setParts, "emergency_contact_name = ?")
+		setParts = append(setParts, fmt.Sprintf("emergency_contact_name = $%d", argCount))
 		args = append(args, emergencyName)
+		argCount++
 	}
 	if emergencyPhone, ok := updates["emergencyContactPhone"]; ok {
-		setParts = append(setParts, "emergency_contact_phone = ?")
+		setParts = append(setParts, fmt.Sprintf("emergency_contact_phone = $%d", argCount))
 		args = append(args, emergencyPhone)
+		argCount++
 	}
 	if preferences, ok := updates["preferences"]; ok {
-		setParts = append(setParts, "preferences = ?")
+		setParts = append(setParts, fmt.Sprintf("preferences = $%d", argCount))
 		args = append(args, preferences)
+		argCount++
 	}
 
 	if len(setParts) == 0 {
 		return fmt.Errorf("no valid fields to update")
 	}
 
-	query := fmt.Sprintf("UPDATE user_profiles SET %s WHERE user_id = ?",
-		setParts[0])
-	for i := 1; i < len(setParts); i++ {
-		query = fmt.Sprintf("%s, %s", query, setParts[i])
-	}
-
+	query := fmt.Sprintf("UPDATE user_profiles SET %s WHERE user_id = $%d",
+		strings.Join(setParts, ", "), argCount)
 	args = append(args, userID)
 	_, err := s.db.Exec(query, args...)
 	return err
@@ -83,7 +87,7 @@ func (s *UserService) GetStats(userID string) (*models.UserStats, error) {
 	stats := &models.UserStats{}
 
 	// Get total sessions
-	err := s.db.QueryRow("SELECT COUNT(*) FROM chat_sessions WHERE user_id = ?", userID).Scan(&stats.TotalSessions)
+	err := s.db.QueryRow("SELECT COUNT(*) FROM chat_sessions WHERE user_id = $1", userID).Scan(&stats.TotalSessions)
 	if err != nil {
 		stats.TotalSessions = 0
 	}
@@ -92,14 +96,14 @@ func (s *UserService) GetStats(userID string) (*models.UserStats, error) {
 	err = s.db.QueryRow(`
 		SELECT COALESCE(AVG(mood_score), 0) 
 		FROM mood_logs 
-		WHERE user_id = ? AND created_at > datetime('now', '-30 days')
+		WHERE user_id = $1 AND created_at > NOW() - INTERVAL '30 days'
 	`, userID).Scan(&stats.MoodScore)
 	if err != nil {
 		stats.MoodScore = 0
 	}
 
 	// Get resources viewed (approximate)
-	err = s.db.QueryRow("SELECT COUNT(*) FROM user_resource_progress WHERE user_id = ?", userID).Scan(&stats.ResourcesViewed)
+	err = s.db.QueryRow("SELECT COUNT(*) FROM user_resource_progress WHERE user_id = $1", userID).Scan(&stats.ResourcesViewed)
 	if err != nil {
 		stats.ResourcesViewed = 0
 	}
@@ -111,7 +115,7 @@ func (s *UserService) GetStats(userID string) (*models.UserStats, error) {
 	err = s.db.QueryRow(`
 		SELECT COUNT(DISTINCT DATE(created_at)) 
 		FROM chat_sessions 
-		WHERE user_id = ?
+		WHERE user_id = $1
 	`, userID).Scan(&stats.DaysActive)
 	if err != nil {
 		stats.DaysActive = 0
@@ -126,7 +130,7 @@ func (s *UserService) LogMood(userID string, moodScore int, notes string) (*mode
 
 	_, err := s.db.Exec(`
 		INSERT INTO mood_logs (id, user_id, mood_score, notes, created_at)
-		VALUES (?, ?, ?, ?, ?)
+		VALUES ($1, $2, $3, $4, $5)
 	`, logID, userID, moodScore, notes, now)
 	if err != nil {
 		return nil, fmt.Errorf("failed to log mood: %w", err)
@@ -145,7 +149,7 @@ func (s *UserService) GetMoodHistory(userID string, days int) ([]models.MoodLog,
 	query := `
 		SELECT id, user_id, mood_score, notes, created_at
 		FROM mood_logs
-		WHERE user_id = ? AND created_at > datetime('now', '-' || ? || ' days')
+		WHERE user_id = $1 AND created_at > NOW() - ($2 * INTERVAL '1 day')
 		ORDER BY created_at DESC
 	`
 
@@ -173,7 +177,7 @@ func (s *UserService) calculateStreak(userID string) int {
 	rows, err := s.db.Query(`
 		SELECT DATE(created_at) as activity_date
 		FROM chat_sessions
-		WHERE user_id = ?
+		WHERE user_id = $1
 		GROUP BY DATE(created_at)
 		ORDER BY activity_date DESC
 		LIMIT 30

@@ -194,8 +194,14 @@ class AuthManager {
     if (!refreshToken) return false;
 
     try {
-      // Implement refresh token logic here
-      // For now, just logout if token is invalid
+      const response = await apiClient.refreshAccessToken(refreshToken);
+      if (response.data) {
+        const { user } = response.data;
+        apiClient.setCurrentUser(user);
+        this.setState({ user, isAuthenticated: true });
+        return true;
+      }
+      this.logout();
       return false;
     } catch (error) {
       this.logout();

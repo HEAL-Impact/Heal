@@ -2,14 +2,16 @@
 
 import { useState, useEffect, useRef } from 'react';
 import {
-  Heart,
-  Shield,
   Brain,
   Users,
   Phone,
   ArrowRight,
-  Star,
-  CheckCircle
+  Plus,
+  CheckCircle,
+  Bot,
+  PhoneCall,
+  Shield,
+  CheckCircle2,
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -48,255 +50,246 @@ export default function HomePage() {
   };
 
 
-  const features = [
-    {
-      icon: Brain,
-      title: 'AI-Powered Support',
-      description: 'Advanced AI companions provide 24/7 emotional support with personalized conversations and evidence-based therapeutic techniques.'
-    },
-    {
-      icon: Shield,
-      title: 'Privacy First',
-      description: 'End-to-end encryption ensures your conversations remain completely private and secure with zero-knowledge architecture.'
-    },
-    {
-      icon: Phone,
-      title: 'Crisis Management',
-      description: 'Immediate emergency response protocols with location-based services and direct connection to crisis professionals.'
-    },
-    {
-      icon: Users,
-      title: 'Expert Network',
-      description: 'Access to licensed therapists and mental health professionals for comprehensive care when you need it most.'
-    }
+  const values = [
+    { title: 'Heal', content: '"You deserve healing — not shame. This is a safe space to begin."' },
+    { title: 'Healing', content: '"Healing is not a moment. It\'s a journey — and you don\'t have to walk it alone."' },
+    { title: 'Empowerment', content: '"We place survivors at the center — restoring voice, agency, and dignity."' },
+    { title: 'Action', content: '"We turn support into action — connecting you to tools, people, and care that create real change."' },
+    { title: 'Liberation', content: '"Liberation means freedom beyond the trauma — freedom to live fully, confidently, and joyfully."' }
   ];
 
 
-
   return (
-    <div className="min-h-screen bg-[#FEF5E3]">
+    <div className="min-h-screen bg-[#FBE8DE]">
       <Navbar />
 
       {/* Hero Section */}
-      {/* <section className="relative overflow-hidden py-12 sm:py-20 lg:py-32">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className={`${isLoaded ? 'fade-in-up' : 'opacity-0'}`}>
-              <h1 className=" font-acme text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-gray-900 mb-4 sm:mb-6">
-                Welcome To Heal
-                <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#056173] via-[#81A9AD] to-[#0C444B]">
-                  Your Listening, Caring Patner
-                </span>
-              </h1>
-              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed px-4">
-                AI powered Mental health care and support anytime, anywhere
-                Immediate • Confidential • Judgment-Free and Culturally-sensitive Care designed with you in mind.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-8 sm:mb-12 px-4">
-                <Link href="/auth/signup" className="heal-button text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 w-full sm:w-auto">
-                  Start Your Journey
-                  <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
-                </Link>
-                <Link href="/crisis" className="bg-red-600 hover:bg-red-700 text-white font-medium py-3 sm:py-4 px-6 sm:px-8 rounded-lg transition-all duration-200 text-base sm:text-lg w-full sm:w-auto text-center">
-                  Crisis Support
-                </Link>
-              </div>
-            </div> */}
-
-      {/* Trust Indicators */}
-      {/* <div className={`${isLoaded ? 'fade-in-up' : 'opacity-0'} grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-8 mt-8 sm:mt-16 px-4`}>
-              <div className="flex items-center justify-center space-x-2">
-                <Shield className="h-4 w-4 sm:h-6 sm:w-6 text-green-600" />
-                <span className="text-gray-700 font-medium text-sm sm:text-base">HIPAA Compliant</span>
-              </div>
-              <div className="flex items-center justify-center space-x-2">
-                <CheckCircle className="h-4 w-4 sm:h-6 sm:w-6 text-green-600" />
-                <span className="text-gray-700 font-medium text-sm sm:text-base">Clinically Verified</span>
-              </div>
-              <div className="flex items-center justify-center space-x-2">
-                <Star className="h-4 w-4 sm:h-6 sm:w-6 text-yellow-500" />
-                <span className="text-gray-700 font-medium text-sm sm:text-base">5-Star Rated</span>
-              </div>
-            </div>
-          </div>
-        </div>
-           <br />
-           <br />
-           <br />   */}
-
-      {/* Hero Section */}
-      <section className="relative overflow-hidden py-12 sm:py-20 lg:py-32">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-row items-center space-x-10">
-            {/* Left: Image */}
-            <div className={`${isLoaded ? 'fade-in-up' : 'opacity-0'} flex justify-center lg:justify-start`}>
+      <section
+      className="relative min-h-screen flex flex-col justify-between bg-cover bg-center bg-no-repeat -mt-20"
+      style={{ backgroundImage: 'url(/images/Hero-bg-image.png)' }}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex-grow flex items-center">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-12 w-full">
+          
+          {/* Left: Illustration Image */}
+          <div className={`w-full rounded-[100px] lg:w-1/2 transition-all duration-1000 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <div className="relative w-full max-w-[400px] rounded-[100px] mx-auto">
               <Image
-                src="/Heal-hero-section.png"
-                alt="Heal Hero Section"
-                width={80}
-                height={80}
-                className="w-full object-contain"
+                src="/images/Heal-hero-section.png"
+                alt="Heal Support Illustration"
+                width={400}
+                height={400}
+                className="w-full h-auto object-contain"
                 priority
               />
             </div>
-            {/* Right: Text Content */}
-            <div className="text-center">
-              <div className={`${isLoaded ? 'fade-in-up' : 'opacity-0'}`}>
-                <h1 className="font-acme text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-gray-900 mb-4 sm:mb-6">
-                  Welcome To Heal
-                  <br />
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#056173] via-[#81A9AD] to-[#0C444B] whitespace-nowrap">
-                    Your Listening, Caring Partner
-                  </span>
-                </h1>
-                <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 mb-6 sm:mb-8 leading-relaxed">
-                  AI powered Mental health care and support anytime, anywhere
-                  Immediate • Confidential • Judgment-Free and Culturally-sensitive Care designed with you in mind.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center mb-8 sm:mb-12">
-                  <Link
-                    href="/auth/signup"
-                    className="bg-[#044750] hover:bg-[#056173] text-white font-bold py-3 sm:py-4 px-6 sm:px-8 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg active:scale-95 font-acme inline-flex items-center justify-center whitespace-nowrap"
-                  >
-                    Start Your Journey
-                    <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
-                  </Link>
-                  <Link href="/crisis" className="bg-red-600 hover:bg-red-700 text-white font-medium py-3 sm:py-4 px-6 sm:px-8 rounded-lg transition-all duration-200 text-base sm:text-lg w-full sm:w-auto text-center">
-                    Crisis Support
-                  </Link>
-                </div>
-              </div>
-              {/* Trust Indicators */}
-              <div className={`${isLoaded ? 'fade-in-up' : 'opacity-0'} grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6`}>
-                <div className="flex items-center justify-center space-x-2">
-                  <Shield className="h-4 w-4 sm:h-6 sm:w-6 text-green-600" />
-                  <span className="text-gray-700 font-medium text-sm sm:text-base">HIPAA Compliant</span>
-                </div>
-                <div className="flex items-center justify-center lg:justify-start space-x-2">
-                  <CheckCircle className="h-4 w-4 sm:h-6 sm:w-6 text-green-600" />
-                  <span className="text-gray-700 font-medium text-sm sm:text-base">Clinically Verified</span>
-                </div>
-                <div className="flex items-center justify-center lg:justify-start space-x-2">
-                  <Star className="h-4 w-4 sm:h-6 sm:w-6 text-yellow-500" />
-                  <span className="text-gray-700 font-medium text-sm sm:text-base">5-Star Rated</span>
-                </div>
-              </div>
-            </div>
           </div>
-        </div>
-        <br />
-        <br />
-        <br />
 
-
-
-        {/* White footer section */}
-        <div className="bg-white mt-12 sm:mt-20 py-4 sm:py-6 text-center border-t border-gray-100">
-          <div className="font-acme flex flex-col sm:flex-row justify-center items-center gap-3 sm:gap-6 text-sm sm:text-base text-gray-700">
-            <p>
-              By clicking the arrow, you acknowledge and agree to our{" "}
-              <Link href="/privacy-policy" className="font-acme text-[#056173] underline hover:text-[#0C444B] transition-colors">
-                Privacy Policy
-              </Link>
-              , and to activate your audio
+          {/* Right: Text Content */}
+          <div className={`w-full lg:w-1/2 text-center lg:text-left transition-all duration-1000 delay-300 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <h1 className="flex flex-col gap-2">
+              <span className="text-4xl md:text-5xl lg:text-6xl text-center font-acme font-normal text-[#333] uppercase tracking-tight">
+                Welcome to Heal
+              </span>
+              <span className="text-3xl md:text-5xl font-acme font-normal text-[#6F8F7A] uppercase tracking-tight md:whitespace-nowrap md:-ml-8">
+                Your Listening, Caring Partner
+              </span>
+            </h1>
+            
+            <p className="mt-6 text-base md:text-lg lg:text-xl font-medium text-[#4F5F5C] text-center font-acme max-w-2xl mx-auto lg:mx-0 leading-snug md:whitespace-nowrap">
+              AI powered Mental health care and support anytime, anywhere. Immediate •<br className="hidden md:block" /> Confidential • Judgment-Free and Culturally-sensitive Care designed <br className="hidden md:block" />with you in mind.
             </p>
 
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handlePlayAudio}
-                className="bg-[#056173] hover:bg-[#0C444B] text-white rounded-full p-3 transition-all duration-200 hover:scale-105"
-                aria-label="Play audio"
+            <div className="mt-10 flex flex-wrap justify-center gap-4">
+              {/* Primary Button */}
+              <Link
+                href="/auth/signup"
+                className="bg-[#6F8F7A] hover:bg-[#6D7E73] text-white px-8 py-3 rounded-full flex items-center gap-2 transition-transform hover:scale-105 font-semibold text-xs lg:text-sm uppercase tracking-wider font-acme"
               >
-                <ArrowRight className="h-5 w-5" />
-              </button>
-              <span className="text-gray-600 text-sm">00:00 / 01:46:59</span>
+                Begin at your pace
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+
+              {/* Secondary Button */}
+              <Link
+                href="/crisis"
+                className="bg-[#F9EBEB] border border-[#D97E7E] text-[#B34D4D] hover:bg-[#f3dede] px-8 py-3 rounded-full flex items-center gap-2 transition-transform hover:scale-105 font-semibold text-xs lg:text-sm uppercase tracking-wider font-acme"
+              >
+                <Plus className="h-4 w-4" />
+                Immediate Help
+              </Link>
             </div>
           </div>
-
-          {/* Hidden audio element */}
-          <audio ref={audioRef} src="/sounds/Heal_audio.mp3" preload="auto" />
-
         </div>
+      </div>
 
-      </section>
+      {/* Footer Bar (White bar at the bottom) */}
+      <div className="w-full bg-white/90 backdrop-blur-sm border-t border-gray-100 py-4 md:py-8 my-4">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-gray-600 text-sm md:text-base text-center md:text-left font-medium font-acme">
+            By clicking the arrow, you acknowledge and agree to our{" "}
+            <Link href="/privacy-policy" className="text-[#056173] font-bold underline hover:text-[#0C444B]">
+              Privacy Policy
+            </Link>
+            , and to activate your audio
+          </p>
+
+          <div className="flex items-center gap-4">
+            <button
+              onClick={handlePlayAudio}
+              className="bg-[#056173] hover:bg-[#0C444B] text-white rounded-full p-2.5 transition-all hover:scale-110 shadow-md"
+              aria-label="Play audio"
+            >
+              <ArrowRight className="h-5 w-5" />
+            </button>
+            <span className="text-gray-500 font-mono text-sm tracking-tighter">00:00 / 01:14:59</span>
+          </div>
+        </div>
+        
+        <audio ref={audioRef} src="/sounds/Heal_audio.mp3" preload="auto" />
+      </div>
+    </section>
+
 
 
       {/* Features Section */}
-      <section id="features" className="py-12 sm:py-20 bg-[#FEF5E3]">
+      <section id="features" className="relative py-20">
+              <Image src="/images/decoration.png" alt="Decoration" 
+                      className="absolute bottom-6 left-64 w-10 h-10 opacity-70 rotate-30"
+                      width={20}
+                      height={20}
+                      priority />
+              <Image src="/images/decoration.png" alt="Decoration" 
+                      className="absolute -bottom-6 left-40 w-auto h-auto z-20"
+                      width={100}
+                      height={100}
+                      priority />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#044750] mb-4 font-acme">
+          <div className="text-center mb-20">
+            <h2 className="text-3xl md:text-4xl font-normal text-[#2F3A3A] font-acme">
               Comprehensive Mental Health Support
             </h2>
-            <p className="text-base sm:text-lg lg:text-xl text-gray-700 max-w-2xl mx-auto px-4 font-acme">
-              Our platform combines cutting-edge AI technology with human expertise
-              to provide the support you need, when you need it.
-            </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-            {features.map((feature, index) => (
-              <div key={index} className="bg-white p-4 sm:p-6 text-center hover:shadow-xl transition-all duration-300 rounded-lg border border-[#81A9AD]/20 hover:scale-105 hover:bg-[#F5F5DC] cursor-pointer group">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#81A9AD]/20 rounded-lg flex items-center justify-center mx-auto mb-3 sm:mb-4 group-hover:bg-[#044750] transition-colors duration-300">
-                  <feature.icon className="h-5 w-5 sm:h-6 sm:w-6 text-[#044750] group-hover:text-white transition-colors duration-300" />
-                </div>
-                <h3 className="text-base sm:text-lg font-semibold text-[#044750] mb-2 font-acme">{feature.title}</h3>
-                <p className="text-gray-600 text-sm sm:text-base leading-relaxed font-acme">{feature.description}</p>
+          {/* Changed to 3 columns and added alignment classes */}
+          <div className="grid grid-cols-1 gap-8 lg:gap-0 lg:grid-cols-3 items-center">
+            
+            {/* Card 1: Crisis Management */}
+            <div className="bg-white rounded-3xl p-10 flex flex-col items-center text-center shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 cursor-pointer group h-full">
+              <div className="mb-8 transition-transform group-hover:scale-110 duration-300">
+                <PhoneCall size={80} strokeWidth={1} className="text-[#333]" />
               </div>
-            ))}
+              <h3 className="text-xl font-bold text-[#1a1a1a] mb-4 uppercase tracking-tight font-acme">
+                Crisis Management
+              </h3>
+              <p className="text-gray-600 text-sm leading-relaxed font-medium font-acme">
+                Immediate emergency response protocols with location-based services and direct connection to crisis professionals.
+              </p>
+            </div>
+
+            {/* Card 2: AI - Powered Support (Featured Center Card) */}
+            <div className="bg-[#007C85] rounded-3xl p-12 flex flex-col items-center text-center shadow-xl hover:shadow-2xl hover:-translate-y-4 transition-all duration-300 cursor-pointer lg:-mt-12 lg:mb-[-3rem] z-10 text-white min-h-[500px] justify-center">
+              <div className="mb-8">
+                <Bot size={100} strokeWidth={1} className="text-white" />
+              </div>
+              <h3 className="text-2xl font-bold mb-4 uppercase tracking-tight font-acme">
+                AI - Powered Support
+              </h3>
+              <p className="text-teal-50/90 text-base leading-relaxed font-medium font-acme">
+                Advanced AI companions provide 24/7 emotional support with personalized conversations and evidence-based therapeutic techniques.
+              </p>
+            </div>
+
+            {/* Card 3: Privacy First */}
+            <div className="bg-white rounded-3xl p-10 flex flex-col items-center text-center shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 cursor-pointer group h-full">
+              <div className="mb-8 transition-transform group-hover:scale-110 duration-300">
+                <Shield size={80} strokeWidth={1} className="text-[#333]" />
+              </div>
+              <h3 className="text-xl font-bold text-[#1a1a1a] mb-4 uppercase tracking-tight font-acme">
+                Privacy First
+              </h3>
+              <p className="text-gray-600 text-sm leading-relaxed font-medium font-acme">
+                End-to-end encryption ensures your conversations remain completely private and secure with zero-knowledge architecture.
+              </p>
+            </div>
+
           </div>
         </div>
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-12 sm:py-20 bg-[#FEF5E3]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center">
+      <section id="about" className="relative py-16 sm:py-24 bg-[#E5EFEC] mb-20 overflow-hidden">
+      {/* Decorative Sunbursts (Absolute positioned) */}
+                <Image src="/images/decoration.png" alt="Decoration" 
+                      className="absolute bottom-1/4 left-40 w-auto h-auto opacity-70 rotate-30"
+                      width={40}
+                      height={40}
+                      priority />
+                <Image src="/images/about-decorative-rectangle.png" alt="Decoration" 
+                      className="absolute bottom-40 left-40 w-40 h-20 opacity-70 rotate-30 hidden lg:block"
+                      width={40}
+                      height={40}
+                      priority />
+              <Image src="/images/decoration.png" alt="Decoration" 
+                      className="absolute -bottom-6 right-40 w-auto h-auto"
+                      width={100}
+                      height={100}
+                      priority />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
+          
+          {/* Left Side: Image with rounded corners */}
+          <div className="relative group">
+            {/* The yellowish decorative box behind the image in figma */}
+            <div className="absolute -bottom-6 -left-6 w-32 h-20 rounded-lg -z-10 hidden lg:block" />
+            
+            <div className="rounded-[3rem] overflow-hidden shadow-2xl transition-transform duration-500 group-hover:scale-[1.02]">
+              <Image
+                src="/images/about-image.png"
+                alt="Happy people embracing"
+                width={600}
+                height={800}
+                className="w-full h-auto object-cover"
+              />
+            </div>
+          </div>
+
+          {/* Right Side: Content */}
+          <div className="flex flex-col space-y-8">
             <div>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#044750] mb-4 sm:mb-6 font-acme">
+              <h2 className="text-3xl md:text-4xl font-normal text-[#2F3A3A] mb-6 font-acme leading-tight">
                 Built by Mental Health Professionals
               </h2>
-              <p className="text-base sm:text-lg text-gray-700 mb-4 sm:mb-6 leading-relaxed font-acme">
-                Heal was created by a team of licensed therapists, AI researchers, and security experts
-                to provide accessible, effective mental health support that prioritizes your privacy and safety.
+              <p className="text-base sm:text-lg text-[#4F5F5C] mb-8 leading-relaxed font-acme">
+                Heal was created by a team of licensed therapists, AI researchers, and
+                security experts to provide accessible, effective mental health support
+                that prioritizes your privacy and safety.
               </p>
-              <div className="space-y-3 sm:space-y-4">
-                <div className="flex items-center space-x-3">
-                  <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-[#81A9AD] flex-shrink-0" />
-                  <span className="text-gray-700 text-sm sm:text-base font-acme">Evidence-based therapeutic approaches</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-[#81A9AD] flex-shrink-0" />
-                  <span className="text-gray-700 text-sm sm:text-base font-acme">24/7 crisis intervention protocols</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-[#81A9AD] flex-shrink-0" />
-                  <span className="text-gray-700 text-sm sm:text-base font-acme">Continuous clinical supervision</span>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-[#81A9AD] flex-shrink-0" />
-                  <span className="text-gray-700 text-sm sm:text-base font-acme">Regular safety and efficacy audits</span>
-                </div>
-              </div>
             </div>
-            <div className="space-y-6">
-              {[
-                { title: 'Heal', content: '"You deserve healing — not shame. This is a safe space to begin."' },
-                { title: 'Healing', content: '"Healing is not a moment. It\'s a journey — and you don\'t have to walk it alone."' },
-                { title: 'Empowerment', content: '"We place survivors at the center — restoring voice, agency, and dignity."' },
-                { title: 'Action', content: '"We turn support into action — connecting you to tools, people, and care that create real change."' },
-                { title: 'Liberation', content: '"Liberation means freedom beyond the trauma — freedom to live fully, confidently, and joyfully."' }
-              ].map((item, index) => (
-                <div key={index} className="bg-white p-4 rounded-lg border border-[#81A9AD]/20 hover:shadow-lg transition-all duration-300 hover:scale-102 cursor-pointer group">
-                  <h4 className="text-lg font-bold text-[#044750] mb-2 font-acme">{item.title}</h4>
-                  <p className="text-gray-600 text-sm leading-relaxed font-acme italic">{item.content}</p>
+
+            {/* Values List */}
+            <div className="space-y-8">
+              {values.map((item, index) => (
+                <div key={index} className="flex flex-col space-y-1 border-l-4 border-[#000000]/80 pl-2">
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-xl font-bold text-[#6F8F7A] font-acme uppercase tracking-wide">
+                      {item.title}
+                    </h3>
+                    <CheckCircle2 className="h-5 w-5 text-[#4F5F5C] stroke-[1.5]" />
+                  </div>
+                  <p className="text-[#4A635D] text-base md:text-lg italic leading-relaxed font-acme">
+                    {item.content}
+                  </p>
                 </div>
               ))}
             </div>
           </div>
+
         </div>
-      </section>
+      </div>
+    </section>
+  
 
       {/* Healing Without Barriers Section */}
       <section 
@@ -316,14 +309,14 @@ export default function HomePage() {
               href="/auth/signup" 
               className="text-black font-bold py-3 px-8 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg active:scale-95 font-acme hover:bg-opacity-90" style={{backgroundColor: '#FEF0D3'}}
             >
-              Let's Start Here
+              Lets Start Here
             </Link>
           </div>
         </div>
       </section>
 
       {/* Newsletter Section */}
-      <section className="flex items-center justify-center w-full bg-[#fef0d3] py-20 px-4">
+      <section className="flex items-center justify-center w-full py-20 px-4">
         <div className="w-full max-w-7xl rounded-[20px] shadow-sm bg-gradient-to-r from-white to-[#e8f3ff] flex flex-col lg:flex-row items-center justify-between gap-10 px-8 lg:px-16 py-12">
           {/* LEFT CONTENT */}
           <div className="flex flex-col w-full align-center justify-end lg:w-1/2">
@@ -367,4 +360,5 @@ export default function HomePage() {
       <Footer />
     </div>
   );
+  
 }

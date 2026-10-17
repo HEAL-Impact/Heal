@@ -38,7 +38,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	
+
 	response, err := h.authService.Login(req)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
@@ -54,8 +54,21 @@ func (h *AuthHandler) Logout(c *gin.Context) {
 }
 
 func (h *AuthHandler) RefreshToken(c *gin.Context) {
-	// Implementation for token refresh
-	c.JSON(http.StatusOK, gin.H{"message": "Token refresh not implemented yet"})
+	var req struct {
+		RefreshToken string `json:"refreshToken" binding:"required"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "refreshToken is required"})
+		return
+	}
+
+	response, err := h.authService.RefreshToken(req.RefreshToken)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired refresh token"})
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 func (h *AuthHandler) ForgotPassword(c *gin.Context) {

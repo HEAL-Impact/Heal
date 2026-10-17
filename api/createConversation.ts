@@ -1,6 +1,7 @@
 import { IConversation } from "@/types";
 import { settingsAtom } from "@/store/settings";
 import { getDefaultStore } from "jotai";
+import { TIME_LIMIT } from "@/config";
 
 export const createConversation = async (
   token?: string,
@@ -13,6 +14,17 @@ export const createConversation = async (
   }
 
   const settings = getDefaultStore().get(settingsAtom);
+  // Tavus now calls conversational agents PALs. Prefer the configured current
+  // PAL ID, while retaining the saved `persona` setting as a migration path.
+  const palId = process.env.NEXT_PUBLIC_TAVUS_PAL_ID?.trim() || settings.persona?.trim();
+  const faceId = process.env.NEXT_PUBLIC_TAVUS_FACE_ID?.trim() || settings.replica?.trim();
+
+  if (!palId) {
+    throw new Error(
+      "Tavus PAL ID is required. Set NEXT_PUBLIC_TAVUS_PAL_ID in .env.local to a PAL from your Tavus account.",
+    );
+  }
+
   let contextString = "";
   if (settings.name) {
     contextString = `You are talking with the user, ${settings.name}. Additional context: `;
@@ -20,7 +32,9 @@ export const createConversation = async (
   contextString += settings.context || "";
   
   const payload = {
-    persona_id: settings.persona || "pd43ffef",
+    pal_id: palId,
+    properties: { max_call_duration: TIME_LIMIT },
+    ...(faceId ? { face_id: faceId } : {}),
     custom_greeting: settings.greeting !== undefined && settings.greeting !== null
       ? settings.greeting
       : "Habari! I'm Nia - your trauma-informed companion. I'm here to listen, believe you, and support you through your healing journey. You're safe here. How are you feeling today?",
@@ -75,7 +89,16 @@ REMEMBER: Brief (<150 words), empowering, option-focused, never pressure. Guide 
 
   if (!response?.ok) {
     const errorText = await response.text();
-    throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+    let message = errorText;
+    try {
+      const error = JSON.parse(errorText);
+      if (typeof error.message === "string") message = error.message;
+    } catch {
+      // Some upstream errors are plain text rather than JSON.
+    }
+    throw new Error(
+      `Tavus could not create a conversation for PAL ${palId} (${response.status}): ${message}`,
+    );
   }
 
   const data = await response.json();

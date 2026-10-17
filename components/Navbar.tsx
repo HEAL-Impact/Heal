@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Menu, X } from 'lucide-react';
@@ -43,24 +43,70 @@ function SignUpToggle() {
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const showGlass = isScrolled || isMenuOpen;
+  const glassStyle = showGlass
+    ? {
+        backgroundColor: 'rgba(255, 248, 239, 0.55)',
+        backdropFilter: 'blur(22px)',
+        WebkitBackdropFilter: 'blur(22px)',
+        border: '1px solid rgba(255, 255, 255, 0.45)',
+        boxShadow: '0 10px 30px rgba(15, 23, 42, 0.12)',
+      }
+    : {
+        backgroundColor: 'transparent',
+        backdropFilter: 'none',
+        WebkitBackdropFilter: 'none',
+        border: '1px solid transparent',
+        boxShadow: 'none',
+      };
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+
+    if (!sentinel) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsScrolled(!entry.isIntersecting);
+      },
+      {
+        threshold: 1,
+      }
+    );
+
+    observer.observe(sentinel);
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <nav className="bg-[#EFE6D1] sticky top-0 z-50">
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
+    <>
+      <div ref={sentinelRef} className="h-24" aria-hidden="true" />
+      <nav className="fixed inset-x-0 top-4 z-50 px-4">
+        <div className="relative max-w-7xl mx-auto overflow-hidden rounded-3xl px-6 lg:px-8">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-0 rounded-3xl transition-all duration-300"
+            style={glassStyle}
+          />
+          <div className="relative z-10 flex items-center justify-between h-20">
           {/* Logo - Left */}
           <Link href="/" className="flex items-center space-x-3 group flex-shrink-0">
             <Image
-              src="/Heal-logo.webp"
+              src="images/heal-logo.png"
               alt="HEAL Logo"
               width={80}
               height={80}
               className="h-30 w-30 object-contain transition-all duration-500 drop-shadow-[0_4px_10px_rgba(0,0,0,0.25)] group-hover:scale-115 group-hover:rotate-3 group-hover:drop-shadow-[0_6px_16px_rgba(0,0,0,0.35)]"
               priority
             />
-            <span className="font-acme text-3xl font-bold text-brand-primary group-hover:text-brand-dark transition-all duration-300 group-hover:tracking-wider">
+            {/* <span className="font-acme text-3xl font-bold text-brand-primary group-hover:text-brand-dark transition-all duration-300 group-hover:tracking-wider">
               HEAL
-            </span>
+            </span> */}
           </Link>
 
           {/* Center Navigation */}
@@ -132,10 +178,17 @@ export default function Navbar() {
           </button>
         </div>
 
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="lg:hidden bg-brand-cream border-t border-brand-light py-4">
-            <div className="flex flex-col space-y-3">
+          {/* Mobile Navigation */}
+          {isMenuOpen && (
+            <div
+              className="relative z-10 lg:hidden border-t border-white/30 py-4"
+              style={{
+                backgroundColor: 'rgba(255, 248, 239, 0.7)',
+                backdropFilter: 'blur(22px)',
+                WebkitBackdropFilter: 'blur(22px)',
+              }}
+            >
+              <div className="flex flex-col space-y-3">
               <Link
                 href="/"
                 className="font-acme text-brand-primary hover:text-brand-dark transition-all duration-300 px-4 py-2 text-sm uppercase tracking-wide hover:bg-brand-light/50 rounded-lg"
@@ -197,16 +250,17 @@ export default function Navbar() {
                 </Link>
                 <Link
                   href="/donate"
-                  className="font-acme block text-center bg-brand-primary hover:bg-brand-accent text-white py-3 px-6 rounded-full shadow-md text-sm uppercase tracking-wide transition-all duration-300 hover:scale-105"
+                  className="font-acme block text-center bg-brand-primary hover:bg-brand-accent text-white py-3 px-6 rounded-full shadow-md text-sm uppercase tracking-wide transition-all duration-300 hover:scale-105 z-20"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   DONATE
                 </Link>
               </div>
+              </div>
             </div>
-          </div>
-        )}
-      </div>
-    </nav>
+          )}
+        </div>
+      </nav>
+    </>
   );
 }

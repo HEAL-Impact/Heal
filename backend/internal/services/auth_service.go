@@ -32,7 +32,7 @@ func (s *AuthService) Register(req models.RegisterRequest) (*models.AuthResponse
 
 	// Check if user already exists
 	var existingID string
-	err := s.db.QueryRow("SELECT id FROM users WHERE email = ?", req.Email).Scan(&existingID)
+	err := s.db.QueryRow("SELECT id FROM users WHERE email = $1", req.Email).Scan(&existingID)
 	if err == nil {
 		return nil, errors.New("user already exists")
 	}
@@ -47,7 +47,7 @@ func (s *AuthService) Register(req models.RegisterRequest) (*models.AuthResponse
 	userID := uuid.New().String()
 	_, err = s.db.Exec(`
 		INSERT INTO users (id, email, password_hash, first_name, last_name, email_verified)
-		VALUES (?, ?, ?, ?, ?, ?)
+		VALUES ($1, $2, $3, $4, $5, $6)
 	`, userID, req.Email, string(hashedPassword), req.FirstName, req.LastName, true)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create user: %w", err)
@@ -56,7 +56,7 @@ func (s *AuthService) Register(req models.RegisterRequest) (*models.AuthResponse
 	// Create user profile
 	_, err = s.db.Exec(`
 		INSERT INTO user_profiles (user_id, preferences)
-		VALUES (?, ?)
+		VALUES ($1, $2)
 	`, userID, "{}")
 	if err != nil {
 		return nil, fmt.Errorf("failed to create user profile: %w", err)
@@ -150,7 +150,7 @@ func (s *AuthService) getUserByID(id string) (*models.User, error) {
 	user := &models.User{}
 	err := s.db.QueryRow(`
 		SELECT id, email, password_hash, first_name, last_name, email_verified, created_at, updated_at
-		FROM users WHERE id = ?
+		FROM users WHERE id = $1
 	`, id).Scan(&user.ID, &user.Email, &user.PasswordHash, &user.FirstName, &user.LastName,
 		&user.EmailVerified, &user.CreatedAt, &user.UpdatedAt)
 	if err != nil {
@@ -163,7 +163,7 @@ func (s *AuthService) getUserByEmail(email string) (*models.User, error) {
 	user := &models.User{}
 	err := s.db.QueryRow(`
 		SELECT id, email, password_hash, first_name, last_name, email_verified, created_at, updated_at
-		FROM users WHERE email = ?
+		FROM users WHERE email = $1
 	`, email).Scan(&user.ID, &user.Email, &user.PasswordHash, &user.FirstName, &user.LastName,
 		&user.EmailVerified, &user.CreatedAt, &user.UpdatedAt)
 	if err != nil {
@@ -193,4 +193,52 @@ func (s *AuthService) generateRefreshToken(userID string) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	return token.SignedString([]byte(s.jwtSecret))
+}
+
+func (s *AuthService) RefreshToken(refreshTokenString string) (*models.AuthResponse, error) {
+	token, err := jwt.Parse(refreshTokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(s.jwtSecret), nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok || !token.Valid {
+		return nil, errors.New("invalid refresh token")
+	}
+
+	tokenType, _ := claims["type"].(string)
+	if tokenType != "refresh" {
+		return nil, errors.New("not a refresh token")
+	}
+
+	userID, ok := claims["user_id"].(string)
+	if !ok {
+		return nil, errors.New("invalid token claims")
+	}
+
+	user, err := s.getUserByID(userID)
+	if err != nil {
+		return nil, err
+	}
+
+	newAccessToken, err := s.generateAccessToken(user.ID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate access token: %w", err)
+	}
+
+	newRefreshToken, err := s.generateRefreshToken(user.ID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to generate refresh token: %w", err)
+	}
+
+	return &models.AuthResponse{
+		User:         *user,
+		AccessToken:  newAccessToken,
+		RefreshToken: newRefreshToken,
+	}, nil
 }

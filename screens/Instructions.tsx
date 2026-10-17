@@ -161,7 +161,7 @@ export function Instructions() {
 
   // Show error if conversation creation failed
   if (conversationError) {
-    return <ConversationError onClick={handleClick} />;
+    return <ConversationError onClick={handleClick} message={conversationError} />;
   }
 
   if (isPlayingSound || isLoadingConversation || isCreatingConversation) {
