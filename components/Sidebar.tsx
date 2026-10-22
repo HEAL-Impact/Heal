@@ -21,7 +21,8 @@ import {
   Image,
   Menu,
   PanelLeftClose,
-  ArrowLeft
+  ArrowLeft,
+  ClipboardList
 } from 'lucide-react';
 import NextImage from 'next/image';
 import Link from 'next/link';
@@ -44,6 +45,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onToggle, user }) => {
   const navigationItems = [
     { icon: Home, label: 'Dashboard', hasSubmenu: true, link: '/dashboard' },
     { icon: Heart, label: 'Mood Tracker', link: '/dashboard/mood' },
+    { icon: ClipboardList, label: 'Screenings', link: '/dashboard/screenings' },
     { icon: AlertTriangle, label: 'Crisis', link: '/dashboard/crisis' },
     { icon: BookOpen, label: 'Resources', link: '/dashboard/resources' },
     { icon: Bell, label: 'Notifications', link: '/dashboard/notifications' },

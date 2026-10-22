@@ -18,6 +18,7 @@ import {
 import { useAuth } from '@/hooks/use-auth';
 import { apiClient } from '@/lib/api';
 import { MoodWidget } from '@/components/MoodWidget';
+import { LatestScreeningCard } from '@/components/screening/LatestScreeningCard';
 import Link from 'next/link';
 
 export default function DashboardPage() {
@@ -219,6 +220,13 @@ export default function DashboardPage() {
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4 sm:p-6 shadow-lg">
               <MoodWidget />
             </div>
+
+            {/* Latest Screening */}
+            {user && (
+              <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4 sm:p-6 shadow-lg">
+                <LatestScreeningCard userId={user.id} />
+              </div>
+            )}
 
             {/* Today's Reminder */}
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4 sm:p-6 shadow-lg">
