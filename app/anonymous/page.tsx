@@ -1,9 +1,17 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Send, Mic, Shield, Phone } from 'lucide-react';
+import { ArrowLeft, Send, Mic, Shield, Phone, MessageCircle, ClipboardList } from 'lucide-react';
 import Link from 'next/link';
 import { geminiService } from '@/lib/ai-services';
+import PtsdScreeningFlow from '@/components/screening/PtsdScreeningFlow';
+
+type GuestTab = 'chat' | 'screening';
+
+const TABS: { id: GuestTab; label: string; icon: typeof MessageCircle }[] = [
+  { id: 'chat', label: 'AI Companion', icon: MessageCircle },
+  { id: 'screening', label: 'PTSD Screening', icon: ClipboardList },
+];
 
 interface Message {
   id: string;
@@ -16,6 +24,7 @@ export default function AnonymousPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [activeTab, setActiveTab] = useState<GuestTab>('chat');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -25,6 +34,19 @@ export default function AnonymousPage() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Read the tab from the URL after mount so the static export renders the same HTML on server and client.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get('tab') === 'screening') setActiveTab('screening');
+  }, []);
+
+  const selectTab = (tab: GuestTab) => {
+    setActiveTab(tab);
+    const url = new URL(window.location.href);
+    if (tab === 'chat') url.searchParams.delete('tab');
+    else url.searchParams.set('tab', tab);
+    window.history.replaceState(null, '', url);
+  };
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || isTyping) return;
@@ -122,8 +144,39 @@ export default function AnonymousPage() {
         </div>
       </div>
 
+      {/* Guest Mode Tabs */}
+      <nav className="bg-white/60 backdrop-blur-sm border-b border-brand-light/30 px-4 py-3">
+        <div role="tablist" aria-label="Guest mode" className="max-w-4xl mx-auto flex justify-center gap-2">
+          {TABS.map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              type="button"
+              role="tab"
+              id={`guest-tab-${id}`}
+              aria-selected={activeTab === id}
+              aria-controls={`guest-panel-${id}`}
+              onClick={() => selectTab(id)}
+              className={`flex items-center gap-2 px-5 py-2 rounded-full font-acme text-sm transition-all ${
+                activeTab === id
+                  ? 'bg-brand-primary text-white shadow-md'
+                  : 'bg-white/70 text-brand-primary hover:bg-brand-light shadow-sm'
+              }`}
+            >
+              <Icon className="h-4 w-4" />
+              {label}
+            </button>
+          ))}
+        </div>
+      </nav>
+
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 py-8">
+        {activeTab === 'screening' ? (
+          <div role="tabpanel" id="guest-panel-screening" aria-labelledby="guest-tab-screening">
+            <PtsdScreeningFlow userId={null} onTalkToCompanion={() => selectTab('chat')} />
+          </div>
+        ) : (
+        <div role="tabpanel" id="guest-panel-chat" aria-labelledby="guest-tab-chat">
         {/* AI Support Companion Header */}
         <div className="bg-white/90 backdrop-blur-md border border-white/40 rounded-2xl shadow-lg p-6 mb-6">
           <div className="flex items-center justify-between">
@@ -229,6 +282,8 @@ export default function AnonymousPage() {
             </p>
           </div>
         </div>
+        </div>
+        )}
       </div>
     </main>
   );
