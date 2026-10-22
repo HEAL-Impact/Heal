@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { Inter, Acme } from 'next/font/google';
 import DailyClientProvider from '@/components/DailyClientProvider';
 import { FloatingBoltLogo } from '@/components/FloatingBoltLogo';
+import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -63,6 +64,7 @@ export default function RootLayout({
       <body className={`${inter.variable} ${acme.variable} font-inter antialiased bg-[#FEF5E3]`}>
         <DailyClientProvider>
           <div id="root">
+            <ServiceWorkerRegistration />
             {children}
             {/* <FloatingBoltLogo /> */}
           </div>
