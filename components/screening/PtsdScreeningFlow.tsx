@@ -13,6 +13,7 @@ import {
   Lock,
   MapPin,
   MessageCircle,
+  Mic,
   Phone,
   RotateCcw,
   ShieldCheck,
@@ -42,8 +43,8 @@ import { onScreeningsChanged, saveCompletedScreening } from '@/lib/screening/syn
 interface PtsdScreeningFlowProps {
   /** Signed-in user's id, or null in guest mode (results then stay on this device). */
   userId: string | null;
-  /** Guest mode: switches the page to the AI companion tab. */
-  onTalkToCompanion?: () => void;
+  /** Guest mode: switches the page to the AI companion chat tab. Signed in, the result links to /dashboard/chat. */
+  onChatWithNia?: () => void;
 }
 
 const MODES: { mode: PresentationMode; title: string; description: string; icon: React.ReactNode; available: boolean }[] = [
@@ -85,7 +86,7 @@ function freshDraft(key: string): ScreeningDraft {
   };
 }
 
-export default function PtsdScreeningFlow({ userId, onTalkToCompanion }: PtsdScreeningFlowProps) {
+export default function PtsdScreeningFlow({ userId, onChatWithNia }: PtsdScreeningFlowProps) {
   const draftKey = userId ?? 'guest';
   const [draft, setDraft] = useState<ScreeningDraft | null>(null);
   const [result, setResult] = useState<LocalScreening | null>(null);
@@ -280,7 +281,7 @@ export default function PtsdScreeningFlow({ userId, onTalkToCompanion }: PtsdScr
       )}
 
       {draft.step === 'result' && result && (
-        <ResultCard result={result} signedIn={!!userId} onRestart={restart} onTalkToCompanion={onTalkToCompanion} />
+        <ResultCard result={result} signedIn={!!userId} onRestart={restart} onChatWithNia={onChatWithNia} />
       )}
 
       {draft.step === 'result' && !result && (
@@ -461,12 +462,12 @@ function ResultCard({
   result,
   signedIn,
   onRestart,
-  onTalkToCompanion,
+  onChatWithNia,
 }: {
   result: LocalScreening;
   signedIn: boolean;
   onRestart: () => void;
-  onTalkToCompanion?: () => void;
+  onChatWithNia?: () => void;
 }) {
   const band = BANDS[result.band];
 
@@ -509,13 +510,24 @@ function ResultCard({
       </p>
 
       <div className="flex flex-wrap justify-center gap-3">
-        {onTalkToCompanion && (
-          <button type="button" className={primaryButton} onClick={onTalkToCompanion}>
-            <MessageCircle className="h-4 w-4" /> Talk to the AI companion
-          </button>
-        )}
         {signedIn ? (
-          <Link href="/dashboard/screenings" className={primaryButton}>
+          <Link href="/dashboard/chat" className={primaryButton}>
+            <MessageCircle className="h-4 w-4" /> Chat with Nia
+          </Link>
+        ) : (
+          onChatWithNia && (
+            <button type="button" className={primaryButton} onClick={onChatWithNia}>
+              <MessageCircle className="h-4 w-4" /> Chat with Nia (AI companion)
+            </button>
+          )
+        )}
+        {/* Placeholder for the Nia psychologist AI; enable and wire up once it exists. */}
+        <button type="button" className={primaryButton} disabled title="Coming soon">
+          <Mic className="h-4 w-4" /> {signedIn ? 'Talk to Nia' : 'Talk to Nia (AI companion)'}
+          <span className="ml-1 rounded-full bg-white/30 px-2 py-0.5 text-[10px] uppercase tracking-wide">Soon</span>
+        </button>
+        {signedIn ? (
+          <Link href="/dashboard/screenings" className={secondaryButton}>
             View my screenings
           </Link>
         ) : (

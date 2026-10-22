@@ -173,7 +173,7 @@ export default function AnonymousPage() {
       <div className="max-w-4xl mx-auto px-4 py-8">
         {activeTab === 'screening' ? (
           <div role="tabpanel" id="guest-panel-screening" aria-labelledby="guest-tab-screening">
-            <PtsdScreeningFlow userId={null} onTalkToCompanion={() => selectTab('chat')} />
+            <PtsdScreeningFlow userId={null} onChatWithNia={() => selectTab('chat')} />
           </div>
         ) : (
         <div role="tabpanel" id="guest-panel-chat" aria-labelledby="guest-tab-chat">
