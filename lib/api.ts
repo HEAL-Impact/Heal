@@ -74,6 +74,27 @@ interface MoodHistoryResponse {
   logs: Array<MoodEntry>;
 }
 
+export interface ScreeningPayload {
+  id: string;
+  instrument: string;
+  mode: string;
+  county: string | null;
+  answers: number[];
+  completedAt: string;
+}
+
+export interface ScreeningRecord extends ScreeningPayload {
+  userId: string;
+  totalScore: number;
+  band: 'low' | 'moderate' | 'high';
+  referralStatus: string;
+  createdAt: string;
+}
+
+interface ScreeningsResponse {
+  screenings: Array<ScreeningRecord>;
+}
+
 class ApiClient {
   private baseURL: string;
 
@@ -382,6 +403,18 @@ class ApiClient {
 
   async getSafetyPlan() {
     return this.request('/crisis/safety-plan');
+  }
+
+  // Screening methods
+  async createScreening(screening: ScreeningPayload): Promise<ApiResponse<ScreeningRecord>> {
+    return this.request<ScreeningRecord>('/screenings', {
+      method: 'POST',
+      body: JSON.stringify(screening),
+    });
+  }
+
+  async getScreenings(): Promise<ApiResponse<ScreeningsResponse>> {
+    return this.request<ScreeningsResponse>('/screenings');
   }
 
   // Utility methods
