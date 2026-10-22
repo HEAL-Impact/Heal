@@ -77,6 +77,29 @@ type MoodLog struct {
 	CreatedAt time.Time `json:"createdAt" db:"created_at"`
 }
 
+type PtsdScreening struct {
+	ID             string    `json:"id" db:"id"`
+	UserID         string    `json:"userId" db:"user_id"`
+	Instrument     string    `json:"instrument" db:"instrument"`
+	Mode           string    `json:"mode" db:"mode"`
+	County         *string   `json:"county" db:"county"`
+	Answers        []int     `json:"answers" db:"answers"`
+	TotalScore     int       `json:"totalScore" db:"total_score"`
+	Band           string    `json:"band" db:"band"`
+	ReferralStatus string    `json:"referralStatus" db:"referral_status"`
+	CompletedAt    time.Time `json:"completedAt" db:"completed_at"`
+	CreatedAt      time.Time `json:"createdAt" db:"created_at"`
+}
+
+type CreateScreeningRequest struct {
+	ID          string    `json:"id" binding:"required,uuid"`
+	Instrument  string    `json:"instrument" binding:"required"`
+	Mode        string    `json:"mode" binding:"required"`
+	County      *string   `json:"county" binding:"omitempty,max=64"`
+	Answers     []int     `json:"answers" binding:"required"`
+	CompletedAt time.Time `json:"completedAt" binding:"required"`
+}
+
 type CrisisAlert struct {
 	ID         string     `json:"id" db:"id"`
 	UserID     string     `json:"userId" db:"user_id"`

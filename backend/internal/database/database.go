@@ -142,6 +142,23 @@ func createTables(db *sql.DB) error {
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 		)`,
+
+		`CREATE TABLE IF NOT EXISTS ptsd_screenings (
+			id TEXT PRIMARY KEY, -- generated on the device, so offline retries are idempotent
+			user_id TEXT NOT NULL,
+			instrument TEXT NOT NULL,
+			mode TEXT NOT NULL, -- 'text', 'audio', 'avatar'
+			county TEXT,
+			answers JSONB NOT NULL,
+			total_score INTEGER NOT NULL,
+			band TEXT NOT NULL, -- 'low', 'moderate', 'high'
+			referral_status TEXT NOT NULL DEFAULT 'none', -- for later CHV / hospital forwarding
+			completed_at TIMESTAMPTZ NOT NULL,
+			created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+			FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+		)`,
+
+		`CREATE INDEX IF NOT EXISTS idx_ptsd_screenings_user ON ptsd_screenings (user_id, completed_at DESC)`,
 	}
 
 	for _, query := range queries {

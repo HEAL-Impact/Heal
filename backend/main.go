@@ -31,6 +31,7 @@ func main() {
 	resourceService := services.NewResourceService(db)
 	crisisService := services.NewCrisisService(db)
 	userService := services.NewUserService(db)
+	screeningService := services.NewScreeningService(db)
 
 	// Initialize handlers
 	authHandler := handlers.NewAuthHandler(authService)
@@ -38,6 +39,7 @@ func main() {
 	resourceHandler := handlers.NewResourceHandler(resourceService)
 	crisisHandler := handlers.NewCrisisHandler(crisisService)
 	userHandler := handlers.NewUserHandler(userService)
+	screeningHandler := handlers.NewScreeningHandler(screeningService)
 
 	// Setup router
 	router := gin.Default()
@@ -120,6 +122,14 @@ func main() {
 				crisis.GET("/services", crisisHandler.GetLocalServices)
 				crisis.POST("/safety-plan", crisisHandler.CreateSafetyPlan)
 				crisis.GET("/safety-plan", crisisHandler.GetSafetyPlan)
+			}
+
+			// Screening routes ("" rather than "/" so /screenings doesn't redirect)
+			screenings := protected.Group("/screenings")
+			{
+				screenings.POST("", screeningHandler.CreateScreening)
+				screenings.GET("", screeningHandler.GetScreenings)
+				screenings.GET("/:id", screeningHandler.GetScreening)
 			}
 		}
 	}
