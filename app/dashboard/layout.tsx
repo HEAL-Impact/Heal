@@ -4,6 +4,7 @@ import { useState, createContext, useContext, useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { usePathname } from 'next/navigation';
 import Layout from '@/components/layout/Layout';
+import { GuestScreeningsPrompt } from '@/components/screening/GuestScreeningsPrompt';
 
 interface SidebarContextType {
   sidebarCollapsed: boolean;
@@ -50,6 +51,8 @@ export default function DashboardLayout({
     <SidebarContext.Provider value={{ sidebarCollapsed, setSidebarCollapsed }}>
       <Layout user={user} onToggle={setSidebarCollapsed} sidebarCollapsed={sidebarCollapsed}>
         {children}
+        {/* The Screenings page shows its own inline version of this prompt. */}
+        {pathname !== '/dashboard/screenings' && <GuestScreeningsPrompt userId={user.id} variant="floating" />}
       </Layout>
     </SidebarContext.Provider>
   );

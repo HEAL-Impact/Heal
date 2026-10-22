@@ -29,6 +29,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import userImage from '@/public/images/heal-logo.png';
 import { authManager } from '@/lib/auth';
+import { useGuestScreenings } from '@/hooks/use-guest-screenings';
 
 interface SidebarProps {
   onToggle: (collapsed: boolean) => void;
@@ -41,11 +42,13 @@ const Sidebar: React.FC<SidebarProps> = ({ onToggle, user }) => {
   const sidebarRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const router = useRouter();
+  // Guest-mode screenings on this device waiting to be saved to the account.
+  const { count: unsavedScreenings } = useGuestScreenings();
 
   const navigationItems = [
     { icon: Home, label: 'Dashboard', hasSubmenu: true, link: '/dashboard' },
     { icon: Heart, label: 'Mood Tracker', link: '/dashboard/mood' },
-    { icon: ClipboardList, label: 'Screenings', link: '/dashboard/screenings' },
+    { icon: ClipboardList, label: 'Screenings', link: '/dashboard/screenings', dot: unsavedScreenings > 0 },
     { icon: AlertTriangle, label: 'Crisis', link: '/dashboard/crisis' },
     { icon: BookOpen, label: 'Resources', link: '/dashboard/resources' },
     { icon: Bell, label: 'Notifications', link: '/dashboard/notifications' },
@@ -142,6 +145,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onToggle, user }) => {
           className="fixed top-4 left-4 z-50 p-2 bg-white/20 backdrop-blur-sm hover:bg-white/30 rounded-lg shadow-lg transition-colors"
         >
           <Menu size={20} className="text-white" />
+          {unsavedScreenings > 0 && (
+            <span className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-white/80" aria-label="Screenings waiting to be saved" />
+          )}
         </button>
       )}
 
@@ -221,8 +227,12 @@ const Sidebar: React.FC<SidebarProps> = ({ onToggle, user }) => {
                       className="flex items-center space-x-3 flex-1"
                       onClick={() => handleItemClick(item.link || '')}
                     >
-                      <item.icon size={18} />
+                      <span className="relative">
+                        <item.icon size={18} />
+                        {item.dot && <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-red-500" />}
+                      </span>
                       <span className="text-sm font-medium">{item.label}</span>
+                      {item.dot && <span className="sr-only">(screenings waiting to be saved)</span>}
                     </div>
                     {item.hasSubmenu && (
                       <ChevronDown 

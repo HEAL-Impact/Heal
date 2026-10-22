@@ -2,11 +2,12 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, ChevronDown, ChevronUp, ClipboardList, CloudOff, CheckCircle2, MapPin, Plus, Smartphone } from 'lucide-react';
+import { ArrowLeft, ChevronDown, ChevronUp, ClipboardList, CloudOff, CheckCircle2, MapPin, Plus } from 'lucide-react';
 import { useAuth } from '@/hooks/use-auth';
 import { apiClient } from '@/lib/api';
 import { offlineStore } from '@/lib/screening/offline-store';
-import { claimGuestScreenings, onScreeningsChanged, startScreeningSync, unclaimedGuestScreenings } from '@/lib/screening/sync';
+import { onScreeningsChanged, startScreeningSync } from '@/lib/screening/sync';
+import { GuestScreeningsPrompt } from '@/components/screening/GuestScreeningsPrompt';
 import { ANSWER_OPTIONS, BANDS, MAX_SCORE, QUESTIONS, type Band } from '@/lib/screening/ptsd-instrument';
 
 interface ScreeningRow {
@@ -32,9 +33,6 @@ export default function ScreeningsPage() {
   const [rows, setRows] = useState<ScreeningRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [serverUnavailable, setServerUnavailable] = useState(false);
-  const [guestCount, setGuestCount] = useState(0);
-  const [guestDismissed, setGuestDismissed] = useState(false);
-  const [claiming, setClaiming] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -56,7 +54,6 @@ export default function ScreeningsPage() {
           lastError: s.lastError,
         });
       }
-      setGuestCount((await unclaimedGuestScreenings()).length);
     } catch {
       // On-device storage blocked; fall back to the server list only.
     }
@@ -82,16 +79,6 @@ export default function ScreeningsPage() {
     };
   }, [user, load]);
 
-  const claim = async () => {
-    if (!user) return;
-    setClaiming(true);
-    try {
-      await claimGuestScreenings(user.id);
-    } finally {
-      setClaiming(false);
-    }
-  };
-
   return (
     <div className="min-h-screen">
       {/* Header */}
@@ -116,28 +103,7 @@ export default function ScreeningsPage() {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 py-8 space-y-4">
-        {guestCount > 0 && !guestDismissed && (
-          <div className="heal-card p-5 flex flex-col sm:flex-row sm:items-center gap-4">
-            <Smartphone className="h-8 w-8 text-teal-300 flex-shrink-0" />
-            <p className="flex-1 text-white">
-              {guestCount === 1 ? 'There is 1 screening' : `There are ${guestCount} screenings`} from guest mode saved on this
-              device. Save {guestCount === 1 ? 'it' : 'them'} to your account?
-            </p>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={claim}
-                disabled={claiming}
-                className="bg-brand-primary hover:bg-brand-accent disabled:opacity-60 text-white px-4 py-2 rounded-full font-acme text-sm shadow-md"
-              >
-                {claiming ? 'Saving…' : 'Save to my account'}
-              </button>
-              <button type="button" onClick={() => setGuestDismissed(true)} className="text-white/80 hover:text-white px-3 py-2 text-sm">
-                Not now
-              </button>
-            </div>
-          </div>
-        )}
+        {user && <GuestScreeningsPrompt userId={user.id} variant="inline" />}
 
         {serverUnavailable && !loading && (
           <p className="flex items-center gap-2 text-sm text-amber-200">
