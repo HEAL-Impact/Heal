@@ -8,6 +8,8 @@ import {
   CheckCircle2,
   CloudOff,
   Headphones,
+  Loader2,
+  LocateFixed,
   Lock,
   MapPin,
   MessageCircle,
@@ -28,7 +30,7 @@ import {
   type Band,
   type PresentationMode,
 } from '@/lib/screening/ptsd-instrument';
-import { KENYA_COUNTIES } from '@/lib/screening/counties';
+import { requestApproxLocation, type LocationError } from '@/lib/screening/location';
 import {
   newScreeningId,
   offlineStore,
@@ -74,6 +76,8 @@ function freshDraft(key: string): ScreeningDraft {
     step: 'intro',
     mode: null,
     county: null,
+    latitude: null,
+    longitude: null,
     answers: QUESTIONS.map(() => null),
     currentIndex: 0,
     resultId: null,
@@ -143,6 +147,9 @@ export default function PtsdScreeningFlow({ userId, onTalkToCompanion }: PtsdScr
       instrument: PTSD_INSTRUMENT_ID,
       mode: draft.mode ?? 'text',
       county: draft.county,
+      // ?? null: drafts saved before location was added have no coordinates.
+      latitude: draft.latitude ?? null,
+      longitude: draft.longitude ?? null,
       answers,
       totalScore,
       band,
@@ -191,22 +198,7 @@ export default function PtsdScreeningFlow({ userId, onTalkToCompanion }: PtsdScr
             This is a screening, not a diagnosis. Only a trained health worker can diagnose PTSD.
           </p>
 
-          <label htmlFor="screening-county" className="flex items-center gap-2 text-sm font-medium text-brand-primary mb-2">
-            <MapPin className="h-4 w-4" /> Which county are you in? <span className="font-normal text-brand-gray">(optional)</span>
-          </label>
-          <select
-            id="screening-county"
-            value={draft.county ?? ''}
-            onChange={(e) => update({ county: e.target.value || null })}
-            className="w-full sm:max-w-xs border border-brand-light bg-white/70 rounded-xl px-4 py-3 text-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary mb-6"
-          >
-            <option value="">Prefer not to say</option>
-            {KENYA_COUNTIES.map((county) => (
-              <option key={county} value={county}>
-                {county}
-              </option>
-            ))}
-          </select>
+          <LocationPicker draft={draft} update={update} />
 
           <div>
             <button type="button" className={primaryButton} onClick={() => update({ step: 'mode' })}>
@@ -298,6 +290,81 @@ export default function PtsdScreeningFlow({ userId, onTalkToCompanion }: PtsdScr
             Start a new screening
           </button>
         </section>
+      )}
+    </div>
+  );
+}
+
+const LOCATION_ERRORS: Record<LocationError, string> = {
+  denied: 'Location access was declined. You can continue without it, or allow it later in your browser settings.',
+  unavailable: "We couldn't find your location. You can continue without it.",
+  timeout: 'Finding your location took too long. You can try again or continue without it.',
+  unsupported: "This browser can't share its location. You can continue without it.",
+};
+
+function LocationPicker({
+  draft,
+  update,
+}: {
+  draft: ScreeningDraft;
+  update: (changes: Partial<ScreeningDraft>) => void;
+}) {
+  const [locating, setLocating] = useState(false);
+  const [error, setError] = useState<LocationError | null>(null);
+
+  const share = async () => {
+    setLocating(true);
+    setError(null);
+    try {
+      const { latitude, longitude, county } = await requestApproxLocation();
+      update({ latitude, longitude, county });
+    } catch (reason) {
+      setError(reason as LocationError);
+    } finally {
+      setLocating(false);
+    }
+  };
+
+  if (draft.latitude != null && draft.longitude != null) {
+    return (
+      <div className="flex flex-wrap items-center gap-3 rounded-xl bg-brand-light/40 px-4 py-3 mb-6">
+        <MapPin className="h-5 w-5 text-brand-teal" />
+        <span className="text-brand-primary font-medium">
+          {draft.county ? `${draft.county} County (approximate)` : 'Location shared (outside Kenya)'}
+        </span>
+        <button
+          type="button"
+          onClick={() => update({ latitude: null, longitude: null, county: null })}
+          className="ml-auto text-sm text-brand-secondary hover:text-brand-primary underline"
+        >
+          Remove
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-xl border border-brand-light bg-white/60 px-4 py-4 mb-6">
+      <p className="flex items-center gap-2 text-sm font-medium text-brand-primary mb-1">
+        <MapPin className="h-4 w-4" /> Share your location <span className="font-normal text-brand-gray">(optional)</span>
+      </p>
+      <p className="text-sm text-brand-secondary mb-3">
+        This helps us connect you with support near you. Your browser will ask for permission. We only keep your
+        approximate area, never your exact position.
+      </p>
+      <button
+        type="button"
+        onClick={share}
+        disabled={locating}
+        className="inline-flex items-center gap-2 border border-brand-primary/30 text-brand-primary hover:bg-brand-light/50 disabled:opacity-60 px-4 py-2 rounded-full text-sm font-medium transition-colors"
+      >
+        {locating ? <Loader2 className="h-4 w-4 animate-spin" /> : <LocateFixed className="h-4 w-4" />}
+        {locating ? 'Finding your location…' : 'Use my location'}
+      </button>
+      {error && (
+        <p role="status" className="mt-3 text-sm text-amber-800">
+          {LOCATION_ERRORS[error]}
+        </p>
       )}
     </div>
   );

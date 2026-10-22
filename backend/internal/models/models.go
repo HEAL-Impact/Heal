@@ -83,6 +83,8 @@ type PtsdScreening struct {
 	Instrument     string    `json:"instrument" db:"instrument"`
 	Mode           string    `json:"mode" db:"mode"`
 	County         *string   `json:"county" db:"county"`
+	Latitude       *float64  `json:"latitude" db:"latitude"`
+	Longitude      *float64  `json:"longitude" db:"longitude"`
 	Answers        []int     `json:"answers" db:"answers"`
 	TotalScore     int       `json:"totalScore" db:"total_score"`
 	Band           string    `json:"band" db:"band"`
@@ -96,6 +98,8 @@ type CreateScreeningRequest struct {
 	Instrument  string    `json:"instrument" binding:"required"`
 	Mode        string    `json:"mode" binding:"required"`
 	County      *string   `json:"county" binding:"omitempty,max=64"`
+	Latitude    *float64  `json:"latitude" binding:"omitempty,min=-90,max=90"`
+	Longitude   *float64  `json:"longitude" binding:"omitempty,min=-180,max=180"`
 	Answers     []int     `json:"answers" binding:"required"`
 	CompletedAt time.Time `json:"completedAt" binding:"required"`
 }

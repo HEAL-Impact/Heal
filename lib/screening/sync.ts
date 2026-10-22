@@ -47,6 +47,8 @@ export async function drainScreenings(userId: string): Promise<void> {
         instrument: screening.instrument,
         mode: screening.mode,
         county: screening.county,
+        latitude: screening.latitude,
+        longitude: screening.longitude,
         answers: screening.answers,
         completedAt: screening.completedAt,
       });

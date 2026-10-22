@@ -14,6 +14,9 @@ export interface LocalScreening {
   instrument: string;
   mode: PresentationMode;
   county: string | null;
+  // Rounded to ~1 km; see lib/screening/location.ts.
+  latitude: number | null;
+  longitude: number | null;
   answers: number[];
   totalScore: number;
   band: Band;
@@ -31,6 +34,9 @@ export interface ScreeningDraft {
   step: FlowStep;
   mode: PresentationMode | null;
   county: string | null;
+  // Rounded to ~1 km; see lib/screening/location.ts.
+  latitude: number | null;
+  longitude: number | null;
   answers: (number | null)[];
   currentIndex: number;
   resultId: string | null;

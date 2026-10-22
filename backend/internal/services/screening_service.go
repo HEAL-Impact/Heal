@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math"
 	"time"
 
 	"github.com/heal/internal/models"
@@ -47,6 +48,11 @@ func (s *ScreeningService) CreateScreening(userID string, req models.CreateScree
 	if req.County != nil && *req.County == "" {
 		req.County = nil
 	}
+	if (req.Latitude == nil) != (req.Longitude == nil) {
+		return nil, false, fmt.Errorf("%w: latitude and longitude must be sent together", ErrInvalidScreening)
+	}
+	// Keep only an approximate position, whatever precision the client sent.
+	req.Latitude, req.Longitude = coarsen(req.Latitude), coarsen(req.Longitude)
 
 	answers, err := json.Marshal(req.Answers)
 	if err != nil {
@@ -54,10 +60,10 @@ func (s *ScreeningService) CreateScreening(userID string, req models.CreateScree
 	}
 
 	result, err := s.db.Exec(`
-		INSERT INTO ptsd_screenings (id, user_id, instrument, mode, county, answers, total_score, band, completed_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+		INSERT INTO ptsd_screenings (id, user_id, instrument, mode, county, latitude, longitude, answers, total_score, band, completed_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 		ON CONFLICT (id) DO NOTHING
-	`, req.ID, userID, req.Instrument, req.Mode, req.County, answers, totalScore, band, req.CompletedAt)
+	`, req.ID, userID, req.Instrument, req.Mode, req.County, req.Latitude, req.Longitude, answers, totalScore, band, req.CompletedAt)
 	if err != nil {
 		return nil, false, fmt.Errorf("failed to save screening: %w", err)
 	}
@@ -74,12 +80,21 @@ func (s *ScreeningService) CreateScreening(userID string, req models.CreateScree
 	return stored, inserted == 1, nil
 }
 
-const screeningColumns = `id, user_id, instrument, mode, county, answers, total_score, band, referral_status, completed_at, created_at`
+const screeningColumns = `id, user_id, instrument, mode, county, latitude, longitude, answers, total_score, band, referral_status, completed_at, created_at`
+
+// coarsen rounds a coordinate to 2 decimal places (about 1 km).
+func coarsen(v *float64) *float64 {
+	if v == nil {
+		return nil
+	}
+	rounded := math.Round(*v*100) / 100
+	return &rounded
+}
 
 func scanScreening(row interface{ Scan(...any) error }) (*models.PtsdScreening, error) {
 	var sc models.PtsdScreening
 	var answers []byte
-	if err := row.Scan(&sc.ID, &sc.UserID, &sc.Instrument, &sc.Mode, &sc.County, &answers,
+	if err := row.Scan(&sc.ID, &sc.UserID, &sc.Instrument, &sc.Mode, &sc.County, &sc.Latitude, &sc.Longitude, &answers,
 		&sc.TotalScore, &sc.Band, &sc.ReferralStatus, &sc.CompletedAt, &sc.CreatedAt); err != nil {
 		return nil, err
 	}

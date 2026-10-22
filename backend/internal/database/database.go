@@ -149,6 +149,8 @@ func createTables(db *sql.DB) error {
 			instrument TEXT NOT NULL,
 			mode TEXT NOT NULL, -- 'text', 'audio', 'avatar'
 			county TEXT,
+			latitude DOUBLE PRECISION, -- rounded to 2 decimals (~1 km), never an exact position
+			longitude DOUBLE PRECISION,
 			answers JSONB NOT NULL,
 			total_score INTEGER NOT NULL,
 			band TEXT NOT NULL, -- 'low', 'moderate', 'high'

@@ -79,6 +79,8 @@ export interface ScreeningPayload {
   instrument: string;
   mode: string;
   county: string | null;
+  latitude: number | null;
+  longitude: number | null;
   answers: number[];
   completedAt: string;
 }
