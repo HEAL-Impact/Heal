@@ -10,6 +10,7 @@ export const GALLERY_CATEGORIES = [
   'Award Ceremonies',
   'Strategic Partnerships',
   'E4Impact Incubation Program',
+  'Understanding Access to SRHR Services Among Rural Women',
 ] as const;
 
 export type GalleryCategory = (typeof GALLERY_CATEGORIES)[number];
@@ -41,6 +42,11 @@ export const GALLERY_PHOTOS: GalleryPhoto[] = [
   { name: 'e4impact-cohort', category: 'E4Impact Incubation Program', caption: 'Our E4Impact incubation cohort' },
   { name: 'e4impact-podium', category: 'E4Impact Incubation Program', caption: 'Pitching HEAL-Impact at E4Impact' },
   { name: 'e4impact-activity', category: 'E4Impact Incubation Program', caption: 'A hands-on incubation activity' },
+  { name: 'srhr-team-mural', category: 'Understanding Access to SRHR Services Among Rural Women', caption: 'The SRHR study team at the HEAL-Impact mural' },
+  { name: 'srhr-discussion-circle', category: 'Understanding Access to SRHR Services Among Rural Women', caption: 'A discussion circle with rural women on access to SRHR services' },
+  { name: 'srhr-listening-session', category: 'Understanding Access to SRHR Services Among Rural Women', caption: 'Listening to women share their experiences of SRHR services' },
+  { name: 'srhr-community-visit', category: 'Understanding Access to SRHR Services Among Rural Women', caption: 'Visiting the community during the SRHR study' },
+  { name: 'srhr-community-presentation', category: 'Understanding Access to SRHR Services Among Rural Women', caption: 'Sharing SRHR information with community members' },
 ];
 
 // Videos for the "See videos" tab. Put the file in public/video/ and add
