@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { FaTwitter, FaLinkedin } from 'react-icons/fa';
+import { HEAL_LINKEDIN_URL } from '@/lib/social';
+import { HEAL_EMAIL, HEAL_PHONE, HEAL_PHONE_DISPLAY } from '@/lib/contact';
 
 export function Contact() {
   const [formData, setFormData] = useState({
@@ -30,13 +32,13 @@ export function Contact() {
 
         <div className="mb-4">
           <h3 className="text-xs font-bold text-black/80 mb-1 font-acme">GET IN TOUCH</h3>
-          <p className="text-gray-400 text-sm mb-1 cursor-pointer select-text font-acme">contactheal.org@gmail.com</p>
-          <p className="text-gray-300 text-sm mb-4 cursor-pointer select-text font-acme">producer@healprojectmanger.com</p>
+          <a href={`mailto:${HEAL_EMAIL}`} className="block text-gray-600 hover:text-[#0D474A] text-sm mb-1 font-acme">{HEAL_EMAIL}</a>
+          <a href={`tel:${HEAL_PHONE}`} className="block text-gray-600 hover:text-[#0D474A] text-sm mb-4 font-acme">{HEAL_PHONE_DISPLAY}</a>
           <div className="flex space-x-6 text-[#0D474A] text-2xl">
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+            <a href={HEAL_LINKEDIN_URL} target="_blank" rel="noopener noreferrer" aria-label="Twitter: opens HEAL-Impact on LinkedIn in a new tab" title="HEAL-Impact on LinkedIn">
               <FaTwitter />
             </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+            <a href={HEAL_LINKEDIN_URL} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn: opens HEAL-Impact on LinkedIn in a new tab" title="HEAL-Impact on LinkedIn">
               <FaLinkedin />
             </a>
           </div>

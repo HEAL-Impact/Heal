@@ -11,6 +11,8 @@ import {
   YoutubeIcon,
   PodcastIcon,
 } from 'lucide-react';
+import { HEAL_LINKEDIN_URL } from '@/lib/social';
+import { HEAL_EMAIL, HEAL_PHONE, HEAL_PHONE_DISPLAY } from '@/lib/contact';
 
 const quickLinks = [
   { label: 'About Heal', href: '/about' },
@@ -20,20 +22,13 @@ const quickLinks = [
   { label: 'Get In Touch', href: '/contact' },
 ];
 
-const contactEmails = [
-  'contactheal.org@gmail.com',
-  'producer@healprojectmanger.com',
-  'partnership@heal communications.com',
-  'media@healmedia.com',
-];
-
 const socialIcons = [
-  { Icon: FacebookIcon, label: 'Facebook', href: '#' },
-  { Icon: TwitterIcon, label: 'Twitter', href: '#' },
-  { Icon: InstagramIcon, label: 'Instagram', href: '#' },
-  { Icon: LinkedinIcon, label: 'LinkedIn', href: '#' },
-  { Icon: YoutubeIcon, label: 'YouTube', href: '#' },
-  { Icon: PodcastIcon, label: 'Podcast', href: '#' },
+  { Icon: FacebookIcon, label: 'Facebook', href: HEAL_LINKEDIN_URL },
+  { Icon: TwitterIcon, label: 'Twitter', href: HEAL_LINKEDIN_URL },
+  { Icon: InstagramIcon, label: 'Instagram', href: HEAL_LINKEDIN_URL },
+  { Icon: LinkedinIcon, label: 'LinkedIn', href: HEAL_LINKEDIN_URL },
+  { Icon: YoutubeIcon, label: 'YouTube', href: HEAL_LINKEDIN_URL },
+  { Icon: PodcastIcon, label: 'Podcast', href: HEAL_LINKEDIN_URL },
 ];
 
 export default function Footer() {
@@ -96,13 +91,13 @@ export default function Footer() {
 
             <address className="flex flex-col items-start w-full not-italic">
               <div className="flex flex-col items-start w-full">
-                <div className="font-acme text-[#b0b8b8] text-sm tracking-[0] leading-7">
-                  {contactEmails.map((email, index) => (
-                    <React.Fragment key={index}>
-                      {email}
-                      {index < contactEmails.length - 1 && <br />}
-                    </React.Fragment>
-                  ))}
+                <div className="flex flex-col font-acme text-[#b0b8b8] text-sm tracking-[0] leading-7">
+                  <a href={`mailto:${HEAL_EMAIL}`} className="hover:text-white transition-colors">
+                    {HEAL_EMAIL}
+                  </a>
+                  <a href={`tel:${HEAL_PHONE}`} className="hover:text-white transition-colors">
+                    {HEAL_PHONE_DISPLAY}
+                  </a>
                 </div>
               </div>
             </address>
@@ -122,7 +117,10 @@ export default function Footer() {
                   <a
                     key={index}
                     href={href}
-                    aria-label={label}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${label}: opens HEAL-Impact on LinkedIn in a new tab`}
+                    title="HEAL-Impact on LinkedIn"
                     className="flex items-start text-white hover:text-[#b0b8b8] transition-colors p-2"
                   >
                     <Icon className="w-5 h-5" />

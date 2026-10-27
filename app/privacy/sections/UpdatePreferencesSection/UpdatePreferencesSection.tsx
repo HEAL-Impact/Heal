@@ -8,19 +8,19 @@ export const UpdatePreferencesSection = (): React.ReactElement => {
         logging into your online account and modifying your information or by
         emailing us at{" "}
         <a
-          href="mailto:privacy@Globalapifactory.com"
+          href="mailto:info@heal-impact.org"
           className="text-[#021577] hover:underline"
         >
-          privacy@Globalapifactory.com
+          info@heal-impact.org
         </a>
         . We will retain your personal information for the period necessary to
         fulfill the purposes outlined in this Notice. If you wish to deactivate
         your account, please email us at{" "}
         <a
-          href="mailto:privacy@Globalapifactory.com"
+          href="mailto:info@heal-impact.org"
           className="text-[#021577] hover:underline"
         >
-          privacy@Globalapifactory.com
+          info@heal-impact.org
         </a>
         , but note that we may retain certain information as required by law or
         for legitimate business purposes. We may also retain cached or archived

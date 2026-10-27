@@ -11,10 +11,10 @@ export const OptOutOptionsSection = (): React.ReactElement => {
           other promotional communications from us at any time by emailing{" "}
         </span>
         <a
-          href="mailto:privacy@Globalapifactory.com"
+          href="mailto:info@heal-impact.org"
           className="text-[#021577] hover:underline"
         >
-          privacy@Globalapifactory.com
+          info@heal-impact.org
         </a>
         <span className="text-black">
           {" "}

@@ -7,10 +7,10 @@ export const RequestInformationSection = (): React.ReactElement => {
         To request the removal of your personal information from our blog or
         testimonials, contact us at{" "}
         <a
-          href="mailto:privacy@Globalapifactory.com"
+          href="mailto:info@heal-impact.org"
           className="text-[#021577] hover:underline"
         >
-          privacy@Globalapifactory.com
+          info@heal-impact.org
         </a>{" "}
         In some cases, we may not be able to remove your personal information,
         in which case we will let you know if we are unable to do so and why.

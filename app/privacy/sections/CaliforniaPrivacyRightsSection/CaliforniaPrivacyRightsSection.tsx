@@ -10,10 +10,10 @@ export const CaliforniaPrivacyRightsSection = (): React.ReactElement => {
         parties for direct marketing purposes. If you choose to opt-out at any
         time after granting approval email{" "}
         <a
-          href="mailto:privacy@Globalapifactory.com"
+          href="mailto:info@heal-impact.org"
           className="text-[#021577]"
         >
-          privacy@Globalapifactory.com
+          info@heal-impact.org
         </a>
         .
       </p>

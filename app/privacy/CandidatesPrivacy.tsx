@@ -75,7 +75,7 @@ export const CandidatesPrivacy = (): React.JSX.Element => {
             Francisco, CA 94105 or by emailing us at{" "}
           </span>
 
-          <span className="text-[#021577]">privacy@Globalapifactory.com</span>
+          <span className="text-[#021577]">info@heal-impact.org</span>
 
           <span className="text-black">.</span>
         </div>
@@ -276,7 +276,7 @@ export const CandidatesPrivacy = (): React.JSX.Element => {
             information, you can contact us at{" "}
           </span>
 
-          <span className="text-[#021577]">privacy@Globalapifactory.com</span>
+          <span className="text-[#021577]">info@heal-impact.org</span>
 
           <span className="text-black">.</span>
         </div>

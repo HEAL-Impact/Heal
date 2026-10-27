@@ -10,10 +10,10 @@ export const GlobalApiSection = (): React.ReactElement => {
         personal information, please contact us at{" "}
       </span>
       <a
-        href="mailto:privacy@Globalapifactory.com"
+        href="mailto:info@heal-impact.org"
         className="text-[#021577] hover:underline"
       >
-        privacy@Globalapifactory.com
+        info@heal-impact.org
       </a>
       <span className="text-black">
         . If we become aware that a child under 13 has provided us with personal
