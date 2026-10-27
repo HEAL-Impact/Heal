@@ -12,17 +12,17 @@ export default function AboutPage() {
     {
       title: "Radical Accessibility",
       content: "24/7 confidential support via AI chat and USSD — even in low-connectivity areas. Survivors can access help immediately, when they need it most.",
-      icon: <Clock className="w-5 h-5 text-white" />,
+      icon: Clock,
     },
     {
       title: "Survivor-Centered & Survivor-Built",
       content: "HEAL is designed with survivors — not for them. Every feature, from AI support to referrals, prioritizes dignity, empathy, and safety.",
-      icon: <Users className="w-5 h-5 text-white" />,
+      icon: Users,
     },
     {
       title: "Trust & Integrity Through Innovation",
       content: "Secure, transparent case coordination powered by technology. We strengthen accountability across medical, legal, and community systems.",
-      icon: <ShieldCheck className="w-5 h-5 text-white" />,
+      icon: ShieldCheck,
     }
   ];
 
@@ -31,7 +31,10 @@ export default function AboutPage() {
 
       <Navbar />
       {/* Hero section */}
-      <section className="relative lg:h-[66.66666667vh] text-white pt-28 lg:pt-20 lg:pb-0 overflow-hidden flex items-center -mt-20" style={{ background: 'linear-gradient(180deg, #DCE7E1 0%, #016A79 55%, #016A79 100%)' }}>
+      <section
+        className="relative lg:h-[66.66666667vh] pt-28 pb-12 lg:pt-20 lg:pb-0 overflow-hidden flex items-center -mt-20 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: 'url(/images/Hero-bg-image.png)' }}
+      >
 
         {/* Decorative Sunbursts */}
         <Image
@@ -99,28 +102,28 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-2 md:gap-8">
 
             {/* Left: Text Content */}
-            <div className="text-center lg:text-left space-y-5 [text-shadow:0_1px_12px_rgba(4,71,80,0.45)]">
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-white/85">
+            <div className="text-center lg:text-left space-y-5">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#6F8F7A]">
                 Who we are
               </p>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-acme tracking-tight">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-acme font-normal text-[#333] uppercase tracking-tight">
                 About Us
               </h1>
-              <p className="lg:max-w-md mx-auto lg:mx-0 text-base sm:text-lg lg:text-xl font-inter font-medium leading-relaxed opacity-90 whitespace-pre-line">
+              <p className="lg:max-w-md mx-auto lg:mx-0 text-base sm:text-lg lg:text-xl font-medium leading-relaxed text-[#4F5F5C] whitespace-pre-line">
                 HEAL is an AI-powered mental health support platform
                 providing confidential, culturally-sensitive care for survivors
                 of SGBV — anytime, anywhere.
               </p>
-              <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start pt-2 [text-shadow:none]">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-2">
                 <Link
                   href="/anonymous"
-                  className="font-acme bg-white text-[#044750] hover:bg-[#FEF5E3] py-3 px-6 rounded-full transition-colors text-sm uppercase tracking-wide shadow-md text-center"
+                  className="bg-[#6F8F7A] hover:bg-[#6D7E73] text-white px-8 py-3 rounded-full transition-transform hover:scale-105 font-semibold text-xs lg:text-sm uppercase tracking-wider font-acme text-center"
                 >
                   Talk to Nia anonymously
                 </Link>
                 <Link
                   href="/services"
-                  className="font-acme border-2 border-white text-white hover:bg-white hover:text-[#044750] py-3 px-6 rounded-full transition-colors text-sm uppercase tracking-wide text-center"
+                  className="bg-white/70 border border-[#6F8F7A] text-[#4F5F5C] hover:bg-white px-8 py-3 rounded-full transition-transform hover:scale-105 font-semibold text-xs lg:text-sm uppercase tracking-wider font-acme text-center"
                 >
                   Our services
                 </Link>
@@ -143,23 +146,10 @@ export default function AboutPage() {
           </div>
         </div>
 
-        {/* Cream wave easing into the next section */}
-        <div className="absolute bottom-[-1px] left-0 w-full overflow-hidden leading-[0] z-20" aria-hidden="true">
-          <svg
-            viewBox="0 0 1200 120"
-            preserveAspectRatio="none"
-            className="relative block w-full h-[60px] sm:h-[90px] lg:h-[120px]"
-          >
-            <path
-              d="M0,120V60.29C400,20,800,100,1200,60.29V120H0Z"
-              fill="#FEF5E3"
-            />
-          </svg>
-        </div>
       </section>
 
       {/* Our Vision */}
-      <section className="relative py-20 bg-[#FEF5E3] overflow-hidden">
+      <section className="relative py-20 overflow-hidden">
         {/* Decorative Sunbursts */}
         <Image
           src="/images/decoration.png"
@@ -396,53 +386,52 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="relative py-20 bg-[#FEF5E3] overflow-hidden">
-        {/* Decorative Sunbursts */}
+      {/* What Makes Us Different */}
+      <section className="relative py-16 sm:py-24 bg-[#E5EFEC] overflow-hidden">
         <Image
           src="/images/decoration.png"
-          alt="Decorative sunburst"
-          className="absolute rotate-45 z-30"
+          alt=""
+          aria-hidden="true"
+          className="absolute rotate-45"
           style={{ inset: '75% 60% auto auto' }}
           width={70}
           height={70}
-          priority
         />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          {/* Title Section */}
-          <div className="mb-12">
-            <div className="w-12 h-[2px] bg-[#016A79] mb-4"></div>
-            <h2 className="text-xl font-bold text-[#016A79] font-acme uppercase tracking-tight leading-none">
-              What makes us
-            </h2>
-            <h2 className="text-3xl lg:text-4xl font-bold text-[#016A79] font-acme uppercase tracking-tight">
-              Different
+          <div className="text-center mb-20">
+            <h2 className="text-3xl md:text-4xl font-normal text-[#2F3A3A] font-acme">
+              What Makes Us Different
             </h2>
           </div>
 
-          {/* Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {cards.map((card, index) => (
-              <div
-                key={index}
-                className="bg-[#51AB3B40] p-8 rounded-[2.5rem] shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 cursor-pointer flex flex-col min-h-[400px]"
-              >
-                {/* Icon & Title Header */}
-                <div className="flex items-start gap-4 mb-6">
-                  <div className="bg-[#016A79] p-2 rounded-lg flex-shrink-0 border-b-2 border-[#51AB3B80] shadow-sm">
-                    {card.icon}
+          {/* Same card style as the home page features; the middle card is featured. */}
+          <div className="grid grid-cols-1 gap-8 lg:gap-0 lg:grid-cols-3 items-center">
+            {cards.map(({ title, content, icon: Icon }, index) =>
+              index === 1 ? (
+                <div
+                  key={title}
+                  className="bg-[#007C85] rounded-3xl p-12 flex flex-col items-center text-center shadow-xl hover:shadow-2xl hover:-translate-y-4 transition-all duration-300 lg:-mt-12 lg:mb-[-3rem] z-10 text-white min-h-[500px] justify-center"
+                >
+                  <div className="mb-8">
+                    <Icon size={100} strokeWidth={1} className="text-white" />
                   </div>
-                  <h3 className="text-2xl lg:text-3xl font-bold text-[#016A79] border-b-2 border-[#51AB3B80] font-acme leading-snug">
-                    {card.title}
-                  </h3>
+                  <h3 className="text-2xl font-bold mb-4 uppercase tracking-tight font-acme">{title}</h3>
+                  <p className="text-teal-50/90 text-base leading-relaxed font-medium">{content}</p>
                 </div>
-
-                {/* Body Text */}
-                <p className="text-xl lg:2xl text-[#555555] leading-relaxed font-normal font-acme">
-                  {card.content}
-                </p>
-              </div>
-            ))}
+              ) : (
+                <div
+                  key={title}
+                  className="bg-white rounded-3xl p-10 flex flex-col items-center text-center shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group h-full"
+                >
+                  <div className="mb-8 transition-transform group-hover:scale-110 duration-300">
+                    <Icon size={80} strokeWidth={1} className="text-[#333]" />
+                  </div>
+                  <h3 className="text-xl font-bold text-[#1a1a1a] mb-4 uppercase tracking-tight font-acme">{title}</h3>
+                  <p className="text-gray-600 text-sm leading-relaxed font-medium">{content}</p>
+                </div>
+              )
+            )}
           </div>
         </div>
       </section>
