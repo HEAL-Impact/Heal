@@ -1,39 +1,12 @@
 'use client';
 
 import Image from 'next/image';
-import { useState, useEffect, useCallback } from 'react';
-import { Clock, Users, ShieldCheck, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Clock, Users, ShieldCheck } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-
-const galleryImages = [
-  'image1.jpg', 'Image1.JPG', 'Image2.jpeg', 'image3.jpg', 'Image3.jpg', 'image3(1).jpg',
-  'Image4.jpg', 'Image5.jpg', 'image6.jpg', 'Image6.jpg', 'Image7.jpg', 'image1.jpg',
-  'image9.jpg', 'image11.jpg', 'Image5.jpg', 'Image13.png',
-];
+import Gallery from '@/components/Gallery';
 
 export default function AboutPage() {
-  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-
-  const closeLightbox = useCallback(() => setLightboxIndex(null), []);
-
-  const showPrev = useCallback(() =>
-    setLightboxIndex(i => (i !== null ? (i - 1 + galleryImages.length) % galleryImages.length : null)), []);
-
-  const showNext = useCallback(() =>
-    setLightboxIndex(i => (i !== null ? (i + 1) % galleryImages.length : null)), []);
-
-  useEffect(() => {
-    if (lightboxIndex === null) return;
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeLightbox();
-      if (e.key === 'ArrowLeft') showPrev();
-      if (e.key === 'ArrowRight') showNext();
-    };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, [lightboxIndex, closeLightbox, showPrev, showNext]);
-
   const cards = [
     {
       title: "Radical Accessibility",
@@ -471,89 +444,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Gallery Section */}
-      <section className="py-12 sm:py-20 bg-[#FEF5E3]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-[#044750] font-acme mb-4">
-              Gallery
-            </h2>
-          </div>
-
-          {/* Gallery Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
-            {galleryImages.map((imageName, index) => (
-              <div
-                key={index}
-                className="relative h-40 sm:h-48 overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer group"
-                onClick={() => setLightboxIndex(index)}
-              >
-                <Image
-                  src={`/images/${imageName}`}
-                  alt={`Gallery image ${index + 1}`}
-                  fill
-                  className="object-cover group-hover:scale-110 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300"></div>
-              </div>
-            ))}
-          </div>
-
-          {/* Lightbox */}
-          {lightboxIndex !== null && (
-            <div
-              className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
-              onClick={closeLightbox}
-            >
-              {/* Close */}
-              <button
-                className="absolute top-4 right-4 text-white bg-black/40 rounded-full p-2 hover:bg-black/70 transition-colors"
-                onClick={closeLightbox}
-                aria-label="Close"
-              >
-                <X className="w-6 h-6" />
-              </button>
-
-              {/* Prev */}
-              <button
-                className="absolute left-4 text-white bg-black/40 rounded-full p-2 hover:bg-black/70 transition-colors"
-                onClick={(e) => { e.stopPropagation(); showPrev(); }}
-                aria-label="Previous image"
-              >
-                <ChevronLeft className="w-7 h-7" />
-              </button>
-
-              {/* Image */}
-              <div
-                className="relative w-[90vw] max-w-4xl h-[80vh]"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Image
-                  src={`/images/${galleryImages[lightboxIndex]}`}
-                  alt={`Gallery image ${lightboxIndex + 1}`}
-                  fill
-                  className="object-contain"
-                  sizes="90vw"
-                />
-              </div>
-
-              {/* Next */}
-              <button
-                className="absolute right-4 text-white bg-black/40 rounded-full p-2 hover:bg-black/70 transition-colors"
-                onClick={(e) => { e.stopPropagation(); showNext(); }}
-                aria-label="Next image"
-              >
-                <ChevronRight className="w-7 h-7" />
-              </button>
-
-              {/* Counter */}
-              <span className="absolute bottom-4 text-white/80 text-sm">
-                {lightboxIndex + 1} / {galleryImages.length}
-              </span>
-            </div>
-          )}
-        </div>
-      </section>
+      <Gallery />
 
       <Footer />
     </div>
