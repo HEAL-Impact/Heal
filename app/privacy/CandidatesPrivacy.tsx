@@ -23,11 +23,11 @@ export const CandidatesPrivacy = (): React.JSX.Element => {
       <header className="flex items-center justify-around bg-transparent shadow-sm">
         <div className="flex items-center">
           <Image
-            src="/images/heal-logo.png"
-            alt="Heal Logo"
-            width={120}
-            height={40}
-            className="h-30 w-20 object-contain transition-all duration-500 drop-shadow-[0_4px_10px_rgba(0,0,0,0.25)] group-hover:scale-115 group-hover:rotate-3 group-hover:drop-shadow-[0_6px_16px_rgba(0,0,0,0.35)]"
+            src="/images/heal-impact-logo.png"
+            alt="HEAL-Impact"
+            width={204}
+            height={52}
+            className="h-12 w-auto object-contain"
           />
         </div>
         <Link

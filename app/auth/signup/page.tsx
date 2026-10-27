@@ -178,7 +178,7 @@ export default function SignUpPage() {
         {/* LEFT SIDE: Content & Illustration */}
         <div className="flex flex-col items-center lg:w-1/2 text-center space-y-4">
           <Link href="/" className="w-full flex justify-left -mb-12">
-            <Image src="/Heal-logo.webp" alt="HEAL Logo" width={80} height={80} className="object-contain" priority />
+            <Image src="/images/heal-impact-logo.png" alt="HEAL-Impact" width={204} height={52} className="h-12 w-auto object-contain" priority />
           </Link>
           <div className="space-y-2">
             <h2 className="text-4xl md:text-5xl font-bold text-[#0B3C49] font-acme">Join Our Platform</h2>

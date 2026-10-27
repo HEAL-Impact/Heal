@@ -27,7 +27,7 @@ import {
 import NextImage from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import userImage from '@/public/images/heal-logo.png';
+import healMark from '@/public/images/heal-impact-mark.png';
 import { authManager } from '@/lib/auth';
 import { useGuestScreenings } from '@/hooks/use-guest-screenings';
 
@@ -300,7 +300,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onToggle, user }) => {
               <span className="text-sm font-medium font-acme">Logout</span>
             </div>
             <div>
-              <NextImage src={userImage} alt="User" width={40} height={40} className="rounded-full" />
+              <NextImage src={healMark} alt="HEAL-Impact" width={40} height={40} />
             </div>
           </div>
         </div>

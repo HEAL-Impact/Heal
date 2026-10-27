@@ -46,12 +46,12 @@ export default function Footer() {
           <div className="col-span-1 lg:col-span-1 flex flex-col items-center">
             <div className="flex flex-col items-center -mt-6 w-full">
               <Link href="/" className="group transition-all duration-300 hover:scale-105">
-                <Image 
-                  src="/images/heal_logo.png" 
-                  alt="HEAL Logo"
-                  width={100}
-                  height={48}
-                  className="h-40 w-auto group-hover:opacity-90 transition-opacity duration-300"
+                <Image
+                  src="/images/heal-impact-logo-light.png"
+                  alt="HEAL-Impact"
+                  width={240}
+                  height={61}
+                  className="w-60 h-auto my-8 group-hover:opacity-90 transition-opacity duration-300"
                   priority
                 />
               </Link>

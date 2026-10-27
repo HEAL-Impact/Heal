@@ -97,11 +97,11 @@ export default function Navbar() {
           {/* Logo - Left */}
           <Link href="/" className="flex items-center space-x-3 group flex-shrink-0">
             <Image
-              src="images/heal-logo.png"
-              alt="HEAL Logo"
-              width={80}
-              height={80}
-              className="h-30 w-30 object-contain transition-all duration-500 drop-shadow-[0_4px_10px_rgba(0,0,0,0.25)] group-hover:scale-115 group-hover:rotate-3 group-hover:drop-shadow-[0_6px_16px_rgba(0,0,0,0.35)]"
+              src="/images/heal-impact-logo.png"
+              alt="HEAL-Impact"
+              width={204}
+              height={52}
+              className="h-11 sm:h-[52px] w-auto object-contain transition-transform duration-300 group-hover:scale-105"
               priority
             />
             {/* <span className="font-acme text-3xl font-bold text-brand-primary group-hover:text-brand-dark transition-all duration-300 group-hover:tracking-wider">
