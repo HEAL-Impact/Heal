@@ -32,7 +32,7 @@ export default function AboutPage() {
       <Navbar />
       {/* Hero section */}
       <section
-        className="relative lg:h-[66.66666667vh] pt-28 pb-12 lg:pt-20 lg:pb-0 overflow-hidden flex items-center -mt-20 bg-cover bg-center bg-no-repeat"
+        className="relative min-h-screen flex flex-col justify-center pt-20 overflow-hidden bg-cover bg-center bg-no-repeat -mt-20"
         style={{ backgroundImage: 'url(/images/Hero-bg-image.png)' }}
       >
 
@@ -98,11 +98,12 @@ export default function AboutPage() {
           priority
         />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10" >
-          <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-2 md:gap-8">
+        {/* Same container and split as the home hero */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10 flex-grow flex items-center">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-12 w-full">
 
             {/* Left: Text Content */}
-            <div className="text-center lg:text-left space-y-5">
+            <div className="w-full lg:w-1/2 text-center lg:text-left space-y-5">
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#6F8F7A]">
                 Who we are
               </p>
@@ -131,8 +132,8 @@ export default function AboutPage() {
             </div>
 
             {/* Right: Cutout Image Positioned at the bottom */}
-            <div className="relative h-full flex justify-center lg:justify-end items-end">
-              <div className="relative w-full max-w-[350px] rounded-[100px] mx-auto">
+            <div className="w-full lg:w-1/2">
+              <div className="relative w-full max-w-[400px] rounded-[100px] mx-auto">
                 <Image
                   src="/images/about-hero-women.png"
                   alt="Two women sharing a supportive embrace"
