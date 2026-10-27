@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { Clock, Users, ShieldCheck } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -29,13 +30,14 @@ export default function AboutPage() {
     <div className="min-h-screen bg-[#FBE8DE]">
 
       <Navbar />
-      {/*Hero section*/}
-      <section className="relative lg:h-[66.66666667vh] text-white pt-28 lg:pt-20 lg:pb-0 overflow-hidden flex items-center -mt-20" style={{ background: 'linear-gradient(180deg, #DCE7E1 0%, #016A79 100%)' }}>
+      {/* Hero section */}
+      <section className="relative lg:h-[66.66666667vh] text-white pt-28 lg:pt-20 lg:pb-0 overflow-hidden flex items-center -mt-20" style={{ background: 'linear-gradient(180deg, #DCE7E1 0%, #016A79 55%, #016A79 100%)' }}>
 
         {/* Decorative Sunbursts */}
         <Image
           src="/images/decoration.png"
-          alt="Decorative sunburst"
+          alt=""
+          aria-hidden="true"
           className="absolute"
           style={{ inset: '15% 5% auto 50%' }}
           width={50}
@@ -44,7 +46,8 @@ export default function AboutPage() {
         />
         <Image
           src="/images/decoration.png"
-          alt="Decorative sunburst"
+          alt=""
+          aria-hidden="true"
           className="absolute hidden lg:block -rotate-6"
           style={{ inset: '20% auto auto 48%' }}
           width={70}
@@ -53,7 +56,8 @@ export default function AboutPage() {
         />
         <Image
           src="/images/decoration.png"
-          alt="Decorative sunburst"
+          alt=""
+          aria-hidden="true"
           className="absolute"
           style={{ inset: '15% 5% auto auto' }}
           width={50}
@@ -62,7 +66,8 @@ export default function AboutPage() {
         />
         <Image
           src="/images/decoration.png"
-          alt="Decorative sunburst"
+          alt=""
+          aria-hidden="true"
           className="absolute -rotate-6"
           style={{ inset: '20% auto auto 88%' }}
           width={70}
@@ -71,7 +76,8 @@ export default function AboutPage() {
         />
         <Image
           src="/images/decoration.png"
-          alt="Decorative sunburst"
+          alt=""
+          aria-hidden="true"
           className="absolute rotate-12"
           style={{ inset: '20% auto auto 8%' }}
           width={70}
@@ -80,7 +86,8 @@ export default function AboutPage() {
         />
         <Image
           src="/images/decoration.png"
-          alt="Decorative sunburst"
+          alt=""
+          aria-hidden="true"
           className="absolute rotate-45 z-30"
           style={{ inset: '75% 60% auto auto' }}
           width={70}
@@ -92,23 +99,40 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-2 md:gap-8">
 
             {/* Left: Text Content */}
-            <div className="text-center lg:text-left space-y-4">
+            <div className="text-center lg:text-left space-y-5 [text-shadow:0_1px_12px_rgba(4,71,80,0.45)]">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-white/85">
+                Who we are
+              </p>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-acme tracking-tight">
                 About Us
               </h1>
-              <p className="lg:max-w-md text-base sm:text-lg lg:text-xl font-inter font-medium leading-relaxed opacity-90 whitespace-pre-line">
+              <p className="lg:max-w-md mx-auto lg:mx-0 text-base sm:text-lg lg:text-xl font-inter font-medium leading-relaxed opacity-90 whitespace-pre-line">
                 HEAL is an AI-powered mental health support platform
                 providing confidential, culturally-sensitive care for survivors
                 of SGBV — anytime, anywhere.
               </p>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start pt-2 [text-shadow:none]">
+                <Link
+                  href="/anonymous"
+                  className="font-acme bg-white text-[#044750] hover:bg-[#FEF5E3] py-3 px-6 rounded-full transition-colors text-sm uppercase tracking-wide shadow-md text-center"
+                >
+                  Talk to Nia anonymously
+                </Link>
+                <Link
+                  href="/services"
+                  className="font-acme border-2 border-white text-white hover:bg-white hover:text-[#044750] py-3 px-6 rounded-full transition-colors text-sm uppercase tracking-wide text-center"
+                >
+                  Our services
+                </Link>
+              </div>
             </div>
 
             {/* Right: Cutout Image Positioned at the bottom */}
             <div className="relative h-full flex justify-center lg:justify-end items-end">
-              <div className="relative w-full max-w-[350px] rounded-[100px] mx-auto]">
+              <div className="relative w-full max-w-[350px] rounded-[100px] mx-auto">
                 <Image
                   src="/images/about-hero-women.png"
-                  alt="Supportive embrace"
+                  alt="Two women sharing a supportive embrace"
                   width={400}
                   height={400}
                   className="w-full h-auto object-contain"
@@ -119,22 +143,16 @@ export default function AboutPage() {
           </div>
         </div>
 
-        {/* The Wavy Bottom Edge using SVG */}
-        <div className="absolute bottom-[-1px] left-0 w-full overflow-hidden leading-[0] z-20">
+        {/* Cream wave easing into the next section */}
+        <div className="absolute bottom-[-1px] left-0 w-full overflow-hidden leading-[0] z-20" aria-hidden="true">
           <svg
             viewBox="0 0 1200 120"
             preserveAspectRatio="none"
-            className="relative block w-full h-[200px]"
+            className="relative block w-full h-[60px] sm:h-[90px] lg:h-[120px]"
           >
-            <defs>
-              <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#DCE7E1" />
-                <stop offset="100%" stopColor="#016A79" />
-              </linearGradient>
-            </defs>
             <path
               d="M0,120V60.29C400,20,800,100,1200,60.29V120H0Z"
-              fill="url(#waveGradient)"
+              fill="#FEF5E3"
             />
           </svg>
         </div>
@@ -211,7 +229,7 @@ export default function AboutPage() {
               </div>
 
               {/* Vision Text */}
-              <p className="text-base lg:text-lg text-gray-800 text-[#363636] leading-relaxed font-medium font-acme max-w-md pl-20">
+              <p className="text-base lg:text-lg text-gray-800 text-[#363636] leading-relaxed font-medium max-w-md pl-20">
                 A world where every SGBV survivor has immediate, confidential,
                 culturally-sensitive access to healing and empowerment —
                 anytime, anywhere, without barriers.
@@ -240,7 +258,7 @@ export default function AboutPage() {
               </div>
 
               {/* Mission Text */}
-              <p className="text-base lg:text-lg text-gray-800 leading-relaxed font-medium font-acme text-right max-w-lg pr-20">
+              <p className="text-base lg:text-lg text-gray-800 leading-relaxed font-medium text-right max-w-lg pr-20">
                 To make mental health support radically accessible to SGBV survivors
                 through AI-powered technology — bridging gaps in mental-health care
                 with reliable, survivor-centered support that enhances well-being,
@@ -320,7 +338,7 @@ export default function AboutPage() {
                 </div>
                 <h3 className="font-bold text-[#2C4A4E] font-acme text-sm group-hover:text-[#4A9B8E] transition-colors duration-300">Radical Access to Mental Health</h3>
               </div>
-              <p className="text-xs text-[#2C4A4E] leading-relaxed font-acme group-hover:text-gray-700 transition-colors duration-300">
+              <p className="text-xs text-[#2C4A4E] leading-relaxed group-hover:text-gray-700 transition-colors duration-300">
                 When survivors are provided with instant, confidential, and culturally-sensitive digital mental health support (AI-powered chat + USSD for low-connectivity areas), they will seek help earlier, begin healing immediately, and reclaim their voice without fear of stigma or judgment. This ultimately breaks them free from the triple threat of unwanted pregnancies, new HIV infections, continued cycles of GBV, and deaths linked to untreated trauma.
               </p>
             </div>
@@ -340,7 +358,7 @@ export default function AboutPage() {
                 </div>
                 <h3 className="font-bold text-[#2C4A4E] font-acme text-sm group-hover:text-[#4A9B8E] transition-colors duration-300">Strong Referral Pathways</h3>
               </div>
-              <p className="text-xs text-[#2C4A4E] leading-relaxed font-acme group-hover:text-gray-700 transition-colors duration-300">
+              <p className="text-xs text-[#2C4A4E] leading-relaxed group-hover:text-gray-700 transition-colors duration-300">
                 If survivors are seamlessly connected through HEAL to trusted medical, legal, and community-based services, then they will access comprehensive care, pursue justice, and be protected from further harm — breaking cycles of silence and impunity.
               </p>
             </div>
@@ -359,7 +377,7 @@ export default function AboutPage() {
                 </div>
                 <h3 className="font-bold text-[#2C4A4E] font-acme text-sm group-hover:text-[#4A9B8E] transition-colors duration-300">Survivor-Centered Systems Change</h3>
               </div>
-              <p className="text-xs text-[#2C4A4E] leading-relaxed font-acme group-hover:text-gray-700 transition-colors duration-300">
+              <p className="text-xs text-[#2C4A4E] leading-relaxed group-hover:text-gray-700 transition-colors duration-300">
                 If survivors are seamlessly connected through HEAL to trusted medical, legal, and community-based services with case management using community systems like CHVs for robust survivor tracking and tracing, then they will access comprehensive care, pursue justice, and be protected from further harm — breaking cycles of silence and impunity.
               </p>
             </div>
@@ -370,7 +388,7 @@ export default function AboutPage() {
 
             {/* Center - Main Theory */}
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 bg-[#2C4A4E] border-2 border-[#4A9B8E] p-6 rounded-lg shadow-xl transition-all duration-300 hover:scale-105 hover:bg-[#1A3A3E] hover:border-[#6BB6AB] hover:shadow-2xl cursor-pointer group">
-              <p className="text-white leading-relaxed text-center font-acme text-sm group-hover:text-[#E8F5E8] transition-colors duration-300">
+              <p className="text-white leading-relaxed text-center text-sm group-hover:text-[#E8F5E8] transition-colors duration-300">
                 When GBV survivors are provided with immediate, confidential, and culturally-sensitive access to mental health support coupled with strong and effective referral pathways - anytime, anywhere, without barriers, they reclaim their dignity and agency by reporting, healing and speaking against GBV, creating community resilience and awareness. At scale this generates survivor-driven data that powers evidence-based advocacy and policy reform in Kenya and across the continent, positioning Africa as a leader in bold, inclusive mental health and gender justice.
               </p>
             </div>
@@ -435,7 +453,7 @@ export default function AboutPage() {
           <h2 className="text-3xl lg:text-[40px] font-bold text-white font-acme mb-4">
             Join the HEAL's team!
           </h2>
-          <p className="text-white/90 text-base lg:text-lg mb-8 font-acme">
+          <p className="text-white/90 text-base lg:text-lg mb-8">
             Do you want to be part of Heal's team? click "join team"
           </p>
           <button className="bg-white text-2xl lg:text-[32px] text-[#2C4A4E] font-bold py-3 px-8 rounded-lg hover:bg-gray-100 hover:scale-105 hover:shadow-lg transition-all duration-300 font-acme transform active:scale-95">

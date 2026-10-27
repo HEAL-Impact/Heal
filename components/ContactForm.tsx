@@ -32,8 +32,8 @@ export function Contact() {
 
         <div className="mb-4">
           <h3 className="text-xs font-bold text-black/80 mb-1 font-acme">GET IN TOUCH</h3>
-          <a href={`mailto:${HEAL_EMAIL}`} className="block text-gray-600 hover:text-[#0D474A] text-sm mb-1 font-acme">{HEAL_EMAIL}</a>
-          <a href={`tel:${HEAL_PHONE}`} className="block text-gray-600 hover:text-[#0D474A] text-sm mb-4 font-acme">{HEAL_PHONE_DISPLAY}</a>
+          <a href={`mailto:${HEAL_EMAIL}`} className="block text-gray-600 hover:text-[#0D474A] text-sm mb-1">{HEAL_EMAIL}</a>
+          <a href={`tel:${HEAL_PHONE}`} className="block text-gray-600 hover:text-[#0D474A] text-sm mb-4">{HEAL_PHONE_DISPLAY}</a>
           <div className="flex space-x-6 text-[#0D474A] text-2xl">
             <a href={HEAL_LINKEDIN_URL} target="_blank" rel="noopener noreferrer" aria-label="Twitter: opens HEAL-Impact on LinkedIn in a new tab" title="HEAL-Impact on LinkedIn">
               <FaTwitter />
@@ -48,7 +48,7 @@ export function Contact() {
       {/* Right Side: Contact Form */}
       <div className="w-2/3 max-w-2xl pl-8">
         <h2 className="text-[#0D474A] font-semibold mb-4 font-acme text-xl">Send Us A Message</h2>
-        <p className="mb-6 text-gray-600 text-sm font-acme">
+        <p className="mb-6 text-gray-600 text-sm">
           Kindly fill the form below for all enquiries and our team will get in touch with you.
         </p>
 

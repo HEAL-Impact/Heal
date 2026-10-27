@@ -107,7 +107,7 @@ export default function SignInPage() {
             <div className="flex flex-col items-center space-y-4 pt-8">
                 <div className="flex items-center w-full max-w-xs">
                     <div className="flex-1 h-px bg-gray-300"></div>
-                    <span className="px-4 text-gray-400 font-bold font-acme text-sm">OR</span>
+                    <span className="px-4 text-gray-400 font-bold text-sm">OR</span>
                     <div className="flex-1 h-px bg-gray-300"></div>
                 </div>
                 <Link href="/anonymous" className="px-10 py-3 border-2 border-[#056173] text-[#056173] rounded-full font-bold font-acme hover:bg-[#056173] hover:text-white transition-all text-lg">
@@ -128,7 +128,7 @@ export default function SignInPage() {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Email Field */}
               <div className="space-y-1">
-                <label className="text-base lg:text-lg font-normal text-[#016A79] font-acme">Email Address</label>
+                <label className="text-base lg:text-lg font-normal text-[#016A79]">Email Address</label>
                 <input 
                   name="email" 
                   type="email" 
@@ -140,7 +140,7 @@ export default function SignInPage() {
 
               {/* Password Field */}
               <div className="space-y-1 relative">
-                <label className="text-base lg:text-lg font-normal text-[#016A79] font-acme">Password</label>
+                <label className="text-base lg:text-lg font-normal text-[#016A79]">Password</label>
                 <div className="relative">
                   <input 
                     name="password" 

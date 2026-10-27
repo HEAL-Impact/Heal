@@ -23,13 +23,13 @@ export function GetInTouch() {
         <h1 className="text-white font-extrabold font-acme text-[4rem] md:text-[5rem] text-center drop-shadow-lg">
           Get In Touch
         </h1>
-        <p className="text-white text-lg text-center mt-2 font-semibold max-w-xl font-acme">
+        <p className="text-white text-lg text-center mt-2 font-semibold max-w-xl">
           We love hearing from you, and we take your feedback very seriously.
           <br />
           Email us at{" "}
-          <a href={`mailto:${HEAL_EMAIL}`} className="font-bold font-acme hover:underline">{HEAL_EMAIL}</a>
+          <a href={`mailto:${HEAL_EMAIL}`} className="font-bold hover:underline">{HEAL_EMAIL}</a>
           {" "}or call{" "}
-          <a href={`tel:${HEAL_PHONE}`} className="font-bold font-acme hover:underline whitespace-nowrap">{HEAL_PHONE_DISPLAY}</a>
+          <a href={`tel:${HEAL_PHONE}`} className="font-bold hover:underline whitespace-nowrap">{HEAL_PHONE_DISPLAY}</a>
         </p>
         <div className="mt-8 text-white text-xl font-semibold text-center font-acme">
           Subscribe To Our Socials:

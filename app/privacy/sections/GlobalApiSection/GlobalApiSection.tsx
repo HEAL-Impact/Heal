@@ -2,7 +2,7 @@ import React from "react";
 
 export const GlobalApiSection = (): React.ReactElement => {
   return (
-    <p className="w-full [font-family:'Jost',Helvetica] font-normal text-base tracking-[0] leading-[26.4px]">
+    <p className="w-full font-normal text-base tracking-[0] leading-[26.4px]">
       <span className="text-black">
         The Global API Factory services are not directed to individuals under
         13. We do not knowingly collect personal information from children under

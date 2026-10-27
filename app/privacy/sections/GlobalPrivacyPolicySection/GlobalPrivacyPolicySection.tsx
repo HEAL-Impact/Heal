@@ -3,11 +3,11 @@ import React from "react";
 export const GlobalPrivacyPolicySection = (): React.ReactElement => {
   return (
     <section className="w-full">
-      <h2 className="[font-family:'Public_Sans',Helvetica] font-bold text-black text-base tracking-[0] leading-[26.4px] mb-3">
+      <h2 className=" font-bold text-black text-base tracking-[0] leading-[26.4px] mb-3">
         Global API Factory&#39;s API Hub
       </h2>
 
-      <p className="[font-family:'Public_Sans',Helvetica] font-normal text-black text-base tracking-[0] leading-[26.4px]">
+      <p className=" font-normal text-black text-base tracking-[0] leading-[26.4px]">
         Global API Factory&#39;s API Hub is the world&apos;s largest public API
         hub that enables developers to build, test, publish, and expose their
         APIs to a broad audience of API consumers who, in turn, use API Hub to

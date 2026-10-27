@@ -51,7 +51,7 @@ export default function Footer() {
                 />
               </Link>
             </div>
-            <div className="flex flex-col font-acme text-[#b0b8b8] text-sm text-center leading-7">
+            <div className="flex flex-col text-[#b0b8b8] text-sm text-center leading-7">
               <p className="">
                 Navigating Mental Health Care with your <br />Listening, Caring Partner
                 <br /> Anytime, Anywhere
@@ -72,7 +72,7 @@ export default function Footer() {
                 <li key={index} className="flex flex-col items-start w-full">
                   <a
                     href={link.href}
-                    className="font-acme text-[#9ca3a3] text-sm tracking-[0] leading-7 whitespace-nowrap hover:text-white transition-colors"
+                    className="text-[#9ca3a3] text-sm tracking-[0] leading-7 whitespace-nowrap hover:text-white transition-colors"
                   >
                     {link.label}
                   </a>
@@ -91,7 +91,7 @@ export default function Footer() {
 
             <address className="flex flex-col items-start w-full not-italic">
               <div className="flex flex-col items-start w-full">
-                <div className="flex flex-col font-acme text-[#b0b8b8] text-sm tracking-[0] leading-7">
+                <div className="flex flex-col text-[#b0b8b8] text-sm tracking-[0] leading-7">
                   <a href={`mailto:${HEAL_EMAIL}`} className="hover:text-white transition-colors">
                     {HEAL_EMAIL}
                   </a>
@@ -141,7 +141,7 @@ export default function Footer() {
       <div className="w-full max-w-[1280px] px-6 lg:px-8 pb-[30px]">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center py-2.5">
-            <p className="font-acme text-[#6b7280] text-base tracking-[0] leading-7 whitespace-nowrap">
+            <p className="text-[#6b7280] text-base tracking-[0] leading-7 whitespace-nowrap">
               Copyright © 2025 Heal.org – All Rights Reserved.
             </p>
           </div>
@@ -149,12 +149,12 @@ export default function Footer() {
           <div className="flex items-center gap-4 py-2.5">
             <Link 
               href="/privacy" 
-              className="font-acme text-[#6b7280] hover:text-white text-base tracking-[0] leading-7 whitespace-nowrap transition-colors"
+              className="text-[#6b7280] hover:text-white text-base tracking-[0] leading-7 whitespace-nowrap transition-colors"
             >
               Privacy Policy
             </Link>
             <span className="text-[#6b7280]">|</span>
-            <p className="font-acme text-[#6b7280] text-base tracking-[0] leading-7 whitespace-nowrap">
+            <p className="text-[#6b7280] text-base tracking-[0] leading-7 whitespace-nowrap">
               Powered by Heal.Org
             </p>
           </div>

@@ -2,7 +2,7 @@ import React from "react";
 
 export const OptOutOptionsSection = (): React.ReactElement => {
   return (
-    <section className="w-full [font-family:'Jost',Helvetica] font-normal text-base tracking-[0] leading-[26.4px]">
+    <section className="w-full font-normal text-base tracking-[0] leading-[26.4px]">
       <p className="text-black">
         <span className="text-black">
           You may opt-out of receiving promotional and newsletter emails from

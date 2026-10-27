@@ -2,7 +2,7 @@ import React from "react";
 
 export const ChildrenPrivacySection = (): React.ReactElement => {
   return (
-    <p className="text-black [font-family:'Jost',Helvetica] font-normal text-base tracking-[0] leading-[26.4px]">
+    <p className="text-black font-normal text-base tracking-[0] leading-[26.4px]">
       If you have questions or comments about this Privacy Policy, please
       contact us at:{" "}
       <a href="mailto:info@heal-impact.org" className="text-[#021577]">

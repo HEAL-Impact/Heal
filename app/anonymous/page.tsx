@@ -103,7 +103,7 @@ export default function AnonymousPage() {
           className="flex items-center gap-2 text-brand-primary hover:text-brand-dark transition-colors"
         >
           <ArrowLeft className="h-5 w-5" />
-          <span className="font-acme text-lg">Home</span>
+          <span className="text-lg">Home</span>
         </Link>
 
         <Link
@@ -117,7 +117,7 @@ export default function AnonymousPage() {
       {/* Emergency Contacts Bar */}
       <div className="bg-white/70 backdrop-blur-sm border-b border-brand-light/30 px-4 py-3 shadow-sm">
         <div className="max-w-6xl mx-auto">
-          <p className="text-sm text-brand-primary mb-2 font-medium font-acme">Emergency Contacts:</p>
+          <p className="text-sm text-brand-primary mb-2 font-medium">Emergency Contacts:</p>
           <div className="flex flex-wrap gap-3">
             <a
               href="tel:1195"

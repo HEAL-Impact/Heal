@@ -11,8 +11,11 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        'acme': ['Acme'],
-        'inter': ['Inter', 'sans-serif'],
+        // Fonts are loaded once in app/layout.tsx via next/font.
+        // Acme: headings, navigation, buttons. Inter: everything else.
+        'acme': ['var(--font-acme)', 'Acme', 'cursive'],
+        'inter': ['var(--font-inter)', 'Inter', 'system-ui', 'sans-serif'],
+        'sans': ['var(--font-inter)', 'Inter', 'system-ui', 'sans-serif'],
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

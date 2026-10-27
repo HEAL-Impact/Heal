@@ -289,12 +289,12 @@ export default function ReportPage() {
               {userLocation ? (
                 <div className="flex items-center gap-2 text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg p-3">
                   <MapPin className="h-4 w-4" />
-                  <span className="font-acme">Location detected - Your report will include location data to help authorities</span>
+                  <span className="">Location detected - Your report will include location data to help authorities</span>
                 </div>
               ) : (
                 <div className="flex items-center gap-2 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3">
                   <MapPin className="h-4 w-4" />
-                  <span className="font-acme">Location not available - Please enable location services for better assistance</span>
+                  <span className="">Location not available - Please enable location services for better assistance</span>
                 </div>
               )}
             </div>
@@ -309,7 +309,7 @@ export default function ReportPage() {
                   onChange={handleChange}
                   className="w-5 h-5 text-brand-teal border-brand-teal/30 rounded focus:ring-brand-teal"
                 />
-                <span className="font-acme text-black text-lg">Submit this report anonymously</span>
+                <span className="text-black text-lg">Submit this report anonymously</span>
               </label>
             </div>
 
@@ -321,7 +321,7 @@ export default function ReportPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                   {/* Type of Incident */}
                   <div>
-                    <label className="block font-acme text-lg font-medium text-brand-primary mb-2">
+                    <label className="block text-lg font-medium text-brand-primary mb-2">
                       Type of Incident <span className="text-red-500">*</span>
                     </label>
                     <select
@@ -342,7 +342,7 @@ export default function ReportPage() {
 
                   {/* Urgency Level */}
                   <div>
-                    <label className="block font-acme text-lg font-medium text-brand-primary mb-2">
+                    <label className="block text-lg font-medium text-brand-primary mb-2">
                       Urgency Level <span className="text-red-500">*</span>
                     </label>
                     <select
@@ -363,7 +363,7 @@ export default function ReportPage() {
 
                 {/* Description */}
                 <div>
-                  <label className="block font-acme text-lg font-medium text-brand-primary mb-2">
+                  <label className="block text-lg font-medium text-brand-primary mb-2">
                     Description of Incident <span className="text-red-500">*</span>
                   </label>
                   <textarea
@@ -382,14 +382,14 @@ export default function ReportPage() {
               {!formData.submitAnonymously && (
                 <div>
                   <h3 className="font-acme text-lg text-brand-teal mb-4">Contact Information</h3>
-                  <p className="text-lg font-acme text-brand-secondary mb-4">
+                  <p className="text-lg text-brand-secondary mb-4">
                     Provide your contact details so we can reach you for immediate support.
                   </p>
 
                   <div className="space-y-4">
                     {/* Phone Number */}
                     <div>
-                      <label className="block font-acme text-lg font-medium text-brand-primary mb-2">
+                      <label className="block text-lg font-medium text-brand-primary mb-2">
                         Phone Number <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -405,7 +405,7 @@ export default function ReportPage() {
 
                     {/* Contact Preference */}
                     <div>
-                      <label className="block font-acme text-lg font-medium text-brand-primary mb-2">
+                      <label className="block text-lg font-medium text-brand-primary mb-2">
                         Preferred Contact Method <span className="text-red-500">*</span>
                       </label>
                       <select
@@ -463,7 +463,7 @@ export default function ReportPage() {
               <CheckCircle2 className="h-6 w-6 text-green-600" />
               Report Submitted Successfully
             </DialogTitle>
-            <DialogDescription className="font-acme text-base text-brand-secondary pt-2">
+            <DialogDescription className="text-base text-brand-secondary pt-2">
               Your safety is our priority. Our support team has been notified.
             </DialogDescription>
           </DialogHeader>
@@ -475,14 +475,14 @@ export default function ReportPage() {
                 <div className="bg-gradient-to-br from-brand-teal/20 to-brand-primary/10 rounded-xl p-6 text-center">
                   <div className="flex items-center justify-center gap-2 mb-3">
                     <Clock className="h-6 w-6 text-brand-primary animate-pulse" />
-                    <p className="font-acme text-lg text-brand-primary">
+                    <p className="text-lg text-brand-primary">
                       Expected Contact Time
                     </p>
                   </div>
                   <div className="text-5xl font-bold text-brand-primary font-mono">
                     {formatTime(countdown)}
                   </div>
-                  <p className="text-sm text-brand-secondary mt-2 font-acme">
+                  <p className="text-sm text-brand-secondary mt-2">
                     minutes remaining
                   </p>
                 </div>
@@ -490,10 +490,10 @@ export default function ReportPage() {
                 {/* Confirmation Details */}
                 {submittedData.phoneNumber && (
                   <div className="w-full bg-gray-50 rounded-lg p-4 mt-4 text-center">
-                    <p className="text-slate-600 font-acme text-sm">
+                    <p className="text-slate-600 text-sm">
                       We will contact you at{' '}
-                      <span className="font-semibold font-acme text-slate-800">{maskPhoneNumber(submittedData.phoneNumber)}</span> via{' '}
-                      <span className="font-semibold font-acme text-slate-800">
+                      <span className="font-semibold text-slate-800">{maskPhoneNumber(submittedData.phoneNumber)}</span> via{' '}
+                      <span className="font-semibold text-slate-800">
                         {submittedData.contactPreference === 'call' && 'Phone Call'}
                         {submittedData.contactPreference === 'text' && 'Text Message'}
                         {submittedData.contactPreference === 'both' && 'Phone Call or Text Message'}
@@ -513,7 +513,7 @@ export default function ReportPage() {
                 <h3 className="font-acme text-xl text-brand-primary font-semibold mb-2">
                   Anonymous Report Received
                 </h3>
-                <p className="text-sm text-brand-secondary font-acme">
+                <p className="text-sm text-brand-secondary">
                   Your report has been securely submitted. Your identity and location are protected.
                 </p>
               </div>
@@ -528,42 +528,42 @@ export default function ReportPage() {
                 <ul className="space-y-2 text-sm text-brand-secondary">
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="font-acme">Your report has been securely submitted and encrypted</span>
+                    <span className="">Your report has been securely submitted and encrypted</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="font-acme">Your location has been recorded to help local authorities</span>
+                    <span className="">Your location has been recorded to help local authorities</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="font-acme">A trained support specialist is reviewing your case</span>
+                    <span className="">A trained support specialist is reviewing your case</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="font-acme">Resources and support are available through our platform</span>
+                    <span className="">Resources and support are available through our platform</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="font-acme">Your identity remains completely anonymous</span>
+                    <span className="">Your identity remains completely anonymous</span>
                   </li>
                 </ul>
               ) : (
                 <ul className="space-y-2 text-sm text-brand-secondary">
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="font-acme">Your report has been securely submitted and encrypted</span>
+                    <span className="">Your report has been securely submitted and encrypted</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="font-acme">Your location has been recorded to help local authorities</span>
+                    <span className="">Your location has been recorded to help local authorities</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="font-acme">A trained support specialist is reviewing your case</span>
+                    <span className="">A trained support specialist is reviewing your case</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="font-acme">You will be contacted within 5 minutes for immediate assistance</span>
+                    <span className="">You will be contacted within 5 minutes for immediate assistance</span>
                   </li>
                 </ul>
               )}
@@ -574,10 +574,10 @@ export default function ReportPage() {
               <div className="flex items-start gap-2">
                 <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-semibold text-red-900 font-acme mb-1">
+                  <p className="text-sm font-semibold text-red-900 mb-1">
                     In Immediate Danger?
                   </p>
-                  <p className="text-sm text-red-800 font-acme mb-2">
+                  <p className="text-sm text-red-800 mb-2">
                     If you are in immediate danger, please call emergency services:
                   </p>
                   <div className="flex gap-2">

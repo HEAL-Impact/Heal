@@ -2,14 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Acme&display=swap');
-
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
   --vh: 1vh;
-  --font-acme: 'Acme', cursive;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -97,6 +94,9 @@
     font-family: var(--font-inter), 'Inter', sans-serif;
   }
   
+  /* Typography: Acme for headings (and, via .font-acme, navigation and
+     buttons); Inter for everything else. Fonts load once in app/layout.tsx. */
+  h1, h2, h3,
   .font-acme {
     font-family: var(--font-acme), 'Acme', cursive;
   }

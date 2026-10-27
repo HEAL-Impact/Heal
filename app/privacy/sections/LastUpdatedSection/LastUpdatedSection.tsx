@@ -2,7 +2,7 @@ import React from "react";
 
 export const LastUpdatedSection = (): React.ReactElement => {
   return (
-    <section className="w-full [font-family:'Jost',Helvetica] font-normal text-black text-base tracking-[0] leading-[26.4px]">
+    <section className="w-full font-normal text-black text-base tracking-[0] leading-[26.4px]">
       <p className="font-bold mb-0">Last updated: 9/17/2021</p>
       <p className="mt-0">
         Data privacy is important to Global API Factory. This Privacy Policy

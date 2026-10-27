@@ -3,7 +3,7 @@ import React from "react";
 export const RequestInformationSection = (): React.ReactElement => {
   return (
     <section className="w-full">
-      <p className="[font-family:'Jost',Helvetica] font-normal text-base tracking-[0] leading-[26.4px] text-black">
+      <p className=" font-normal text-base tracking-[0] leading-[26.4px] text-black">
         To request the removal of your personal information from our blog or
         testimonials, contact us at{" "}
         <a

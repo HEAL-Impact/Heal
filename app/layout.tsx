@@ -57,11 +57,8 @@ export default function RootLayout({
         <link rel="icon" type="image/png" href="/images/heal-impact-mark.png" />
         <link rel="apple-touch-icon" href="/icon-192x192.png" />
         <link rel="manifest" href="/manifest.json" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Acme&display=swap" rel="stylesheet" />
       </head>
-      <body className={`${inter.variable} ${acme.variable} font-inter antialiased bg-[#FEF5E3]`}>
+      <body className="font-sans antialiased bg-[#FEF5E3]">
         <DailyClientProvider>
           <div id="root">
             <ServiceWorkerRegistration />

@@ -2,7 +2,7 @@ import React from "react";
 
 export const UpdatePreferencesSection = (): React.ReactElement => {
   return (
-    <div className="w-full [font-family:'Jost',Helvetica] font-normal text-base tracking-[0] leading-[26.4px]">
+    <div className="w-full font-normal text-base tracking-[0] leading-[26.4px]">
       <p className="text-black">
         You may update, correct, or delete information about you at any time by
         logging into your online account and modifying your information or by

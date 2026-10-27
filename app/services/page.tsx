@@ -49,7 +49,7 @@ export default function ServicesPage() {
                   Anywhere, Anytime
                 </h1>
 
-                <p className="max-w-[381px] font-acme text-[#221f1f] text-base tracking-[0] leading-[27px] mb-[68px]">
+                <p className="max-w-[381px] text-[#221f1f] text-base tracking-[0] leading-[27px] mb-[68px]">
                   &quot;You don't have to go through it alone. With HEAL, your voice
                   matters, you are safe and heard, and you deserve quality support,
                   care, and justice. Every step you take, HEAL is with you—always and
@@ -82,7 +82,7 @@ export default function ServicesPage() {
                         +
                       </div>
                     </div>
-                    <div className="font-acme text-[#221f1f] text-base tracking-[0] leading-[normal] max-w-[163px]">
+                    <div className="text-[#221f1f] text-base tracking-[0] leading-[normal] max-w-[163px]">
                       Positive Reviews
                     </div>
                   </div>
@@ -95,7 +95,7 @@ export default function ServicesPage() {
                         +
                       </div>
                     </div>
-                    <div className="font-acme text-[#221f1f] text-base tracking-[0] leading-[normal] max-w-[163px]">
+                    <div className="text-[#221f1f] text-base tracking-[0] leading-[normal] max-w-[163px]">
                       Community Health Volunteers
                     </div>
                   </div>
@@ -283,7 +283,7 @@ export default function ServicesPage() {
                           <h3 className="font-acme text-[#056173] text-[28px] leading-[1.1] group-hover:text-[#0C444B] transition-colors duration-300">
                             {card.title}
                           </h3>
-                          <p className="font-acme text-gray-600 text-lg leading-[26.2px] group-hover:text-[#056173] transition-colors duration-300">
+                          <p className="text-gray-600 text-lg leading-[26.2px] group-hover:text-[#056173] transition-colors duration-300">
                             {card.description}
                           </p>
                         </div>
@@ -373,7 +373,7 @@ export default function ServicesPage() {
                   Safe Space for World
                 </h2>
 
-                <p className="font-acme text-[#FEF5E3] text-base leading-[27px] max-w-[500px]">
+                <p className="text-[#FEF5E3] text-base leading-[27px] max-w-[500px]">
                   Hope Empowerment Action Love, Anywhere, Anytime: HEALing every afflicted life without barriers.
                 </p>
 
@@ -418,7 +418,7 @@ export default function ServicesPage() {
               />
             </div> */}
             {/* FLOATING INFO CARD */}
-                <div className="absolute bottom-[40%] right-0 bg-[#0C444B] text-white p-6 shadow-xl rounded-lg w-[250px] lg:w-[400px] font-acme text-sm leading-relaxed border border-[#81A9AD]/20">
+                <div className="absolute bottom-[40%] right-0 bg-[#0C444B] text-white p-6 shadow-xl rounded-lg w-[250px] lg:w-[400px] text-sm leading-relaxed border border-[#81A9AD]/20">
                   <ul className="space-y-1">
                     <li className="flex items-center gap-2">
                       <span className="text-[#81A9AD] text-lg">✔</span> Strong Referral Pathways
@@ -442,7 +442,7 @@ export default function ServicesPage() {
               <h2 className="font-acme text-[#056173] text-2xl lg:text-[34px] leading-[42px] mb-3">
                 Sign up for our newsletter!
               </h2>
-              <p className="font-acme text-gray-600 text-base lg:text-lg leading-7 max-w-[480px]">
+              <p className="text-gray-600 text-base lg:text-lg leading-7 max-w-[480px]">
                 Get notified about updates, join us in building a world where mental health care is accessible without barriers.
               </p>
             </div>
@@ -452,17 +452,17 @@ export default function ServicesPage() {
               <input
                 type="text"
                 placeholder="Enter Your First Name"
-                className="flex-1 w-full px-5 py-[14px] bg-white rounded-[25px] border border-[#81A9AD]/30 shadow-sm font-acme text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#056173] focus:border-transparent transition-all duration-300"
+                className="flex-1 w-full px-5 py-[14px] bg-white rounded-[25px] border border-[#81A9AD]/30 shadow-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#056173] focus:border-transparent transition-all duration-300"
               />
               <input
                 type="text"
                 placeholder="Enter Your Last Name"
-                className="flex-1 w-full px-5 py-[14px] bg-white rounded-[25px] border border-[#81A9AD]/30 shadow-sm font-acme text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#056173] focus:border-transparent transition-all duration-300"
+                className="flex-1 w-full px-5 py-[14px] bg-white rounded-[25px] border border-[#81A9AD]/30 shadow-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#056173] focus:border-transparent transition-all duration-300"
               />
               <input
                 type="email"
                 placeholder="Enter Your Email"
-                className="flex-1 w-full px-5 py-[14px] bg-white rounded-[25px] border border-[#81A9AD]/30 shadow-sm font-acme text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#056173] focus:border-transparent transition-all duration-300"
+                className="flex-1 w-full px-5 py-[14px] bg-white rounded-[25px] border border-[#81A9AD]/30 shadow-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#056173] focus:border-transparent transition-all duration-300"
               />
               <div className="flex w-full">
                 <button

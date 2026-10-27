@@ -229,7 +229,7 @@ export default function PtsdScreeningFlow({ userId, onChatWithNia }: PtsdScreeni
                 <span className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-primary/10 text-brand-primary">
                   {option.icon}
                 </span>
-                <span className="font-acme text-lg text-brand-primary">{option.title}</span>
+                <span className="text-lg text-brand-primary">{option.title}</span>
                 <span className="text-sm text-brand-secondary">{option.description}</span>
                 {!option.available && (
                   <span className="text-xs font-semibold uppercase tracking-wide text-brand-teal">Coming soon</span>

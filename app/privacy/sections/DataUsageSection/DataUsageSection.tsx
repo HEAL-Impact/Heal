@@ -18,7 +18,7 @@ const contentData = [
 export const DataUsageSection = (): React.ReactElement => {
   return (
     <section className="w-full">
-      <h2 className="[font-family:'Public_Sans',Helvetica] font-bold text-black text-base tracking-[0] leading-[26.4px] mb-4">
+      <h2 className=" font-bold text-black text-base tracking-[0] leading-[26.4px] mb-4">
         Changes to this Privacy Policy
       </h2>
 
@@ -26,7 +26,7 @@ export const DataUsageSection = (): React.ReactElement => {
         {contentData.map((item, index) => (
           <p
             key={index}
-            className="[font-family:'Public_Sans',Helvetica] font-normal text-black text-base tracking-[0] leading-[26.4px]"
+            className=" font-normal text-black text-base tracking-[0] leading-[26.4px]"
           >
             {item.text}
           </p>

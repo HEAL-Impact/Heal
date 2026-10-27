@@ -18,7 +18,7 @@ const purposes = [
 export const TermsAndConditionsSection = (): React.ReactElement => {
   return (
     <section className="w-full">
-      <p className="[font-family:'Public_Sans',Helvetica] font-normal text-black text-base tracking-[0] leading-[26.4px] mb-[27px]">
+      <p className=" font-normal text-black text-base tracking-[0] leading-[26.4px] mb-[27px]">
         The information may be used for the following purposes;
       </p>
 
@@ -26,7 +26,7 @@ export const TermsAndConditionsSection = (): React.ReactElement => {
         {purposes.map((purpose, index) => (
           <p
             key={index}
-            className="[font-family:'Public_Sans',Helvetica] font-normal text-black text-base tracking-[0] leading-[26.4px]"
+            className=" font-normal text-black text-base tracking-[0] leading-[26.4px]"
           >
             {purpose}
           </p>

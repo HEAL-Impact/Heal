@@ -126,7 +126,7 @@ export default function HomePage() {
       {/* Footer Bar (White bar at the bottom) */}
       <div className="w-full bg-white/90 backdrop-blur-sm border-t border-gray-100 py-4 md:py-8 my-4">
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-gray-600 text-sm md:text-base text-center md:text-left font-medium font-acme">
+          <p className="text-gray-600 text-sm md:text-base text-center md:text-left font-medium">
             By clicking the arrow, you acknowledge and agree to our{" "}
             <Link href="/privacy-policy" className="text-[#056173] font-bold underline hover:text-[#0C444B]">
               Privacy Policy
@@ -182,7 +182,7 @@ export default function HomePage() {
               <h3 className="text-xl font-bold text-[#1a1a1a] mb-4 uppercase tracking-tight font-acme">
                 Crisis Management
               </h3>
-              <p className="text-gray-600 text-sm leading-relaxed font-medium font-acme">
+              <p className="text-gray-600 text-sm leading-relaxed font-medium">
                 Immediate emergency response protocols with location-based services and direct connection to crisis professionals.
               </p>
             </div>
@@ -195,7 +195,7 @@ export default function HomePage() {
               <h3 className="text-2xl font-bold mb-4 uppercase tracking-tight font-acme">
                 AI - Powered Support
               </h3>
-              <p className="text-teal-50/90 text-base leading-relaxed font-medium font-acme">
+              <p className="text-teal-50/90 text-base leading-relaxed font-medium">
                 Advanced AI companions provide 24/7 emotional support with personalized conversations and evidence-based therapeutic techniques.
               </p>
             </div>
@@ -208,7 +208,7 @@ export default function HomePage() {
               <h3 className="text-xl font-bold text-[#1a1a1a] mb-4 uppercase tracking-tight font-acme">
                 Privacy First
               </h3>
-              <p className="text-gray-600 text-sm leading-relaxed font-medium font-acme">
+              <p className="text-gray-600 text-sm leading-relaxed font-medium">
                 End-to-end encryption ensures your conversations remain completely private and secure with zero-knowledge architecture.
               </p>
             </div>
@@ -261,7 +261,7 @@ export default function HomePage() {
               <h2 className="text-3xl md:text-4xl font-normal text-[#2F3A3A] mb-6 font-acme leading-tight">
                 Built by Mental Health Professionals
               </h2>
-              <p className="text-base sm:text-lg text-[#4F5F5C] mb-8 leading-relaxed font-acme">
+              <p className="text-base sm:text-lg text-[#4F5F5C] mb-8 leading-relaxed">
                 Heal was created by a team of licensed therapists, AI researchers, and
                 security experts to provide accessible, effective mental health support
                 that prioritizes your privacy and safety.
@@ -278,7 +278,7 @@ export default function HomePage() {
                     </h3>
                     <CheckCircle2 className="h-5 w-5 text-[#4F5F5C] stroke-[1.5]" />
                   </div>
-                  <p className="text-[#4A635D] text-base md:text-lg italic leading-relaxed font-acme">
+                  <p className="text-[#4A635D] text-base md:text-lg italic leading-relaxed">
                     {item.content}
                   </p>
                 </div>
@@ -323,7 +323,7 @@ export default function HomePage() {
             <h2 className="font-acme text-[#2a4045] text-2xl lg:text-[34px] leading-[42px] mb-3">
               Sign up for our newsletter!
             </h2>
-            <p className="font-acme text-[#6b7c93] text-base lg:text-lg leading-7 max-w-[480px]">
+            <p className="text-[#6b7c93] text-base lg:text-lg leading-7 max-w-[480px]">
               Get notified about updates, join us in building a world where mental health care is accessible without barriers.
             </p>
           </div>
@@ -333,17 +333,17 @@ export default function HomePage() {
             <input
               type="text"
               placeholder="Enter Your First Name"
-              className="flex-1 w-full px-5 py-[14px] bg-white rounded-[25px] border border-[#ecf2f7] shadow-sm font-acme text-[#7a7a7a] focus:outline-none focus:ring-2 focus:ring-[#016a79]"
+              className="flex-1 w-full px-5 py-[14px] bg-white rounded-[25px] border border-[#ecf2f7] shadow-sm text-[#7a7a7a] focus:outline-none focus:ring-2 focus:ring-[#016a79]"
             />
             <input
               type="text"
               placeholder="Enter Your Last Name"
-              className="flex-1 w-full px-5 py-[14px] bg-white rounded-[25px] border border-[#ecf2f7] shadow-sm font-acme text-[#7a7a7a] focus:outline-none focus:ring-2 focus:ring-[#016a79]"
+              className="flex-1 w-full px-5 py-[14px] bg-white rounded-[25px] border border-[#ecf2f7] shadow-sm text-[#7a7a7a] focus:outline-none focus:ring-2 focus:ring-[#016a79]"
             />
             <input
               type="email"
               placeholder="Enter Your Email"
-              className="flex-1 w-full px-5 py-[14px] bg-white rounded-[25px] border border-[#ecf2f7] shadow-sm font-acme text-[#6b7c93] focus:outline-none focus:ring-2 focus:ring-[#016a79]"
+              className="flex-1 w-full px-5 py-[14px] bg-white rounded-[25px] border border-[#ecf2f7] shadow-sm text-[#6b7c93] focus:outline-none focus:ring-2 focus:ring-[#016a79]"
             />
             <div className="flex w-full">
               <button

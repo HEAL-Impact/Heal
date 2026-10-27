@@ -200,7 +200,7 @@ export default function SignUpPage() {
             <div className="flex flex-col items-center space-y-4 pt-8">
                 <div className="flex items-center w-full max-w-xs">
                     <div className="flex-1 h-px bg-gray-300"></div>
-                    <span className="px-4 text-gray-400 font-bold font-acme text-sm">OR</span>
+                    <span className="px-4 text-gray-400 font-bold text-sm">OR</span>
                     <div className="flex-1 h-px bg-gray-300"></div>
                 </div>
                 <Link href="/anonymous" className="px-10 py-3 border-2 border-[#056173] text-[#056173] rounded-full font-bold font-acme hover:bg-[#056173] hover:text-white transition-all text-lg">
@@ -221,26 +221,26 @@ export default function SignUpPage() {
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-base lg:text-lg font-normal text-[#016A79] font-acme">First Name</label>
+                  <label className="text-base lg:text-lg font-normal text-[#016A79]">First Name</label>
                   <input name="firstName" type="text" placeholder="Enter your first name" onChange={handleInputChange}
                     className="w-full px-4 py-3 rounded-md border border-gray-200 focus:ring-2 focus:ring-[#056173] outline-none text-base lg:text-lg bg-white/60" />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-base lg:text-lg font-normal text-[#016A79] font-acme">Last Name</label>
+                  <label className="text-base lg:text-lg font-normal text-[#016A79]">Last Name</label>
                   <input name="lastName" type="text" placeholder="Enter your last name" onChange={handleInputChange}
                     className="w-full px-4 py-3 rounded-md border border-gray-200 focus:ring-2 focus:ring-[#056173] outline-none text-base lg:text-lg bg-white/60" />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-base lg:text-lg font-normal text-[#016A79] font-acme">Email Address</label>
+                <label className="text-base lg:text-lg font-normal text-[#016A79]">Email Address</label>
                 <input name="email" type="email" placeholder="Enter your email address" onChange={handleInputChange}
                   className="w-full px-4 py-3 rounded-md border border-gray-200 focus:ring-2 focus:ring-[#056173] outline-none text-base lg:text-lg bg-white/60" />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1 relative">
-                  <label className="text-base lg:text-lg font-normal text-[#016A79] font-acme">Password</label>
+                  <label className="text-base lg:text-lg font-normal text-[#016A79]">Password</label>
                   <input name="password" type={showPassword ? "text" : "password"} placeholder="Enter your password" onChange={handleInputChange}
                     className="w-full px-4 py-3 rounded-md border border-gray-200 focus:ring-2 focus:ring-[#056173] outline-none text-base lg:text-lg bg-white/60" />
                   <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-9 text-[#016A79] opacity-60">
@@ -248,7 +248,7 @@ export default function SignUpPage() {
                   </button>
                 </div>
                 <div className="space-y-1 relative">
-                  <label className="text-base lg:text-lg font-normal text-[#016A79] font-acme">Confirm Password</label>
+                  <label className="text-base lg:text-lg font-normal text-[#016A79]">Confirm Password</label>
                   <input name="confirmPassword" type={showConfirmPassword ? "text" : "password"} placeholder="Confirm your password" onChange={handleInputChange}
                     className="w-full px-4 py-3 rounded-md border border-gray-200 focus:ring-2 focus:ring-[#016A79] outline-none text-base lg:text-lg bg-white/60" />
                   <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-9 text-[#016A79] opacity-60">
