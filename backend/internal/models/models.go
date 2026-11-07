@@ -16,13 +16,13 @@ type User struct {
 }
 
 type UserProfile struct {
-	UserID                 string `json:"userId" db:"user_id"`
-	AvatarURL              string `json:"avatarUrl" db:"avatar_url"`
-	Phone                  string `json:"phone" db:"phone"`
-	DateOfBirth            string `json:"dateOfBirth" db:"date_of_birth"`
-	EmergencyContactName   string `json:"emergencyContactName" db:"emergency_contact_name"`
-	EmergencyContactPhone  string `json:"emergencyContactPhone" db:"emergency_contact_phone"`
-	Preferences            string `json:"preferences" db:"preferences"`
+	UserID                string `json:"userId" db:"user_id"`
+	AvatarURL             string `json:"avatarUrl" db:"avatar_url"`
+	Phone                 string `json:"phone" db:"phone"`
+	DateOfBirth           string `json:"dateOfBirth" db:"date_of_birth"`
+	EmergencyContactName  string `json:"emergencyContactName" db:"emergency_contact_name"`
+	EmergencyContactPhone string `json:"emergencyContactPhone" db:"emergency_contact_phone"`
+	Preferences           string `json:"preferences" db:"preferences"`
 }
 
 type ChatSession struct {
@@ -38,9 +38,9 @@ type ChatMessage struct {
 	SessionID   string    `json:"sessionId" db:"session_id"`
 	UserID      string    `json:"userId" db:"user_id"`
 	Content     string    `json:"content" db:"content"`
-	SenderType  string    `json:"senderType" db:"sender_type"` // 'user' or 'ai'
+	SenderType  string    `json:"senderType" db:"sender_type"`   // 'user' or 'ai'
 	MessageType string    `json:"messageType" db:"message_type"` // 'text', 'audio', 'video'
-	Metadata    string    `json:"metadata" db:"metadata"` // JSON for additional data
+	Metadata    string    `json:"metadata" db:"metadata"`        // JSON for additional data
 	CreatedAt   time.Time `json:"createdAt" db:"created_at"`
 }
 
@@ -116,15 +116,15 @@ type CrisisAlert struct {
 }
 
 type SafetyPlan struct {
-	ID                    string    `json:"id" db:"id"`
-	UserID                string    `json:"userId" db:"user_id"`
-	WarningSigns          string    `json:"warningSigns" db:"warning_signs"`
-	CopingStrategies      string    `json:"copingStrategies" db:"coping_strategies"`
-	SupportContacts       string    `json:"supportContacts" db:"support_contacts"`
-	ProfessionalContacts  string    `json:"professionalContacts" db:"professional_contacts"`
-	EnvironmentSafety     string    `json:"environmentSafety" db:"environment_safety"`
-	CreatedAt             time.Time `json:"createdAt" db:"created_at"`
-	UpdatedAt             time.Time `json:"updatedAt" db:"updated_at"`
+	ID                   string    `json:"id" db:"id"`
+	UserID               string    `json:"userId" db:"user_id"`
+	WarningSigns         string    `json:"warningSigns" db:"warning_signs"`
+	CopingStrategies     string    `json:"copingStrategies" db:"coping_strategies"`
+	SupportContacts      string    `json:"supportContacts" db:"support_contacts"`
+	ProfessionalContacts string    `json:"professionalContacts" db:"professional_contacts"`
+	EnvironmentSafety    string    `json:"environmentSafety" db:"environment_safety"`
+	CreatedAt            time.Time `json:"createdAt" db:"created_at"`
+	UpdatedAt            time.Time `json:"updatedAt" db:"updated_at"`
 }
 
 type EmergencyContact struct {
@@ -139,16 +139,16 @@ type EmergencyContact struct {
 
 // Request/Response models
 type RegisterRequest struct {
-	Email           string `json:"email" binding:"required,email"`
-	Password        string `json:"password" binding:"required,min=8"`
+	Email           string `json:"email" binding:"required,max=260"` // trimmed and checked in the handler
+	Password        string `json:"password" binding:"required,min=8,max=72"`
 	ConfirmPassword string `json:"confirmPassword" binding:"required"`
-	FirstName       string `json:"firstName" binding:"required"`
-	LastName        string `json:"lastName" binding:"required"`
+	FirstName       string `json:"firstName" binding:"required,max=50"`
+	LastName        string `json:"lastName" binding:"required,max=50"`
 }
 
 type LoginRequest struct {
-	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required"`
+	Email    string `json:"email" binding:"required,max=260"` // trimmed and checked in the handler
+	Password string `json:"password" binding:"required,max=72"`
 }
 
 type AuthResponse struct {

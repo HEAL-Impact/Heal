@@ -161,6 +161,128 @@ func createTables(db *sql.DB) error {
 		)`,
 
 		`CREATE INDEX IF NOT EXISTS idx_ptsd_screenings_user ON ptsd_screenings (user_id, completed_at DESC)`,
+
+		// Anonymous GBV reports. Contents are AES-GCM encrypted by the app; only
+		// the status timeline is readable, and only with the case code.
+		`CREATE TABLE IF NOT EXISTS gbv_reports (
+			case_code TEXT PRIMARY KEY, -- HEAL-XXX-XX, generated on the device
+			recipient TEXT NOT NULL,
+			status TEXT NOT NULL DEFAULT 'received', -- 'received', 'contacted', 'seen', 'closed'
+			payload_encrypted TEXT NOT NULL,
+			received_at TIMESTAMPTZ,
+			contacted_at TIMESTAMPTZ,
+			seen_at TIMESTAMPTZ,
+			closed_at TIMESTAMPTZ,
+			created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+		)`,
+
+		// Care network: every service a case can be routed to. Alerts go to the
+		// partner's WhatsApp group. is_default marks the route used when a case
+		// has no usable location (anonymous) or no local partner of that type.
+		`CREATE TABLE IF NOT EXISTS partners (
+			id TEXT PRIMARY KEY,
+			name TEXT NOT NULL,
+			type TEXT NOT NULL, -- 'chp', 'rescue_centre', 'facility', 'police_desk', 'counsellor', 'legal_aid', 'coordinator'
+			county TEXT NOT NULL DEFAULT '',
+			ward TEXT NOT NULL DEFAULT '',
+			phone TEXT NOT NULL DEFAULT '',
+			whatsapp_group_id TEXT NOT NULL DEFAULT '',
+			focal_person TEXT NOT NULL DEFAULT '',
+			is_default BOOLEAN NOT NULL DEFAULT FALSE,
+			active BOOLEAN NOT NULL DEFAULT TRUE,
+			created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+		)`,
+
+		// Partner staff sign in separately from survivors. role: 'admin' (manages
+		// partners and accounts), 'coordinator' (sees every case), 'partner' (sees
+		// only cases routed to its own partner).
+		`CREATE TABLE IF NOT EXISTS partner_accounts (
+			id TEXT PRIMARY KEY,
+			email TEXT UNIQUE NOT NULL,
+			password_hash TEXT NOT NULL,
+			name TEXT NOT NULL,
+			role TEXT NOT NULL,
+			partner_id TEXT REFERENCES partners(id),
+			active BOOLEAN NOT NULL DEFAULT TRUE,
+			last_login_at TIMESTAMPTZ,
+			created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+		)`,
+
+		// One case per survivor request for care. Contact details and any summary
+		// she approved are AES-GCM sealed and bound to the case code.
+		`CREATE TABLE IF NOT EXISTS cases (
+			id TEXT PRIMARY KEY,
+			case_code TEXT UNIQUE NOT NULL,
+			source TEXT NOT NULL, -- 'screening', 'emergency', 'report', 'nia', 'chp'
+			pathway TEXT NOT NULL, -- 'emergency', 'facility_today', 'refer', 'chp_follow_up', 'report'
+			urgent BOOLEAN NOT NULL DEFAULT FALSE,
+			needs JSONB NOT NULL DEFAULT '[]',
+			consent JSONB NOT NULL DEFAULT '[]', -- responder types she agreed to
+			county TEXT NOT NULL DEFAULT '',
+			ward TEXT NOT NULL DEFAULT '',
+			latitude DOUBLE PRECISION,
+			longitude DOUBLE PRECISION,
+			language TEXT NOT NULL DEFAULT 'en',
+			screening JSONB, -- instrument, band, score (no answers)
+			contact_encrypted TEXT,
+			summary_encrypted TEXT,
+			status TEXT NOT NULL DEFAULT 'created',
+			outcome TEXT NOT NULL DEFAULT '',
+			failed_attempts INTEGER NOT NULL DEFAULT 0,
+			follow_up_at TIMESTAMPTZ,
+			follow_up_reminded_at TIMESTAMPTZ,
+			feedback_helped BOOLEAN,
+			created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+			updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+			closed_at TIMESTAMPTZ
+		)`,
+
+		`CREATE TABLE IF NOT EXISTS case_alerts (
+			id TEXT PRIMARY KEY,
+			case_id TEXT NOT NULL REFERENCES cases(id) ON DELETE CASCADE,
+			partner_id TEXT NOT NULL REFERENCES partners(id),
+			responder_type TEXT NOT NULL,
+			status TEXT NOT NULL DEFAULT 'alerted', -- 'alerted', 'accepted', 'passed', 'expired', 'withdrawn', 'done'
+			escalation_level INTEGER NOT NULL DEFAULT 0,
+			deadline_at TIMESTAMPTZ NOT NULL,
+			reminded_at TIMESTAMPTZ,
+			responded_at TIMESTAMPTZ,
+			note TEXT NOT NULL DEFAULT '',
+			created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+		)`,
+
+		`CREATE INDEX IF NOT EXISTS idx_case_alerts_open ON case_alerts (status, deadline_at)`,
+		`CREATE INDEX IF NOT EXISTS idx_case_alerts_partner ON case_alerts (partner_id, created_at DESC)`,
+
+		// Every change and every partner view of a case: the audit log and the timeline.
+		`CREATE TABLE IF NOT EXISTS case_events (
+			id TEXT PRIMARY KEY,
+			case_id TEXT NOT NULL REFERENCES cases(id) ON DELETE CASCADE,
+			actor TEXT NOT NULL, -- 'survivor', 'system', 'account:<id>'
+			kind TEXT NOT NULL,
+			detail TEXT NOT NULL DEFAULT '',
+			created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+		)`,
+
+		`CREATE INDEX IF NOT EXISTS idx_case_events_case ON case_events (case_id, created_at)`,
+
+		// Partner self-registration and location (added Nov 2026). A partner
+		// signs up as 'pending' and HEAL approves it before it can see any case.
+		// services: extra responder types it also offers (e.g. an NGO with
+		// counselling and legal aid). Coordinates are approximate (~1 km).
+		`ALTER TABLE partners ADD COLUMN IF NOT EXISTS org_type TEXT NOT NULL DEFAULT ''`,
+		`ALTER TABLE partners ADD COLUMN IF NOT EXISTS services JSONB NOT NULL DEFAULT '[]'`,
+		`ALTER TABLE partners ADD COLUMN IF NOT EXISTS sub_county TEXT NOT NULL DEFAULT ''`,
+		`ALTER TABLE partners ADD COLUMN IF NOT EXISTS landmark TEXT NOT NULL DEFAULT ''`,
+		`ALTER TABLE partners ADD COLUMN IF NOT EXISTS latitude DOUBLE PRECISION`,
+		`ALTER TABLE partners ADD COLUMN IF NOT EXISTS longitude DOUBLE PRECISION`,
+		`ALTER TABLE partners ADD COLUMN IF NOT EXISTS email TEXT NOT NULL DEFAULT ''`,
+		`ALTER TABLE partners ADD COLUMN IF NOT EXISTS hours TEXT NOT NULL DEFAULT ''`,
+		`ALTER TABLE partners ADD COLUMN IF NOT EXISTS registration_number TEXT NOT NULL DEFAULT ''`,
+		`ALTER TABLE partners ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'approved'`,
+		`ALTER TABLE partners ADD COLUMN IF NOT EXISTS reviewed_at TIMESTAMPTZ`,
+		`ALTER TABLE partners ADD COLUMN IF NOT EXISTS review_note TEXT NOT NULL DEFAULT ''`,
+		`CREATE INDEX IF NOT EXISTS idx_partners_location ON partners (county, ward)`,
 	}
 
 	for _, query := range queries {
