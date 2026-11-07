@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Check, Copy, Loader2, MapPin, ShieldCheck } from 'lucide-react';
 import HelpShell from '@/components/help/HelpShell';
-import { openCase, type CasePathway, type CaseRequest, type ResponderType } from '@/lib/care/cases';
+import { openCase, type CasePathway, type CaseRequest, type OpenCaseResult, type ResponderType } from '@/lib/care/cases';
 import { NEEDS, OFFER, PATHWAY, RESPONDER } from '@/lib/care/labels';
 import { saveCaseCode } from '@/lib/myspace/store';
 import { COUNTIES, requestApproxLocation } from '@/lib/screening/location';
@@ -42,7 +42,8 @@ function Connect() {
   const [codeWord, setCodeWord] = useState('');
   const [name, setName] = useState('');
   const [sending, setSending] = useState(false);
-  const [done, setDone] = useState<{ caseCode: string; sent: boolean } | null>(null);
+  const [done, setDone] = useState<OpenCaseResult | null>(null);
+  const [refused, setRefused] = useState<string | null>(null);
   const [kept, setKept] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -83,6 +84,12 @@ function Connect() {
       contact: { method, detail: needsContact ? phone.trim() : '', safeTimes: safeTimes.trim(), silent: method === 'sms' ? true : silent, codeWord: codeWord.trim(), name: name.trim() },
     });
     setSending(false);
+    if (result.problem === 'rejected') {
+      // The server refused it: say so, never pretend it was saved.
+      setRefused(result.message ?? '');
+      return;
+    }
+    setRefused(null);
     setDone(result);
   };
 
@@ -99,7 +106,9 @@ function Connect() {
               ? emergency
                 ? tr("Partners near you have been alerted now. If you are in danger, call 999 or 112 as well.", "Washirika walio karibu nawe wamearifiwa sasa. Kama uko hatarini, piga pia 999 au 112.")
                 : tr("A partner near you has been alerted and will contact you only the way you chose.", "Mshirika aliye karibu nawe ameharifiwa na atawasiliana nawe kwa njia uliyochagua tu.")
-              : tr("You’re offline. It will be sent automatically when you’re back online. If you need help now, call 1195.", "Huna mtandao. Itatumwa yenyewe ukirudi mtandaoni. Kama unahitaji msaada sasa, piga 1195.")}
+              : done.problem === 'offline'
+                ? tr("You’re offline. It will be sent automatically when you’re back online. If you need help now, call 1195, 999 or 112.", "Huna mtandao. Itatumwa yenyewe ukirudi mtandaoni. Kama unahitaji msaada sasa, piga 1195, 999 au 112.")
+                : tr("We couldn’t reach HEAL just now. It is saved and will be sent automatically. If you need help now, call 1195, 999 or 112.", "Hatukuweza kufikia HEAL sasa hivi. Imehifadhiwa na itatumwa yenyewe. Kama unahitaji msaada sasa, piga 1195, 999 au 112.")}
           </p>
           <p className="mt-6 text-sm text-gray-600">{tr("Your case code", "Namba yako ya kesi")}</p>
           <div className="mt-1 flex items-center gap-3">
@@ -240,6 +249,18 @@ function Connect() {
           </div>
         )}
       </fieldset>
+
+      {refused !== null && (
+        <div role="alert" className="rounded-3xl border border-[#B34D4D]/30 bg-[#F9EBEB] p-5 text-[#B34D4D]">
+          <p className="font-semibold">{tr('We couldn’t send your request', 'Hatukuweza kutuma ombi lako')}</p>
+          {refused && <p className="mt-1 text-sm">{refused}</p>}
+          <p className="mt-2 text-sm">
+            {tr('Please try again. If you need help now, call', 'Tafadhali jaribu tena. Kama unahitaji msaada sasa, piga')}{' '}
+            <a href="tel:1195" className="font-bold underline">1195</a>, <a href="tel:999" className="font-bold underline">999</a> {tr('or', 'au')}{' '}
+            <a href="tel:112" className="font-bold underline">112</a>.
+          </p>
+        </div>
+      )}
 
       <button
         type="button"

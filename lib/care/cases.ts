@@ -63,34 +63,71 @@ function writeOutbox(o: Record<string, CaseRequest>) {
   }
 }
 
-async function post(caseCode: string, req: CaseRequest, token?: string): Promise<boolean> {
+type PostResult =
+  | { ok: true }
+  /** offline / timeout / 5xx: worth retrying later */
+  | { ok: false; retry: true; reason: 'offline' | 'timeout' | 'server' }
+  /** 4xx: the server refused this request, retrying won't help */
+  | { ok: false; retry: false; reason: 'rejected'; message: string };
+
+async function post(caseCode: string, req: CaseRequest, token?: string): Promise<PostResult> {
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) return { ok: false, retry: true, reason: 'offline' };
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 30000);
   try {
     const res = await fetch(`${API}/cases`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
       body: JSON.stringify({ caseCode, ...req }),
+      signal: controller.signal,
     });
-    return res.ok;
-  } catch {
-    return false;
+    if (res.ok) return { ok: true };
+    if (res.status >= 500) return { ok: false, retry: true, reason: 'server' };
+    const body = await res.json().catch(() => ({}));
+    return { ok: false, retry: false, reason: 'rejected', message: body.error || `Request refused (${res.status})` };
+  } catch (e) {
+    const timedOut = e instanceof DOMException && e.name === 'AbortError';
+    return { ok: false, retry: true, reason: timedOut ? 'timeout' : 'offline' };
+  } finally {
+    clearTimeout(timer);
   }
 }
 
-/** Opens a case. The survivor always gets their case code, even offline. */
-export async function openCase(req: CaseRequest, token?: string): Promise<{ caseCode: string; sent: boolean }> {
+export interface OpenCaseResult {
+  caseCode: string;
+  sent: boolean;
+  /** Why it wasn't sent. 'rejected' means it was NOT queued: show the error. */
+  problem?: 'offline' | 'timeout' | 'server' | 'rejected';
+  message?: string;
+}
+
+/**
+ * Opens a case. If it can't be sent now (offline, slow or server down) it is
+ * kept on this device and retried, and the survivor still gets the case code.
+ * If the server refuses it, nothing is queued and the caller shows the reason.
+ */
+export async function openCase(req: CaseRequest, token?: string): Promise<OpenCaseResult> {
   const caseCode = newCaseCode();
-  const sent = await post(caseCode, req, token);
-  if (!sent && !token) writeOutbox({ ...readOutbox(), [caseCode]: req });
-  return { caseCode, sent };
+  const r = await post(caseCode, req, token);
+  if (r.ok) return { caseCode, sent: true };
+  if (r.retry) {
+    if (!token) writeOutbox({ ...readOutbox(), [caseCode]: req });
+    return { caseCode, sent: false, problem: r.reason };
+  }
+  return { caseCode, sent: false, problem: 'rejected', message: r.message };
 }
 
 /** Retries cases saved offline. */
 export async function flushCaseOutbox(): Promise<void> {
   const outbox = readOutbox();
   for (const [code, req] of Object.entries(outbox)) {
-    if (await post(code, req)) {
+    const r = await post(code, req);
+    if (r.ok) {
       delete outbox[code];
       if (loadMySpace().cases.some((c) => c.code === code)) saveCaseCode(code, 'received');
+    } else if (!r.retry) {
+      // Refused by the server: retrying forever would never help.
+      delete outbox[code];
     }
   }
   writeOutbox(outbox);
