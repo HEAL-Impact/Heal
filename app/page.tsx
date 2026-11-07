@@ -17,8 +17,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import FourDoors from '@/components/home/FourDoors';
+import SafetyByDesign from '@/components/home/SafetyByDesign';
+import ForCommunities from '@/components/home/ForCommunities';
+import { useLang } from '@/lib/i18n';
 
 export default function HomePage() {
+  const { tr } = useLang();
   const [isLoaded, setIsLoaded] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -51,16 +56,16 @@ export default function HomePage() {
 
 
   const values = [
-    { title: 'Heal', content: '"You deserve healing — not shame. This is a safe space to begin."' },
-    { title: 'Healing', content: '"Healing is not a moment. It\'s a journey — and you don\'t have to walk it alone."' },
-    { title: 'Empowerment', content: '"We place survivors at the center — restoring voice, agency, and dignity."' },
-    { title: 'Action', content: '"We turn support into action — connecting you to tools, people, and care that create real change."' },
-    { title: 'Liberation', content: '"Liberation means freedom beyond the trauma — freedom to live fully, confidently, and joyfully."' }
+    { title: { en: "Heal", sw: "Ponya" }, content: { en: "You deserve healing — not shame. This is a safe space to begin.", sw: "Unastahili kuponywa — si aibu. Hapa ni mahali salama pa kuanzia." } },
+    { title: { en: "Healing", sw: "Uponyaji" }, content: { en: "Healing is not a moment. It's a journey — and you don't have to walk it alone.", sw: "Uponyaji si tukio la mara moja. Ni safari — na huhitaji kuitembea peke yako." } },
+    { title: { en: "Empowerment", sw: "Uwezeshaji" }, content: { en: "We place survivors at the center — restoring voice, agency, and dignity.", sw: "Tunawaweka walionusurika katikati — tukirejesha sauti, uwezo na heshima yao." } },
+    { title: { en: "Action", sw: "Hatua" }, content: { en: "We turn support into action — connecting you to tools, people, and care that create real change.", sw: "Tunageuza msaada kuwa vitendo — tukikuunganisha na zana, watu na huduma zinazoleta mabadiliko halisi." } },
+    { title: { en: "Liberation", sw: "Ukombozi" }, content: { en: "Liberation means freedom beyond the trauma — freedom to live fully, confidently, and joyfully.", sw: "Ukombozi ni uhuru baada ya kiwewe — uhuru wa kuishi kikamilifu, kwa kujiamini na kwa furaha." } }
   ];
 
 
   return (
-    <div className="min-h-screen bg-[#FBE8DE]">
+    <div className="min-h-screen bg-[#ECE5DA]">
       <Navbar />
 
       {/* Hero Section */}
@@ -89,34 +94,34 @@ export default function HomePage() {
           <div className={`w-full lg:w-1/2 text-center lg:text-left transition-all duration-1000 delay-300 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             <h1 className="flex flex-col gap-2">
               <span className="text-4xl md:text-5xl lg:text-6xl text-center font-acme font-normal text-[#333] uppercase tracking-tight">
-                Welcome to Heal
+                {tr("Welcome to Heal", "Karibu HEAL")}
               </span>
-              <span className="text-3xl md:text-5xl font-acme font-normal text-[#6F8F7A] uppercase tracking-tight md:whitespace-nowrap md:-ml-8">
-                Your Listening, Caring Partner
+              <span className="text-3xl md:text-5xl font-acme font-normal text-[#2C4A4E] uppercase tracking-tight md:whitespace-nowrap md:-ml-8">
+                {tr("Your Listening, Caring Partner", "Mwenzako Anayesikiliza na Kujali")}
               </span>
             </h1>
             
-            <p className="mt-6 text-base md:text-lg lg:text-xl font-medium text-[#4F5F5C] text-center font-acme max-w-2xl mx-auto lg:mx-0 leading-snug md:whitespace-nowrap">
+            <p className="mt-6 text-base md:text-lg lg:text-xl font-medium text-[#2C4A4E] text-center font-acme max-w-2xl mx-auto lg:mx-0 leading-snug md:whitespace-nowrap">
               AI powered Mental health care and support anytime, anywhere. Immediate •<br className="hidden md:block" /> Confidential • Judgment-Free and Culturally-sensitive Care designed <br className="hidden md:block" />with you in mind.
             </p>
 
             <div className="mt-10 flex flex-wrap justify-center gap-4">
               {/* Primary Button */}
               <Link
-                href="/auth/signup"
-                className="bg-[#6F8F7A] hover:bg-[#6D7E73] text-white px-8 py-3 rounded-full flex items-center gap-2 transition-transform hover:scale-105 font-semibold text-xs lg:text-sm uppercase tracking-wider font-acme"
+                href="/help"
+                className="bg-[#2C4A4E] hover:bg-[#2C4A4E]/90 text-white px-8 py-3 rounded-full flex items-center gap-2 transition-transform hover:scale-105 font-semibold text-xs lg:text-sm uppercase tracking-wider font-acme"
               >
-                Begin at your pace
+                {tr("Begin at your pace", "Anza kwa kasi yako")}
                 <ArrowRight className="h-4 w-4" />
               </Link>
 
               {/* Secondary Button */}
               <Link
-                href="/crisis"
+                href="/help/safe-now"
                 className="bg-[#F9EBEB] border border-[#D97E7E] text-[#B34D4D] hover:bg-[#f3dede] px-8 py-3 rounded-full flex items-center gap-2 transition-transform hover:scale-105 font-semibold text-xs lg:text-sm uppercase tracking-wider font-acme"
               >
                 <Plus className="h-4 w-4" />
-                Immediate Help
+                {tr("Immediate Help", "Msaada wa haraka")}
               </Link>
             </div>
           </div>
@@ -127,18 +132,18 @@ export default function HomePage() {
       <div className="w-full bg-white/90 backdrop-blur-sm border-t border-gray-100 py-4 md:py-8 my-4">
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-gray-600 text-sm md:text-base text-center md:text-left font-medium">
-            By clicking the arrow, you acknowledge and agree to our{" "}
-            <Link href="/privacy-policy" className="text-[#056173] font-bold underline hover:text-[#0C444B]">
-              Privacy Policy
+            {tr('By clicking the arrow, you acknowledge and agree to our', 'Kwa kubofya mshale, unakubali')}{" "}
+            <Link href="/privacy" className="text-[#2C4A4E] font-bold underline hover:text-[#2C4A4E]">
+              {tr("Privacy Policy", "Sera ya Faragha")}
             </Link>
-            , and to activate your audio
+            {tr(', and to activate your audio', ', na kuwasha sauti')}
           </p>
 
           <div className="flex items-center gap-4">
             <button
               onClick={handlePlayAudio}
-              className="bg-[#056173] hover:bg-[#0C444B] text-white rounded-full p-2.5 transition-all hover:scale-110 shadow-md"
-              aria-label="Play audio"
+              className="bg-[#2C4A4E] hover:bg-[#2C4A4E]/90 text-white rounded-full p-2.5 transition-all hover:scale-110 shadow-md"
+              aria-label={tr("Play audio", "Cheza sauti")}
             >
               <ArrowRight className="h-5 w-5" />
             </button>
@@ -151,6 +156,8 @@ export default function HomePage() {
     </section>
 
 
+
+      <FourDoors />
 
       {/* Features Section */}
       <section id="features" className="relative py-20">
@@ -166,8 +173,8 @@ export default function HomePage() {
                       priority />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-20">
-            <h2 className="text-3xl md:text-4xl font-normal text-[#2F3A3A] font-acme">
-              Comprehensive Mental Health Support
+            <h2 className="text-3xl md:text-4xl font-normal text-[#2C4A4E] font-acme">
+              {tr("Comprehensive Mental Health Support", "Msaada Kamili wa Afya ya Akili")}
             </h2>
           </div>
 
@@ -179,24 +186,24 @@ export default function HomePage() {
               <div className="mb-8 transition-transform group-hover:scale-110 duration-300">
                 <PhoneCall size={80} strokeWidth={1} className="text-[#333]" />
               </div>
-              <h3 className="text-xl font-bold text-[#1a1a1a] mb-4 uppercase tracking-tight font-acme">
-                Crisis Management
+              <h3 className="text-xl font-bold text-[#2C4A4E] mb-4 uppercase tracking-tight font-acme">
+                {tr("Crisis Management", "Kukabiliana na Dharura")}
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed font-medium">
-                Immediate emergency response protocols with location-based services and direct connection to crisis professionals.
+                {tr("Immediate emergency response protocols with location-based services and direct connection to crisis professionals.", "Hatua za haraka za dharura, huduma kulingana na mahali ulipo, na kukuunganisha moja kwa moja na wataalamu wa dharura.")}
               </p>
             </div>
 
             {/* Card 2: AI - Powered Support (Featured Center Card) */}
-            <div className="bg-[#007C85] rounded-3xl p-12 flex flex-col items-center text-center shadow-xl hover:shadow-2xl hover:-translate-y-4 transition-all duration-300 cursor-pointer lg:-mt-12 lg:mb-[-3rem] z-10 text-white min-h-[500px] justify-center">
+            <div className="bg-[#2C4A4E] rounded-3xl p-12 flex flex-col items-center text-center shadow-xl hover:shadow-2xl hover:-translate-y-4 transition-all duration-300 cursor-pointer lg:-mt-12 lg:mb-[-3rem] z-10 text-white min-h-[500px] justify-center">
               <div className="mb-8">
                 <Bot size={100} strokeWidth={1} className="text-white" />
               </div>
               <h3 className="text-2xl font-bold mb-4 uppercase tracking-tight font-acme">
-                AI - Powered Support
+                {tr("AI - Powered Support", "Msaada wa AI")}
               </h3>
-              <p className="text-teal-50/90 text-base leading-relaxed font-medium">
-                Advanced AI companions provide 24/7 emotional support with personalized conversations and evidence-based therapeutic techniques.
+              <p className="text-[#ECE5DA]/90 text-base leading-relaxed font-medium">
+                {tr("Advanced AI companions provide 24/7 emotional support with personalized conversations and evidence-based therapeutic techniques.", "Msaidizi wa AI anatoa msaada wa kihisia saa 24 kwa mazungumzo yanayokufaa na mbinu zinazotegemea ushahidi.")}
               </p>
             </div>
 
@@ -205,11 +212,11 @@ export default function HomePage() {
               <div className="mb-8 transition-transform group-hover:scale-110 duration-300">
                 <Shield size={80} strokeWidth={1} className="text-[#333]" />
               </div>
-              <h3 className="text-xl font-bold text-[#1a1a1a] mb-4 uppercase tracking-tight font-acme">
-                Privacy First
+              <h3 className="text-xl font-bold text-[#2C4A4E] mb-4 uppercase tracking-tight font-acme">
+                {tr("Privacy First", "Faragha Kwanza")}
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed font-medium">
-                End-to-end encryption ensures your conversations remain completely private and secure with zero-knowledge architecture.
+                {tr("Anonymous by default. Reports are encrypted, nothing is saved unless you choose, and you can leave in one tap.", "Bila jina kwa chaguo-msingi. Ripoti zinasimbwa kwa usiri, hakuna kinachohifadhiwa usipochagua, na unaweza kuondoka kwa mguso mmoja.")}
               </p>
             </div>
 
@@ -218,7 +225,7 @@ export default function HomePage() {
       </section>
 
       {/* About Section */}
-      <section id="about" className="relative py-16 sm:py-24 bg-[#E5EFEC] mb-20 overflow-hidden">
+      <section id="about" className="relative py-16 sm:py-24 bg-[#ECE5DA] mb-20 overflow-hidden">
       {/* Decorative Sunbursts (Absolute positioned) */}
                 <Image src="/images/decoration.png" alt="Decoration" 
                       className="absolute bottom-1/4 left-40 w-auto h-auto opacity-70 rotate-30"
@@ -258,13 +265,12 @@ export default function HomePage() {
           {/* Right Side: Content */}
           <div className="flex flex-col space-y-8">
             <div>
-              <h2 className="text-3xl md:text-4xl font-normal text-[#2F3A3A] mb-6 font-acme leading-tight">
-                Built by Mental Health Professionals
+              <h2 className="text-3xl md:text-4xl font-normal text-[#2C4A4E] mb-6 font-acme leading-tight">
+                {tr("Built by Mental Health Professionals", "Imejengwa na Wataalamu wa Afya ya Akili")}
               </h2>
-              <p className="text-base sm:text-lg text-[#4F5F5C] mb-8 leading-relaxed">
-                Heal was created by a team of licensed therapists, AI researchers, and
-                security experts to provide accessible, effective mental health support
-                that prioritizes your privacy and safety.
+              <p className="text-base sm:text-lg text-[#2C4A4E] mb-8 leading-relaxed">
+                {/* TODO(team): confirm this description of who built HEAL before launch. */}
+                {tr("Heal was created by a team of licensed therapists, AI researchers, and security experts to provide accessible, effective mental health support that prioritizes your privacy and safety.", "HEAL iliundwa na timu ya wataalamu wa tiba waliosajiliwa, watafiti wa AI na wataalamu wa usalama ili kutoa msaada wa afya ya akili unaopatikana kwa urahisi, wenye ufanisi, unaotanguliza faragha na usalama wako.")}
               </p>
             </div>
 
@@ -273,13 +279,13 @@ export default function HomePage() {
               {values.map((item, index) => (
                 <div key={index} className="flex flex-col space-y-1 border-l-4 border-[#000000]/80 pl-2">
                   <div className="flex items-center gap-3">
-                    <h3 className="text-xl font-bold text-[#6F8F7A] font-acme uppercase tracking-wide">
-                      {item.title}
+                    <h3 className="text-xl font-bold text-[#2C4A4E] font-acme uppercase tracking-wide">
+                      {tr(item.title)}
                     </h3>
-                    <CheckCircle2 className="h-5 w-5 text-[#4F5F5C] stroke-[1.5]" />
+                    <CheckCircle2 className="h-5 w-5 text-[#2C4A4E] stroke-[1.5]" />
                   </div>
-                  <p className="text-[#4A635D] text-base md:text-lg italic leading-relaxed">
-                    {item.content}
+                  <p className="text-[#2C4A4E] text-base md:text-lg italic leading-relaxed">
+                    “{tr(item.content)}”
                   </p>
                 </div>
               ))}
@@ -300,31 +306,34 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center">
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 font-acme">
-              Healing Without Barriers
+              {tr("Healing Without Barriers", "Uponyaji Bila Vikwazo")}
             </h2>
             <p className="text-lg sm:text-xl text-white mb-8 font-acme">
-              Hope • Empowerment • Action • Love
+              {tr("Hope • Empowerment • Action • Love", "Matumaini • Uwezeshaji • Hatua • Upendo")}
             </p>
             <Link 
               href="/auth/signup" 
-              className="text-black font-bold py-3 px-8 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg active:scale-95 font-acme hover:bg-opacity-90" style={{backgroundColor: '#FEF0D3'}}
+              className="text-black font-bold py-3 px-8 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-lg active:scale-95 font-acme hover:bg-opacity-90" style={{backgroundColor: '#ECE5DA'}}
             >
-              Lets Start Here
+              {tr("Lets Start Here", "Tuanzie Hapa")}
             </Link>
           </div>
         </div>
       </section>
 
+      <SafetyByDesign />
+      <ForCommunities />
+
       {/* Newsletter Section */}
       <section className="flex items-center justify-center w-full py-20 px-4">
-        <div className="w-full max-w-7xl rounded-[20px] shadow-sm bg-gradient-to-r from-white to-[#e8f3ff] flex flex-col lg:flex-row items-center justify-between gap-10 px-8 lg:px-16 py-12">
+        <div className="w-full max-w-7xl rounded-[20px] shadow-sm bg-gradient-to-r from-white to-[#2C4A4E]/10 flex flex-col lg:flex-row items-center justify-between gap-10 px-8 lg:px-16 py-12">
           {/* LEFT CONTENT */}
           <div className="flex flex-col w-full align-center justify-end lg:w-1/2">
-            <h2 className="font-acme text-[#2a4045] text-2xl lg:text-[34px] leading-[42px] mb-3">
-              Sign up for our newsletter!
+            <h2 className="font-acme text-[#2C4A4E] text-2xl lg:text-[34px] leading-[42px] mb-3">
+              {tr("Sign up for our newsletter!", "Jiandikishe kupokea habari zetu!")}
             </h2>
             <p className="text-[#6b7c93] text-base lg:text-lg leading-7 max-w-[480px]">
-              Get notified about updates, join us in building a world where mental health care is accessible without barriers.
+              {tr("Get notified about updates, join us in building a world where mental health care is accessible without barriers.", "Pata taarifa mpya, na ujiunge nasi kujenga dunia ambapo huduma ya afya ya akili inapatikana bila vikwazo.")}
             </p>
           </div>
 
@@ -332,25 +341,25 @@ export default function HomePage() {
           <form className="w-full lg:w-1/2 flex flex-col items-center gap-3 lg:gap-4">
             <input
               type="text"
-              placeholder="Enter Your First Name"
-              className="flex-1 w-full px-5 py-[14px] bg-white rounded-[25px] border border-[#ecf2f7] shadow-sm text-[#7a7a7a] focus:outline-none focus:ring-2 focus:ring-[#016a79]"
+              placeholder={tr("Enter Your First Name", "Weka jina lako la kwanza")}
+              className="flex-1 w-full px-5 py-[14px] bg-white rounded-[25px] border border-[#2C4A4E]/10 shadow-sm text-[#7a7a7a] focus:outline-none focus:ring-2 focus:ring-[#2C4A4E]"
             />
             <input
               type="text"
-              placeholder="Enter Your Last Name"
-              className="flex-1 w-full px-5 py-[14px] bg-white rounded-[25px] border border-[#ecf2f7] shadow-sm text-[#7a7a7a] focus:outline-none focus:ring-2 focus:ring-[#016a79]"
+              placeholder={tr("Enter Your Last Name", "Weka jina lako la mwisho")}
+              className="flex-1 w-full px-5 py-[14px] bg-white rounded-[25px] border border-[#2C4A4E]/10 shadow-sm text-[#7a7a7a] focus:outline-none focus:ring-2 focus:ring-[#2C4A4E]"
             />
             <input
               type="email"
-              placeholder="Enter Your Email"
-              className="flex-1 w-full px-5 py-[14px] bg-white rounded-[25px] border border-[#ecf2f7] shadow-sm text-[#6b7c93] focus:outline-none focus:ring-2 focus:ring-[#016a79]"
+              placeholder={tr("Enter Your Email", "Weka barua pepe yako")}
+              className="flex-1 w-full px-5 py-[14px] bg-white rounded-[25px] border border-[#2C4A4E]/10 shadow-sm text-[#6b7c93] focus:outline-none focus:ring-2 focus:ring-[#2C4A4E]"
             />
             <div className="flex w-full">
               <button
                 type="submit"
-                className="mt-2 ml-auto h-auto px-8 py-[13px] bg-[#1a1a1a] rounded-[25px] font-acme text-white text-sm uppercase tracking-[0.5px] hover:bg-[#333] transition-all"
+                className="mt-2 ml-auto h-auto px-8 py-[13px] bg-[#2C4A4E] rounded-[25px] font-acme text-white text-sm uppercase tracking-[0.5px] hover:bg-[#333] transition-all"
               >
-                Subscribe
+                {tr("Subscribe", "Jiandikishe")}
               </button>
             </div>
           </form>

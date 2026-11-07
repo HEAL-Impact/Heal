@@ -6,28 +6,31 @@ import { Clock, Users, ShieldCheck } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Gallery from '@/components/Gallery';
+import { useLang } from '@/lib/i18n';
+import { TEAM } from '@/lib/team';
 
 export default function AboutPage() {
+  const { tr } = useLang();
   const cards = [
     {
-      title: "Radical Accessibility",
-      content: "24/7 confidential support via AI chat and USSD — even in low-connectivity areas. Survivors can access help immediately, when they need it most.",
+      title: { en: "Radical Accessibility", sw: "Ufikiaji kwa Wote" },
+      content: { en: "24/7 confidential support via AI chat and USSD — even in low-connectivity areas. Survivors can access help immediately, when they need it most.", sw: "Msaada wa siri saa 24 kupitia mazungumzo ya AI na USSD — hata maeneo yenye mtandao hafifu. Walionusurika wanapata msaada mara moja, wanapouhitaji zaidi." },
       icon: Clock,
     },
     {
-      title: "Survivor-Centered & Survivor-Built",
-      content: "HEAL is designed with survivors — not for them. Every feature, from AI support to referrals, prioritizes dignity, empathy, and safety.",
+      title: { en: "Survivor-Centered & Survivor-Built", sw: "Imemlenga na Kujengwa na Mnusurika" },
+      content: { en: "HEAL is designed with survivors — not for them. Every feature, from AI support to referrals, prioritizes dignity, empathy, and safety.", sw: "HEAL imeundwa pamoja na walionusurika — si kwa ajili yao tu. Kila kipengele, kuanzia msaada wa AI hadi rufaa, kinatanguliza heshima, huruma na usalama." },
       icon: Users,
     },
     {
-      title: "Trust & Integrity Through Innovation",
-      content: "Secure, transparent case coordination powered by technology. We strengthen accountability across medical, legal, and community systems.",
+      title: { en: "Trust & Integrity Through Innovation", sw: "Uaminifu na Uadilifu Kupitia Ubunifu" },
+      content: { en: "Secure, transparent case coordination powered by technology. We strengthen accountability across medical, legal, and community systems.", sw: "Uratibu wa kesi ulio salama na wa wazi kwa kutumia teknolojia. Tunaimarisha uwajibikaji katika mifumo ya afya, sheria na jamii." },
       icon: ShieldCheck,
     }
   ];
 
   return (
-    <div className="min-h-screen bg-[#FBE8DE]">
+    <div className="min-h-screen bg-[#ECE5DA]">
 
       <Navbar />
       {/* Hero section */}
@@ -104,29 +107,27 @@ export default function AboutPage() {
 
             {/* Left: Text Content */}
             <div className="w-full lg:w-1/2 text-center lg:text-left space-y-5">
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#6F8F7A]">
-                Who we are
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#2C4A4E]">
+                {tr("Who we are", "Sisi ni nani")}
               </p>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-acme font-normal text-[#333] uppercase tracking-tight">
-                About Us
+                {tr("About Us", "Kuhusu Sisi")}
               </h1>
-              <p className="lg:max-w-md mx-auto lg:mx-0 text-base sm:text-lg lg:text-xl font-medium leading-relaxed text-[#4F5F5C] whitespace-pre-line">
-                HEAL is an AI-powered mental health support platform
-                providing confidential, culturally-sensitive care for survivors
-                of SGBV — anytime, anywhere.
+              <p className="lg:max-w-md mx-auto lg:mx-0 text-base sm:text-lg lg:text-xl font-medium leading-relaxed text-[#2C4A4E] whitespace-pre-line">
+                {tr("HEAL is an AI-powered mental health support platform providing confidential, culturally-sensitive care for survivors of SGBV — anytime, anywhere.", "HEAL ni jukwaa la msaada wa afya ya akili linalotumia AI, linalotoa huduma ya siri inayozingatia utamaduni kwa walionusurika ukatili wa kingono na wa kijinsia — wakati wowote, mahali popote.")}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-2">
                 <Link
                   href="/anonymous"
-                  className="bg-[#6F8F7A] hover:bg-[#6D7E73] text-white px-8 py-3 rounded-full transition-transform hover:scale-105 font-semibold text-xs lg:text-sm uppercase tracking-wider font-acme text-center"
+                  className="bg-[#2C4A4E] hover:bg-[#2C4A4E]/90 text-white px-8 py-3 rounded-full transition-transform hover:scale-105 font-semibold text-xs lg:text-sm uppercase tracking-wider font-acme text-center"
                 >
-                  Talk to Nia anonymously
+                  {tr("Talk to Nia anonymously", "Ongea na Nia bila jina")}
                 </Link>
                 <Link
                   href="/services"
-                  className="bg-white/70 border border-[#6F8F7A] text-[#4F5F5C] hover:bg-white px-8 py-3 rounded-full transition-transform hover:scale-105 font-semibold text-xs lg:text-sm uppercase tracking-wider font-acme text-center"
+                  className="bg-white/70 border border-[#2C4A4E] text-[#2C4A4E] hover:bg-white px-8 py-3 rounded-full transition-transform hover:scale-105 font-semibold text-xs lg:text-sm uppercase tracking-wider font-acme text-center"
                 >
-                  Our services
+                  {tr("Our services", "Huduma zetu")}
                 </Link>
               </div>
             </div>
@@ -214,27 +215,25 @@ export default function AboutPage() {
             <div className="space-y-12">
               {/* Vision Header */}
               <div className="relative inline-block">
-                <div className="w-20 h-1 bg-[#056173] mt-2"></div>
-                <span className="text-3xl font-bold text-[#044750] font-acme block">Our</span>
-                <h2 className="text-4xl lg:text-5xl font-bold text-[#044750] font-acme">Vision</h2>
+                <div className="w-20 h-1 bg-[#2C4A4E] mt-2"></div>
+                <span className="text-3xl font-bold text-[#2C4A4E] font-acme block">{tr("Our", "Maono")}</span>
+                <h2 className="text-4xl lg:text-5xl font-bold text-[#2C4A4E] font-acme">{tr("Vision", "Yetu")}</h2>
               </div>
 
               {/* Vision Text */}
               <p className="text-base lg:text-lg text-gray-800 text-[#363636] leading-relaxed font-medium max-w-md pl-20">
-                A world where every SGBV survivor has immediate, confidential,
-                culturally-sensitive access to healing and empowerment —
-                anytime, anywhere, without barriers.
+                {tr("A world where every SGBV survivor has immediate, confidential, culturally-sensitive access to healing and empowerment — anytime, anywhere, without barriers.", "Dunia ambapo kila mnusurika wa ukatili wa kingono na wa kijinsia anapata uponyaji na uwezeshaji mara moja, kwa siri na kwa kuzingatia utamaduni — wakati wowote, mahali popote, bila vikwazo.")}
               </p>
 
               {/* Counter / Stats */}
               <div className="pt-8">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-6xl lg:text-7xl font-bold text-[#0C444B] font-acme">500+</span>
+                  <span className="text-6xl lg:text-7xl font-bold text-[#2C4A4E] font-acme">500+</span>
                 </div>
                 <div className="flex gap-4 mt-2">
-                  <span className="text-[#056173] font-bold font-acme uppercase tracking-wider text-sm">Cases</span>
-                  <span className="text-[#056173] font-bold font-acme uppercase tracking-wider text-sm">Reported</span>
-                  <span className="text-[#056173] font-bold font-acme uppercase tracking-wider text-sm">Yearly</span>
+                  <span className="text-[#2C4A4E] font-bold font-acme uppercase tracking-wider text-sm">{tr("Cases", "Kesi")}</span>
+                  <span className="text-[#2C4A4E] font-bold font-acme uppercase tracking-wider text-sm">{tr("Reported", "Zinazoripotiwa")}</span>
+                  <span className="text-[#2C4A4E] font-bold font-acme uppercase tracking-wider text-sm">{tr("Yearly", "Kila Mwaka")}</span>
                 </div>
               </div>
             </div>
@@ -243,17 +242,14 @@ export default function AboutPage() {
             <div className="lg:pt-48 space-y-8 flex flex-col items-end">
               {/* Mission Header */}
               <div className="text-right w-full">
-                <span className="text-3xl font-bold text-[#0C444B] font-acme block">Our</span>
-                <h2 className="text-4xl lg:text-5xl font-bold text-[#0C444B] font-acme">Mission</h2>
-                <div className="w-20 h-1 bg-[#056173] mt-4 ml-auto"></div>
+                <span className="text-3xl font-bold text-[#2C4A4E] font-acme block">{tr("Our", "Dhamira")}</span>
+                <h2 className="text-4xl lg:text-5xl font-bold text-[#2C4A4E] font-acme">{tr("Mission", "Yetu")}</h2>
+                <div className="w-20 h-1 bg-[#2C4A4E] mt-4 ml-auto"></div>
               </div>
 
               {/* Mission Text */}
               <p className="text-base lg:text-lg text-gray-800 leading-relaxed font-medium text-right max-w-lg pr-20">
-                To make mental health support radically accessible to SGBV survivors
-                through AI-powered technology — bridging gaps in mental-health care
-                with reliable, survivor-centered support that enhances well-being,
-                restores dignity, and fosters survivors' reintegration into the community.
+                {tr("To make mental health support radically accessible to SGBV survivors through AI-powered technology — bridging gaps in mental-health care with reliable, survivor-centered support that enhances well-being, restores dignity, and fosters survivors' reintegration into the community.", "Kufanya msaada wa afya ya akili upatikane kwa urahisi kabisa kwa walionusurika ukatili wa kingono na wa kijinsia kupitia teknolojia ya AI — kuziba mapengo katika huduma ya afya ya akili kwa msaada wa kuaminika unaomlenga mnusurika, unaoboresha ustawi, kurejesha heshima, na kusaidia walionusurika kurejea katika jamii.")}
               </p>
             </div>
 
@@ -313,74 +309,74 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Title */}
           <div className="text-center mb-16">
-            <h2 className="text-4xl sm:text-5xl font-bold text-white font-acme">Our Theory of Change</h2>
+            <h2 className="text-4xl sm:text-5xl font-bold text-white font-acme">{tr("Our Theory of Change", "Nadharia Yetu ya Mabadiliko")}</h2>
           </div>
 
           {/* Theory boxes layout */}
           <div className="relative min-h-[600px]">
             {/* Top Left - Radical Access */}
-            <div className="absolute top-0 left-0 w-72 bg-[#F5F5DC] p-6 rounded-lg shadow-lg transition-all duration-300 hover:scale-110 hover:bg-[#E8F5E8] hover:shadow-2xl cursor-pointer group">
+            <div className="absolute top-0 left-0 w-72 bg-[#ECE5DA] p-6 rounded-lg shadow-lg transition-all duration-300 hover:scale-110 hover:bg-[#2C4A4E]/10 hover:shadow-2xl cursor-pointer group">
               <div className="flex items-center mb-4">
-                <div className="w-8 h-8 bg-[#4A9B8E] rounded-full flex items-center justify-center mr-3 group-hover:bg-[#2C4A4E] transition-colors duration-300">
+                <div className="w-8 h-8 bg-[#2C4A4E] rounded-full flex items-center justify-center mr-3 group-hover:bg-[#2C4A4E]/90 transition-colors duration-300">
                   <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="3" />
                     <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" strokeWidth="2" />
                   </svg>
                 </div>
-                <h3 className="font-bold text-[#2C4A4E] font-acme text-sm group-hover:text-[#4A9B8E] transition-colors duration-300">Radical Access to Mental Health</h3>
+                <h3 className="font-bold text-[#2C4A4E] font-acme text-sm group-hover:text-[#2C4A4E] transition-colors duration-300">{tr("Radical Access to Mental Health", "Ufikiaji Kamili wa Afya ya Akili")}</h3>
               </div>
               <p className="text-xs text-[#2C4A4E] leading-relaxed group-hover:text-gray-700 transition-colors duration-300">
-                When survivors are provided with instant, confidential, and culturally-sensitive digital mental health support (AI-powered chat + USSD for low-connectivity areas), they will seek help earlier, begin healing immediately, and reclaim their voice without fear of stigma or judgment. This ultimately breaks them free from the triple threat of unwanted pregnancies, new HIV infections, continued cycles of GBV, and deaths linked to untreated trauma.
+                {tr("When survivors are provided with instant, confidential, and culturally-sensitive digital mental health support (AI-powered chat + USSD for low-connectivity areas), they will seek help earlier, begin healing immediately, and reclaim their voice without fear of stigma or judgment. This ultimately breaks them free from the triple threat of unwanted pregnancies, new HIV infections, continued cycles of GBV, and deaths linked to untreated trauma.", "Walionusurika wanapopewa msaada wa kidijitali wa afya ya akili ulio wa haraka, wa siri na unaozingatia utamaduni (mazungumzo ya AI + USSD kwa maeneo yenye mtandao hafifu), watatafuta msaada mapema, kuanza kupona mara moja, na kurejesha sauti yao bila hofu ya unyanyapaa wala hukumu. Hatimaye hili linawaweka huru kutokana na tishio la mimba zisizotarajiwa, maambukizi mapya ya VVU, mzunguko unaoendelea wa ukatili wa kijinsia, na vifo vinavyohusiana na kiwewe kisichotibiwa.")}
               </p>
             </div>
 
             {/* Connecting line from top left to center */}
-            <div className="absolute top-48 left-72 w-40 h-0.5 bg-[#4A9B8E]"></div>
-            <div className="absolute top-48 left-[440px] w-0.5 h-24 bg-[#4A9B8E]"></div>
+            <div className="absolute top-48 left-72 w-40 h-0.5 bg-[#2C4A4E]"></div>
+            <div className="absolute top-48 left-[440px] w-0.5 h-24 bg-[#2C4A4E]"></div>
 
             {/* Top Right - Strong Referral */}
-            <div className="absolute top-0 right-0 w-72 bg-[#F5F5DC] p-6 rounded-lg shadow-lg transition-all duration-300 hover:scale-110 hover:bg-[#E8F5E8] hover:shadow-2xl cursor-pointer group">
+            <div className="absolute top-0 right-0 w-72 bg-[#ECE5DA] p-6 rounded-lg shadow-lg transition-all duration-300 hover:scale-110 hover:bg-[#2C4A4E]/10 hover:shadow-2xl cursor-pointer group">
               <div className="flex items-center mb-4">
-                <div className="w-8 h-8 bg-[#4A9B8E] rounded-full flex items-center justify-center mr-3 group-hover:bg-[#2C4A4E] transition-colors duration-300">
+                <div className="w-8 h-8 bg-[#2C4A4E] rounded-full flex items-center justify-center mr-3 group-hover:bg-[#2C4A4E]/90 transition-colors duration-300">
                   <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2" />
                     <polyline points="12,6 12,12 16,14" stroke="currentColor" strokeWidth="2" fill="none" />
                   </svg>
                 </div>
-                <h3 className="font-bold text-[#2C4A4E] font-acme text-sm group-hover:text-[#4A9B8E] transition-colors duration-300">Strong Referral Pathways</h3>
+                <h3 className="font-bold text-[#2C4A4E] font-acme text-sm group-hover:text-[#2C4A4E] transition-colors duration-300">{tr("Strong Referral Pathways", "Njia Imara za Rufaa")}</h3>
               </div>
               <p className="text-xs text-[#2C4A4E] leading-relaxed group-hover:text-gray-700 transition-colors duration-300">
-                If survivors are seamlessly connected through HEAL to trusted medical, legal, and community-based services, then they will access comprehensive care, pursue justice, and be protected from further harm — breaking cycles of silence and impunity.
+                {tr("If survivors are seamlessly connected through HEAL to trusted medical, legal, and community-based services, then they will access comprehensive care, pursue justice, and be protected from further harm — breaking cycles of silence and impunity.", "Walionusurika wakiunganishwa kwa urahisi kupitia HEAL na huduma za afya, sheria na za kijamii zinazoaminika, watapata huduma kamili, kutafuta haki, na kulindwa dhidi ya madhara zaidi — wakivunja mizunguko ya ukimya na kutoadhibiwa.")}
               </p>
             </div>
 
             {/* Connecting line from top right to center */}
-            <div className="absolute top-48 right-72 w-40 h-0.5 bg-[#4A9B8E]"></div>
-            <div className="absolute top-48 right-[440px] w-0.5 h-24 bg-[#4A9B8E]"></div>
+            <div className="absolute top-48 right-72 w-40 h-0.5 bg-[#2C4A4E]"></div>
+            <div className="absolute top-48 right-[440px] w-0.5 h-24 bg-[#2C4A4E]"></div>
 
             {/* Bottom Right - Survivor-Centered */}
-            <div className="absolute bottom-0 right-0 w-72 bg-[#F5F5DC] p-6 rounded-lg shadow-lg transition-all duration-300 hover:scale-110 hover:bg-[#E8F5E8] hover:shadow-2xl cursor-pointer group">
+            <div className="absolute bottom-0 right-0 w-72 bg-[#ECE5DA] p-6 rounded-lg shadow-lg transition-all duration-300 hover:scale-110 hover:bg-[#2C4A4E]/10 hover:shadow-2xl cursor-pointer group">
               <div className="flex items-center mb-4">
-                <div className="w-8 h-8 bg-[#4A9B8E] rounded-full flex items-center justify-center mr-3 group-hover:bg-[#2C4A4E] transition-colors duration-300">
+                <div className="w-8 h-8 bg-[#2C4A4E] rounded-full flex items-center justify-center mr-3 group-hover:bg-[#2C4A4E]/90 transition-colors duration-300">
                   <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 7.5V9M15 11.5C15.8 12.3 16 13.4 16 14.5V22H14V16H10V22H8V14.5C8 13.4 8.2 12.3 9 11.5L12 8.5L15 11.5Z" />
                   </svg>
                 </div>
-                <h3 className="font-bold text-[#2C4A4E] font-acme text-sm group-hover:text-[#4A9B8E] transition-colors duration-300">Survivor-Centered Systems Change</h3>
+                <h3 className="font-bold text-[#2C4A4E] font-acme text-sm group-hover:text-[#2C4A4E] transition-colors duration-300">{tr("Survivor-Centered Systems Change", "Mabadiliko ya Mifumo Yanayomlenga Mnusurika")}</h3>
               </div>
               <p className="text-xs text-[#2C4A4E] leading-relaxed group-hover:text-gray-700 transition-colors duration-300">
-                If survivors are seamlessly connected through HEAL to trusted medical, legal, and community-based services with case management using community systems like CHVs for robust survivor tracking and tracing, then they will access comprehensive care, pursue justice, and be protected from further harm — breaking cycles of silence and impunity.
+                {tr("If survivors are seamlessly connected through HEAL to trusted medical, legal, and community-based services with case management using community systems like CHVs for robust survivor tracking and tracing, then they will access comprehensive care, pursue justice, and be protected from further harm — breaking cycles of silence and impunity.", "Walionusurika wakiunganishwa kwa urahisi kupitia HEAL na huduma za afya, sheria na za kijamii zinazoaminika, pamoja na usimamizi wa kesi kupitia mifumo ya jamii kama wahudumu wa afya wa jamii (CHV) kwa ufuatiliaji imara, watapata huduma kamili, kutafuta haki, na kulindwa dhidi ya madhara zaidi — wakivunja mizunguko ya ukimya na kutoadhibiwa.")}
               </p>
             </div>
 
             {/* Connecting line from bottom right to center */}
-            <div className="absolute bottom-48 right-72 w-40 h-0.5 bg-[#4A9B8E]"></div>
-            <div className="absolute bottom-48 right-[440px] w-0.5 h-24 bg-[#4A9B8E]"></div>
+            <div className="absolute bottom-48 right-72 w-40 h-0.5 bg-[#2C4A4E]"></div>
+            <div className="absolute bottom-48 right-[440px] w-0.5 h-24 bg-[#2C4A4E]"></div>
 
             {/* Center - Main Theory */}
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 bg-[#2C4A4E] border-2 border-[#4A9B8E] p-6 rounded-lg shadow-xl transition-all duration-300 hover:scale-105 hover:bg-[#1A3A3E] hover:border-[#6BB6AB] hover:shadow-2xl cursor-pointer group">
-              <p className="text-white leading-relaxed text-center text-sm group-hover:text-[#E8F5E8] transition-colors duration-300">
-                When GBV survivors are provided with immediate, confidential, and culturally-sensitive access to mental health support coupled with strong and effective referral pathways - anytime, anywhere, without barriers, they reclaim their dignity and agency by reporting, healing and speaking against GBV, creating community resilience and awareness. At scale this generates survivor-driven data that powers evidence-based advocacy and policy reform in Kenya and across the continent, positioning Africa as a leader in bold, inclusive mental health and gender justice.
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 bg-[#2C4A4E] border-2 border-[#2C4A4E] p-6 rounded-lg shadow-xl transition-all duration-300 hover:scale-105 hover:bg-[#1A3A3E] hover:border-[#6BB6AB] hover:shadow-2xl cursor-pointer group">
+              <p className="text-white leading-relaxed text-center text-sm group-hover:text-[#2C4A4E]/10 transition-colors duration-300">
+                {tr("When GBV survivors are provided with immediate, confidential, and culturally-sensitive access to mental health support coupled with strong and effective referral pathways - anytime, anywhere, without barriers, they reclaim their dignity and agency by reporting, healing and speaking against GBV, creating community resilience and awareness. At scale this generates survivor-driven data that powers evidence-based advocacy and policy reform in Kenya and across the continent, positioning Africa as a leader in bold, inclusive mental health and gender justice.", "Walionusurika ukatili wa kijinsia wanapopata msaada wa afya ya akili mara moja, kwa siri na kwa kuzingatia utamaduni, pamoja na njia imara na bora za rufaa — wakati wowote, mahali popote, bila vikwazo — wanarejesha heshima na uwezo wao kwa kuripoti, kupona na kupaza sauti dhidi ya ukatili wa kijinsia, wakijenga ustahimilivu na uelewa katika jamii. Kwa kiwango kikubwa hili linazalisha takwimu zinazoongozwa na walionusurika zinazochochea utetezi unaotegemea ushahidi na mageuzi ya sera nchini Kenya na barani kote, na kuiweka Afrika mstari wa mbele katika afya ya akili jumuishi na haki ya kijinsia.")}
               </p>
             </div>
           </div>
@@ -388,7 +384,7 @@ export default function AboutPage() {
       </section>
 
       {/* What Makes Us Different */}
-      <section className="relative py-16 sm:py-24 bg-[#E5EFEC] overflow-hidden">
+      <section className="relative py-16 sm:py-24 bg-[#ECE5DA] overflow-hidden">
         <Image
           src="/images/decoration.png"
           alt=""
@@ -401,8 +397,8 @@ export default function AboutPage() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-20">
-            <h2 className="text-3xl md:text-4xl font-normal text-[#2F3A3A] font-acme">
-              What Makes Us Different
+            <h2 className="text-3xl md:text-4xl font-normal text-[#2C4A4E] font-acme">
+              {tr("What Makes Us Different", "Kinachotutofautisha")}
             </h2>
           </div>
 
@@ -411,25 +407,25 @@ export default function AboutPage() {
             {cards.map(({ title, content, icon: Icon }, index) =>
               index === 1 ? (
                 <div
-                  key={title}
-                  className="bg-[#007C85] rounded-3xl p-12 flex flex-col items-center text-center shadow-xl hover:shadow-2xl hover:-translate-y-4 transition-all duration-300 lg:-mt-12 lg:mb-[-3rem] z-10 text-white min-h-[500px] justify-center"
+                  key={title.en}
+                  className="bg-[#2C4A4E] rounded-3xl p-12 flex flex-col items-center text-center shadow-xl hover:shadow-2xl hover:-translate-y-4 transition-all duration-300 lg:-mt-12 lg:mb-[-3rem] z-10 text-white min-h-[500px] justify-center"
                 >
                   <div className="mb-8">
                     <Icon size={100} strokeWidth={1} className="text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold mb-4 uppercase tracking-tight font-acme">{title}</h3>
-                  <p className="text-teal-50/90 text-base leading-relaxed font-medium">{content}</p>
+                  <h3 className="text-2xl font-bold mb-4 uppercase tracking-tight font-acme">{tr(title)}</h3>
+                  <p className="text-[#ECE5DA]/90 text-base leading-relaxed font-medium">{tr(content)}</p>
                 </div>
               ) : (
                 <div
-                  key={title}
+                  key={title.en}
                   className="bg-white rounded-3xl p-10 flex flex-col items-center text-center shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group h-full"
                 >
                   <div className="mb-8 transition-transform group-hover:scale-110 duration-300">
                     <Icon size={80} strokeWidth={1} className="text-[#333]" />
                   </div>
-                  <h3 className="text-xl font-bold text-[#1a1a1a] mb-4 uppercase tracking-tight font-acme">{title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed font-medium">{content}</p>
+                  <h3 className="text-xl font-bold text-[#2C4A4E] mb-4 uppercase tracking-tight font-acme">{tr(title)}</h3>
+                  <p className="text-gray-600 text-sm leading-relaxed font-medium">{tr(content)}</p>
                 </div>
               )
             )}
@@ -437,17 +433,48 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Our team */}
+      <section className="py-16 sm:py-24 bg-[#ECE5DA]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <h2 className="text-3xl md:text-4xl font-normal text-[#2C4A4E] font-acme">{tr("Meet Our Team", "Kutana na Timu Yetu")}</h2>
+            <p className="mt-3 text-gray-600">
+              {tr(
+                "A team of survivors’ allies, technologists, community mobilisers and health data specialists, working so every woman and girl can find safe, immediate support.",
+                "Timu ya wanaowaunga mkono wahusika, wataalamu wa teknolojia, wahamasishaji wa jamii na wataalamu wa takwimu za afya, tukifanya kazi ili kila mwanamke na msichana apate msaada salama na wa haraka."
+              )}
+            </p>
+          </div>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {TEAM.map((m) => (
+              <li key={m.name} className="bg-white rounded-3xl p-6 flex flex-col items-center text-center shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                {m.photo ? (
+                  <Image src={m.photo} alt={m.name} width={112} height={112} className="h-28 w-28 rounded-full object-cover ring-4 ring-[#2C4A4E]/10" />
+                ) : (
+                  <span aria-hidden="true" className="flex h-28 w-28 items-center justify-center rounded-full bg-[#2C4A4E] text-3xl font-acme text-white ring-4 ring-[#2C4A4E]/10">
+                    {m.name[0]}{m.name.split(' ').pop()?.[0]}
+                  </span>
+                )}
+                <h3 className="mt-5 text-lg font-bold text-[#2C4A4E] font-acme">{m.name}</h3>
+                <p className="text-sm font-semibold text-[#2C4A4E]">{tr(m.role)}</p>
+                <p className="mt-3 text-sm text-gray-600 leading-relaxed">{tr(m.bio)}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
       {/* Join the HEAL's team Section */}
-      <section className="py-12 sm:py-16 bg-[#016A79] border-1 border-[#973939]">
+      <section className="py-12 sm:py-16 bg-[#2C4A4E] border-1 border-[#2C4A4E]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl lg:text-[40px] font-bold text-white font-acme mb-4">
-            Join the HEAL's team!
+            {tr("Join the HEAL's team!", "Jiunge na timu ya HEAL!")}
           </h2>
           <p className="text-white/90 text-base lg:text-lg mb-8">
-            Do you want to be part of Heal's team? click "join team"
+            {tr('Do you want to be part of the HEAL team? Get in touch.', 'Ungependa kuwa sehemu ya timu ya HEAL? Wasiliana nasi.')}
           </p>
           <button className="bg-white text-2xl lg:text-[32px] text-[#2C4A4E] font-bold py-3 px-8 rounded-lg hover:bg-gray-100 hover:scale-105 hover:shadow-lg transition-all duration-300 font-acme transform active:scale-95">
-            Join Team
+            {tr("Join Team", "Jiunge na Timu")}
           </button>
         </div>
       </section>

@@ -13,13 +13,16 @@ import {
 } from 'lucide-react';
 import { HEAL_LINKEDIN_URL } from '@/lib/social';
 import { HEAL_EMAIL, HEAL_PHONE, HEAL_PHONE_DISPLAY } from '@/lib/contact';
+import { useLang } from '@/lib/i18n';
 
 const quickLinks = [
-  { label: 'About Heal', href: '/about' },
-  { label: 'We Listen – Safe Space', href: '/anonymous' },
+  { label: { en: 'About HEAL', sw: 'Kuhusu HEAL' }, href: '/about' },
+  { label: { en: 'Get help now', sw: 'Pata msaada sasa' }, href: '/help' },
+  { label: { en: 'We Listen – Safe Space', sw: 'Tunasikiliza – Mahali Salama' }, href: '/anonymous' },
   // { label: 'Chat Anonymously – Chat Space', href: '/anonymous' },
-  { label: 'Report - Seek Help', href: '/report' },
-  { label: 'Get In Touch', href: '/contact' },
+  { label: { en: 'Make a safe report', sw: 'Toa ripoti kwa usalama' }, href: '/report' },
+  { label: { en: 'For partners', sw: 'Kwa washirika' }, href: '/care' },
+  { label: { en: 'Get In Touch', sw: 'Wasiliana Nasi' }, href: '/contact' },
 ];
 
 const socialIcons = [
@@ -32,6 +35,7 @@ const socialIcons = [
 ];
 
 export default function Footer() {
+  const { tr } = useLang();
   return (
     <footer className="flex flex-col items-center w-full bg-brand-primary">
       {/* Main Footer Content */}
@@ -53,8 +57,7 @@ export default function Footer() {
             </div>
             <div className="flex flex-col text-[#b0b8b8] text-sm text-center leading-7">
               <p className="">
-                Navigating Mental Health Care with your <br />Listening, Caring Partner
-                <br /> Anytime, Anywhere
+                {tr('Navigating mental health care with your listening, caring partner, anytime, anywhere.', 'Huduma ya afya ya akili pamoja na mwenzako anayesikiliza na kujali, wakati wowote, mahali popote.')}
               </p>
             </div>
           </div>
@@ -63,7 +66,7 @@ export default function Footer() {
           <nav className="col-span-1 lg:col-span-1 flex flex-col items-start">
             <div className="w-full">
               <h3 className="font-acme text-white text-[17px] tracking-[0] leading-7 whitespace-nowrap">
-                QUICK LINKS
+                {tr("QUICK LINKS", "VIUNGO VYA HARAKA")}
               </h3>
             </div>
 
@@ -74,7 +77,7 @@ export default function Footer() {
                     href={link.href}
                     className="text-[#9ca3a3] text-sm tracking-[0] leading-7 whitespace-nowrap hover:text-white transition-colors"
                   >
-                    {link.label}
+                    {tr(link.label)}
                   </a>
                 </li>
               ))}
@@ -85,7 +88,7 @@ export default function Footer() {
           <div className="w-full lg:w-[285px] flex flex-col items-start">
             <div className="flex flex-col items-start pb-5 w-full">
               <h3 className="font-acme text-white text-lg tracking-[0] leading-7 whitespace-nowrap">
-                GET IN TOUCH
+                {tr("GET IN TOUCH", "WASILIANA NASI")}
               </h3>
             </div>
 
@@ -107,7 +110,7 @@ export default function Footer() {
           <div className="w-full lg:w-[285px] flex flex-col items-start">
             <div className="flex flex-col items-start pb-5 w-full">
               <h3 className="font-acme text-white text-[17px] tracking-[0] leading-7 whitespace-nowrap">
-                SUBSCRIBE &amp; FOLLOW US
+                {tr("SUBSCRIBE & FOLLOW US", "JIUNGE NA UTUFUATE")}
               </h3>
             </div>
 
@@ -119,8 +122,8 @@ export default function Footer() {
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label={`${label}: opens HEAL-Impact on LinkedIn in a new tab`}
-                    title="HEAL-Impact on LinkedIn"
+                    aria-label={tr(`${label}: opens HEAL-Impact on LinkedIn in a new tab`, `${label}: inafungua HEAL-Impact kwenye LinkedIn katika kichupo kipya`)}
+                    title={tr('HEAL-Impact on LinkedIn', 'HEAL-Impact kwenye LinkedIn')}
                     className="flex items-start text-white hover:text-[#b0b8b8] transition-colors p-2"
                   >
                     <Icon className="w-5 h-5" />
@@ -142,7 +145,7 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center py-2.5">
             <p className="text-[#6b7280] text-base tracking-[0] leading-7 whitespace-nowrap">
-              Copyright © 2025 Heal.org – All Rights Reserved.
+              {tr("© 2026 HEAL-Impact. All rights reserved.", "© 2026 HEAL-Impact. Haki zote zimehifadhiwa.")}
             </p>
           </div>
 
@@ -151,11 +154,25 @@ export default function Footer() {
               href="/privacy" 
               className="text-[#6b7280] hover:text-white text-base tracking-[0] leading-7 whitespace-nowrap transition-colors"
             >
-              Privacy Policy
+              {tr("Privacy Policy", "Sera ya Faragha")}
+            </Link>
+            <span className="text-[#6b7280]">|</span>
+            <Link
+              href="/partners/login"
+              className="text-[#6b7280] hover:text-white text-base tracking-[0] leading-7 whitespace-nowrap transition-colors"
+            >
+              {tr("Partner sign-in", "Kuingia kwa washirika")}
+            </Link>
+            <span className="text-[#6b7280]">|</span>
+            <Link
+              href="/partners/register"
+              className="text-[#6b7280] hover:text-white text-base tracking-[0] leading-7 whitespace-nowrap transition-colors"
+            >
+              {tr("Become a partner", "Kuwa mshirika")}
             </Link>
             <span className="text-[#6b7280]">|</span>
             <p className="text-[#6b7280] text-base tracking-[0] leading-7 whitespace-nowrap">
-              Powered by Heal.Org
+              {tr("Powered by HEAL-Impact", "Inaendeshwa na HEAL-Impact")}
             </p>
           </div>
         </div>

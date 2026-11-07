@@ -4,9 +4,12 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Menu, X } from 'lucide-react';
+import { useLang } from '@/lib/i18n';
+import LanguageToggle from '@/components/LanguageToggle';
 
 // Sign Up Toggle Component
 function SignUpToggle() {
+  const { tr } = useLang();
   const [isSignUp, setIsSignUp] = useState(true);
 
   return (
@@ -17,14 +20,14 @@ function SignUpToggle() {
           className="bg-brand-primary hover:bg-brand-accent border-4 border-brand-cream rounded-full pl-3 pr-6 py-2 flex items-center gap-2 transition-all shadow-md"
         >
           <div className="w-4 h-4 rounded-full bg-brand-cream" />
-          <span className="font-acme text-white text-sm uppercase tracking-wide">SIGN UP</span>
+          <span className="font-acme text-white text-sm uppercase tracking-wide">{tr("SIGN UP", "JISAJILI")}</span>
         </Link>
       ) : (
         <Link
-          href="/anonymous"
+          href="/help"
           className="bg-brand-primary hover:bg-brand-accent border-4 border-brand-cream rounded-full pl-6 pr-3 py-2 flex items-center gap-2 transition-all shadow-md"
         >
-          <span className="font-acme text-white text-sm uppercase tracking-wide">GUEST</span>
+          <span className="font-acme text-white text-sm uppercase tracking-wide">{tr("GUEST", "MGENI")}</span>
           <div className="w-4 h-4 rounded-full bg-brand-cream" />
         </Link>
       )}
@@ -33,7 +36,7 @@ function SignUpToggle() {
       <button
         onClick={() => setIsSignUp(!isSignUp)}
         className="absolute right-2 top-1/2 -translate-y-1/2 text-brand-cream hover:text-white text-xs z-10"
-        aria-label="Toggle between Sign Up and Guest"
+        aria-label={tr("Toggle between Sign Up and Guest", "Badilisha kati ya Kujisajili na Mgeni")}
       >
         ⇄
       </button>
@@ -42,6 +45,7 @@ function SignUpToggle() {
 }
 
 export default function Navbar() {
+  const { tr } = useLang();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
@@ -115,35 +119,35 @@ export default function Navbar() {
               href="/"
               className="font-acme text-brand-primary hover:text-brand-dark transition-all duration-300 text-sm uppercase tracking-wide relative group/nav hover:scale-110 hover:tracking-wider"
             >
-              HOME
+              {tr("HOME", "MWANZO")}
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-dark group-hover/nav:w-full transition-all duration-300"></span>
             </Link>
             <Link
               href="/about"
               className="font-acme text-brand-primary hover:text-brand-dark transition-all duration-300 text-sm uppercase tracking-wide relative group/nav hover:scale-110 hover:tracking-wider"
             >
-              ABOUT HEAL
+              {tr("ABOUT HEAL", "KUHUSU HEAL")}
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-dark group-hover/nav:w-full transition-all duration-300"></span>
             </Link>
             <Link
               href="/services"
               className="font-acme text-brand-primary hover:text-brand-dark transition-all duration-300 text-sm uppercase tracking-wide relative group/nav hover:scale-110 hover:tracking-wider"
             >
-              SERVICES
+              {tr("SERVICES", "HUDUMA")}
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-dark group-hover/nav:w-full transition-all duration-300"></span>
             </Link>
-            {/* <Link
-              href="/#resources"
-              className="font-acme text-brand-primary hover:text-brand-dark transition-all duration-300 text-sm uppercase tracking-wide relative group/nav hover:scale-110 hover:tracking-wider"
-            >
-              RESOURCES
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-dark group-hover/nav:w-full transition-all duration-300"></span>
-            </Link> */}
             <Link
-              href="/report"
+              href="/care"
               className="font-acme text-brand-primary hover:text-brand-dark transition-all duration-300 text-sm uppercase tracking-wide relative group/nav hover:scale-110 hover:tracking-wider"
             >
-              REPORT
+              {tr("FOR PARTNERS", "KWA WASHIRIKA")}
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-dark group-hover/nav:w-full transition-all duration-300"></span>
+            </Link>
+            <Link
+              href="/help"
+              className="font-acme text-brand-primary hover:text-brand-dark transition-all duration-300 text-sm uppercase tracking-wide relative group/nav hover:scale-110 hover:tracking-wider"
+            >
+              {tr("GET HELP", "PATA MSAADA")}
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-dark group-hover/nav:w-full transition-all duration-300"></span>
             </Link>
 
@@ -153,18 +157,19 @@ export default function Navbar() {
 
           {/* Right Side Buttons */}
           <div className="hidden lg:flex items-center space-x-4 flex-shrink-0">
+            <LanguageToggle />
             <Link
               href="/contact"
               className="font-acme text-brand-primary hover:text-brand-dark transition-all duration-300 text-sm uppercase tracking-wide relative group/nav hover:scale-110 hover:tracking-wider"
             >
-              CONTACT US
+              {tr("CONTACT US", "WASILIANA NASI")}
               <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-brand-dark group-hover/nav:w-full transition-all duration-300"></span>
             </Link>
             <Link
               href="/donate"
               className="font-acme bg-brand-primary hover:bg-brand-accent text-white py-2.5 px-6 rounded-full transition-all duration-300 text-sm uppercase tracking-wide shadow-md hover:shadow-xl hover:scale-105 active:scale-95 hover:-translate-y-0.5"
             >
-              DONATE
+              {tr("DONATE", "CHANGIA")}
             </Link>
           </div>
 
@@ -172,7 +177,7 @@ export default function Navbar() {
           <button
             className="lg:hidden p-2 text-brand-primary rounded-lg hover:bg-brand-light/50 transition-colors"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
+            aria-label={tr("Toggle menu", "Fungua au funga menyu")}
           >
             {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
@@ -189,40 +194,41 @@ export default function Navbar() {
               }}
             >
               <div className="flex flex-col space-y-3">
+                <LanguageToggle className="self-start" />
               <Link
                 href="/"
                 className="font-acme text-brand-primary hover:text-brand-dark transition-all duration-300 px-4 py-2 text-sm uppercase tracking-wide hover:bg-brand-light/50 rounded-lg"
                 onClick={() => setIsMenuOpen(false)}
               >
-                HOME
+                {tr("HOME", "MWANZO")}
               </Link>
               <Link
                 href="/about"
                 className="font-acme text-brand-primary hover:text-brand-dark transition-all duration-300 px-4 py-2 text-sm uppercase tracking-wide hover:bg-brand-light/50 rounded-lg"
                 onClick={() => setIsMenuOpen(false)}
               >
-                ABOUT HEAL
+                {tr("ABOUT HEAL", "KUHUSU HEAL")}
               </Link>
               <Link
-                href="/#services"
+                href="/services"
                 className="font-acme text-brand-primary hover:text-brand-dark transition-all duration-300 px-4 py-2 text-sm uppercase tracking-wide hover:bg-brand-light/50 rounded-lg"
                 onClick={() => setIsMenuOpen(false)}
               >
-                SERVICES
+                {tr("SERVICES", "HUDUMA")}
               </Link>
               <Link
-                href="/#resources"
+                href="/care"
                 className="font-acme text-brand-primary hover:text-brand-dark transition-all duration-300 px-4 py-2 text-sm uppercase tracking-wide hover:bg-brand-light/50 rounded-lg"
                 onClick={() => setIsMenuOpen(false)}
               >
-                RESOURCES
+                {tr("FOR PARTNERS", "KWA WASHIRIKA")}
               </Link>
               <Link
-                href="/#report"
+                href="/help"
                 className="font-acme text-brand-primary hover:text-brand-dark transition-all duration-300 px-4 py-2 text-sm uppercase tracking-wide hover:bg-brand-light/50 rounded-lg"
                 onClick={() => setIsMenuOpen(false)}
               >
-                REPORT
+                {tr("GET HELP", "PATA MSAADA")}
               </Link>
 
               {/* Mobile Auth buttons */}
@@ -232,28 +238,28 @@ export default function Navbar() {
                   className="font-acme block text-center bg-brand-primary hover:bg-brand-accent text-white py-3 px-6 rounded-full shadow-md text-sm uppercase tracking-wide transition-all duration-300 hover:scale-105"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  SIGN UP
+                  {tr("SIGN UP", "JISAJILI")}
                 </Link>
                 <Link
-                  href="/chat"
+                  href="/help"
                   className="font-acme block text-center text-brand-teal hover:text-brand-primary px-4 py-3 rounded-lg hover:bg-brand-light/50 transition-all duration-300 text-sm uppercase tracking-wide"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  GUEST
+                  {tr("GUEST", "MGENI")}
                 </Link>
                 <Link
-                  href="/#contact"
+                  href="/contact"
                   className="font-acme block text-center text-brand-primary hover:text-brand-dark px-4 py-3 text-sm uppercase tracking-wide transition-all duration-300"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  CONTACT US
+                  {tr("CONTACT US", "WASILIANA NASI")}
                 </Link>
                 <Link
                   href="/donate"
                   className="font-acme block text-center bg-brand-primary hover:bg-brand-accent text-white py-3 px-6 rounded-full shadow-md text-sm uppercase tracking-wide transition-all duration-300 hover:scale-105 z-20"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  DONATE
+                  {tr("DONATE", "CHANGIA")}
                 </Link>
               </div>
               </div>
