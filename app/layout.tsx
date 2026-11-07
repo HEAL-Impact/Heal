@@ -4,6 +4,7 @@ import { Inter, Acme } from 'next/font/google';
 import DailyClientProvider from '@/components/DailyClientProvider';
 import { FloatingBoltLogo } from '@/components/FloatingBoltLogo';
 import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
+import QuickExit from '@/components/safety/QuickExit';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -58,11 +59,12 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icon-192x192.png" />
         <link rel="manifest" href="/manifest.json" />
       </head>
-      <body className="font-sans antialiased bg-[#FEF5E3]">
+      <body className="font-sans antialiased bg-[#ECE5DA]">
         <DailyClientProvider>
           <div id="root">
             <ServiceWorkerRegistration />
             {children}
+            <QuickExit />
             {/* <FloatingBoltLogo /> */}
           </div>
         </DailyClientProvider>
