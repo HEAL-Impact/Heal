@@ -36,7 +36,7 @@ func NewCaseCode() (string, error) {
 	return fmt.Sprintf("HEAL-%s-%s", b[:3], b[3:]), nil
 }
 
-// Statuses a report moves through; the survivor sees these against her case code.
+// Statuses a report moves through; the survivor sees these against their case code.
 var Statuses = []string{"received", "contacted", "seen", "closed"}
 
 // Cipher encrypts report contents at rest with AES-256-GCM.

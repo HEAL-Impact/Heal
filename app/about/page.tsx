@@ -440,8 +440,8 @@ export default function AboutPage() {
             <h2 className="text-3xl md:text-4xl font-normal text-[#2C4A4E] font-acme">{tr("Meet Our Team", "Kutana na Timu Yetu")}</h2>
             <p className="mt-3 text-gray-600">
               {tr(
-                "A team of survivors’ allies, technologists, community mobilisers and health data specialists, working so every woman and girl can find safe, immediate support.",
-                "Timu ya wanaowaunga mkono wahusika, wataalamu wa teknolojia, wahamasishaji wa jamii na wataalamu wa takwimu za afya, tukifanya kazi ili kila mwanamke na msichana apate msaada salama na wa haraka."
+                "A team of survivors’ allies, technologists, community mobilisers and health data specialists, working so every survivor can find safe, immediate support.",
+                "Timu ya wanaowaunga mkono wahusika, wataalamu wa teknolojia, wahamasishaji wa jamii na wataalamu wa takwimu za afya, tukifanya kazi ili kila mhusika apate msaada salama na wa haraka."
               )}
             </p>
           </div>

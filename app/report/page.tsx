@@ -10,7 +10,7 @@ import { saveCaseCode } from '@/lib/myspace/store';
 import { requestApproxLocation } from '@/lib/screening/location';
 import { useLang } from '@/lib/i18n';
 
-// Values are stored in English so services read consistent reports; labels follow her language.
+// Values are stored in English so services read consistent reports; labels follow the survivor's language.
 type Opt = { value: string; sw: string };
 const INCIDENT_TYPES: Opt[] = [
   { value: 'Physical violence', sw: 'Ukatili wa kimwili' },
@@ -99,7 +99,7 @@ function GuidedReport() {
       const loc = await requestApproxLocation();
       set({ latitude: loc.latitude, longitude: loc.longitude, county: loc.county ?? draft.county });
     } catch {
-      /* she can type a place instead */
+      /* the survivor can type a place instead */
     } finally {
       setLocating(false);
     }

@@ -82,13 +82,13 @@ async function post(caseCode: string, draft: ReportDraft): Promise<boolean> {
 
 /**
  * Sends a report. If it can't be sent now it waits on this device and is
- * retried later; either way the survivor gets her case code straight away.
+ * retried later; either way the survivor gets their case code straight away.
  */
 export async function submitReport(draft: ReportDraft): Promise<{ caseCode: string; sent: boolean }> {
   const caseCode = newCaseCode();
   const sent = await post(caseCode, draft);
   if (!sent) writeOutbox({ ...readOutbox(), [caseCode]: draft });
-  // Nothing is kept in My Space unless she taps "Keep this code".
+  // Nothing is kept in My Space unless the survivor taps "Keep this code".
   return { caseCode, sent };
 }
 

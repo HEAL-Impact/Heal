@@ -59,7 +59,7 @@ var needResponder = map[string]string{
 
 func IsNeed(n string) bool { _, ok := needResponder[n]; return ok }
 
-// recommended responders for each pathway, before her needs and consent.
+// recommended responders for each pathway, before the survivor's needs and consent.
 var recommended = map[string][]string{
 	Emergency:     {Rescue, Police, CHP},
 	FacilityToday: {Facility, CHP},
@@ -68,8 +68,8 @@ var recommended = map[string][]string{
 	Report:        {},
 }
 
-// Responders returns the responder types to alert: those the pathway and her
-// needs call for, limited to the ones she consented to. The coordinator is not
+// Responders returns the responder types to alert: those the pathway and the
+// survivor's needs call for, limited to the ones they consented to. The coordinator is not
 // in the list; it watches every case and is alerted separately.
 func Responders(pathway string, needs, consent []string) []string {
 	want := map[string]bool{}
@@ -87,7 +87,7 @@ func Responders(pathway string, needs, consent []string) []string {
 	}
 	var out []string
 	for _, t := range ResponderTypes {
-		// A report goes to whoever she chose, even when the pathway recommends nobody.
+		// A report goes to whoever the survivor chose, even when the pathway recommends nobody.
 		if t != Coordinator && agreed[t] && (want[t] || pathway == Report) {
 			out = append(out, t)
 		}

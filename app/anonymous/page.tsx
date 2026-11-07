@@ -322,7 +322,7 @@ export default function AnonymousPage() {
             <Shield className="h-4 w-4 text-purple-500 flex-shrink-0 mt-0.5" />
             <p>
               {tr(
-                'Nia is an AI, not a person or a doctor. She listens and helps you find options; she can make mistakes. Nothing you type is linked to your name.',
+                'Nia is an AI, not a person or a doctor. Nia listens and helps you find options, but can make mistakes. Nothing you type is linked to your name.',
                 'Nia ni AI, si mtu wala daktari. Anasikiliza na kukusaidia kupata njia; anaweza kukosea. Unachoandika hakihusishwi na jina lako.'
               )}
             </p>

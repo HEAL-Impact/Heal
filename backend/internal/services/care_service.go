@@ -56,7 +56,7 @@ type ContactDetails struct {
 	SafeTimes string `json:"safeTimes"`
 	Silent    bool   `json:"silent"` // SMS only, never call back
 	CodeWord  string `json:"codeWord"`
-	Name      string `json:"name"` // only if she chose to give it
+	Name      string `json:"name"` // only if they chose to give it
 }
 
 type CreateCaseRequest struct {
@@ -292,7 +292,7 @@ func (s *CareService) route(c *caseRow) {
 	if c.Urgent || len(types) == 0 {
 		why := "Urgent case opened"
 		if len(types) == 0 {
-			why = "Case opened with no responder she agreed to: please follow up"
+			why = "Case opened with no responder the survivor agreed to: please follow up"
 		}
 		s.notifyCoordinator(c, why)
 	}
@@ -376,7 +376,7 @@ func (s *CareService) send(caseID string, p PartnerRecord, text string) {
 	}
 }
 
-// alertText is what a stakeholder group sees: never her name, story or contact.
+// alertText is what a stakeholder group sees: never the survivor's name, story or contact.
 func (s *CareService) alertText(c *caseRow, head, responder string, deadline time.Time) string {
 	needs := ""
 	if len(c.Needs) > 0 {
@@ -430,7 +430,7 @@ type CaseStatus struct {
 	CreatedAt time.Time         `json:"createdAt"`
 }
 
-// status is what she sees with her case code: progress only, never details.
+// status is what the survivor sees with their case code: progress only, never details.
 func (s *CareService) status(c *caseRow) (*CaseStatus, error) {
 	st := &CaseStatus{CaseCode: c.Code, Status: c.Status, Pathway: c.Pathway, CreatedAt: c.CreatedAt, Timeline: map[string]string{"received": c.CreatedAt.Format(time.RFC3339)}}
 	if c.FeedbackHelped.Valid {
@@ -460,14 +460,14 @@ func (s *CareService) StatusByCode(code string) (*CaseStatus, error) {
 	return s.status(c)
 }
 
-// Withdraw stops a case at her request; every alerted partner is told to stand down.
+// Withdraw stops a case at the survivor's request; every alerted partner is told to stand down.
 func (s *CareService) Withdraw(code string) (*CaseStatus, error) {
 	c, err := s.caseByCode(code)
 	if err != nil {
 		return nil, err
 	}
 	if care.IsOpen(c.Status) {
-		s.closeAlerts(c, "withdrawn", fmt.Sprintf("HEAL-Impact · %s\nThe survivor has stopped this case. Please take no further action and do not contact her.", c.Code))
+		s.closeAlerts(c, "withdrawn", fmt.Sprintf("HEAL-Impact · %s\nThe survivor has stopped this case. Please take no further action and do not contact them.", c.Code))
 		s.db.Exec(`UPDATE cases SET status = $2, closed_at = $3, updated_at = $3 WHERE id = $1`, c.ID, care.StatusDeclined, s.now())
 		c.Status = care.StatusDeclined
 		s.event(c.ID, "survivor", care.StatusDeclined, "")
@@ -483,7 +483,7 @@ func (s *CareService) Feedback(code string, helped bool) error {
 	s.db.Exec(`UPDATE cases SET feedback_helped = $2 WHERE id = $1`, c.ID, helped)
 	s.event(c.ID, "survivor", "feedback", map[bool]string{true: "got the help needed", false: "did not get the help needed"}[helped])
 	if !helped {
-		s.notifyCoordinator(c, "The survivor says she did NOT get the help she needed. Please review this case.")
+		s.notifyCoordinator(c, "The survivor says they did NOT get the help they needed. Please review this case.")
 	}
 	return nil
 }
@@ -675,7 +675,7 @@ func (s *CareService) canSee(a *PartnerAccount, caseID string) bool {
 	return n > 0
 }
 
-// GetCase returns one case. Contact details and her summary are unsealed only
+// GetCase returns one case. Contact details and the summary are unsealed only
 // for the coordinator desk or a partner that has accepted the case. Every
 // view is logged.
 func (s *CareService) GetCase(a *PartnerAccount, id string) (*CaseView, error) {
@@ -746,7 +746,7 @@ func (s *CareService) actorName(actor string) string {
 
 type CaseAction struct {
 	Action string `json:"action" binding:"required"` // accept, pass, contacted, attempt_failed, seen, follow_up, close, note, refer
-	// refer: the partner chosen from the directory, the service, and whether she agreed.
+	// refer: the partner chosen from the directory, the service, and whether the survivor agreed.
 	PartnerID        string `json:"partnerId"`
 	Service          string `json:"service"`
 	ConsentConfirmed bool   `json:"consentConfirmed"`
@@ -842,7 +842,7 @@ func (s *CareService) act(actor, partnerID string, coordinator bool, caseID stri
 		}
 		s.event(caseID, actor, care.StatusSeen, strings.TrimSpace(responderLabel(responder)+" "+note))
 		s.setStatus(c, care.StatusSeen)
-		// Hand aftercare back to the CHP (Workflow 8), if she agreed to one.
+		// Hand aftercare back to the CHP (Workflow 8), if the survivor agreed to one.
 		if responder != care.CHP && contains(c.Consent, care.CHP) {
 			var openCHP int
 			s.db.QueryRow(`SELECT COUNT(*) FROM case_alerts WHERE case_id = $1 AND responder_type = $2 AND status IN ('alerted','accepted')`, caseID, care.CHP).Scan(&openCHP)
@@ -1020,7 +1020,7 @@ func (s *CareService) RunEscalations() {
 		s.db.Exec(`UPDATE cases SET follow_up_reminded_at = $2 WHERE id = $1`, id, now)
 		var partnerID string
 		s.db.QueryRow(`SELECT partner_id FROM case_alerts WHERE case_id = $1 AND status IN ('accepted','done') ORDER BY (responder_type = 'chp') DESC, created_at DESC LIMIT 1`, id).Scan(&partnerID)
-		text := fmt.Sprintf("HEAL-Impact · FOLLOW-UP DUE · %s\nPlease check in with her today through her safe channel, re-screen if due, and update the case.\nOpen: %s/care/case?id=%s", c.Code, s.appURL, c.ID)
+		text := fmt.Sprintf("HEAL-Impact · FOLLOW-UP DUE · %s\nPlease check in with the survivor today through their safe channel, re-screen if due, and update the case.\nOpen: %s/care/case?id=%s", c.Code, s.appURL, c.ID)
 		if p, ok := byID[partnerID]; ok {
 			s.send(id, p, text)
 		} else {

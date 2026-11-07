@@ -65,11 +65,11 @@ export const MODULES: Module[] = [
     ],
     quiz: [
       {
-        q: { en: 'A woman is crying after a fight at home. What do you do first?', sw: 'Mwanamke analia baada ya ugomvi nyumbani. Unafanya nini kwanza?' },
+        q: { en: 'Someone is crying after a fight at home. What do you do first?', sw: 'Mtu analia baada ya ugomvi nyumbani. Unafanya nini kwanza?' },
         options: [
-          { en: 'Ask her to explain exactly what happened', sw: 'Mwombe aeleze hasa kilichotokea' },
-          { en: 'Check that she is safe right now', sw: 'Hakikisha yuko salama sasa hivi' },
-          { en: 'Call her husband to calm things down', sw: 'Mpigie mume wake simu ili kutuliza mambo' },
+          { en: 'Ask them to explain exactly what happened', sw: 'Mwombe aeleze hasa kilichotokea' },
+          { en: 'Check that they are safe right now', sw: 'Hakikisha yuko salama sasa hivi' },
+          { en: 'Call their partner to calm things down', sw: 'Mpigie mwenzi wake simu ili kutuliza mambo' },
         ],
         answer: 1,
         why: {
@@ -78,7 +78,7 @@ export const MODULES: Module[] = [
         },
       },
       {
-        q: { en: 'She doesn’t want to talk about it. You should…', sw: 'Hataki kuzungumza kuhusu hilo. Unapaswa…' },
+        q: { en: 'They don’t want to talk about it. You should…', sw: 'Hataki kuzungumza kuhusu hilo. Unapaswa…' },
         options: [
           { en: 'Gently insist so you can help', sw: 'Msisitize kwa upole ili uweze kusaidia' },
           { en: 'Respect that and offer practical help and information', sw: 'Heshimu hilo na umpe msaada wa vitendo na taarifa' },
@@ -132,17 +132,17 @@ export const MODULES: Module[] = [
     quiz: [
       {
         q: {
-          en: 'A survivor tells you she was raped two days ago. The most urgent step is…',
+          en: 'A survivor tells you they were raped two days ago. The most urgent step is…',
           sw: 'Mnusurika anakueleza kwamba alibakwa siku mbili zilizopita. Hatua ya dharura zaidi ni…',
         },
         options: [
-          { en: 'Wait until she is ready to go to the police', sw: 'Subiri hadi atakapokuwa tayari kwenda polisi' },
-          { en: 'Explain PEP and help her reach a facility today', sw: 'Eleza kuhusu PEP na umsaidie kufika kituo cha afya leo' },
-          { en: 'Advise her to rest for a week', sw: 'Mshauri apumzike kwa wiki moja' },
+          { en: 'Wait until they are ready to go to the police', sw: 'Subiri hadi atakapokuwa tayari kwenda polisi' },
+          { en: 'Explain PEP and help them reach a facility today', sw: 'Eleza kuhusu PEP na umsaidie kufika kituo cha afya leo' },
+          { en: 'Advise them to rest for a week', sw: 'Mshauri apumzike kwa wiki moja' },
         ],
         answer: 1,
         why: {
-          en: 'PEP must start within 72 hours. She still decides about reporting to the police.',
+          en: 'PEP must start within 72 hours. The survivor still decides about reporting to the police.',
           sw: 'PEP lazima ianze ndani ya saa 72. Yeye bado ndiye anaamua kuhusu kuripoti polisi.',
         },
       },
@@ -201,12 +201,12 @@ export const MODULES: Module[] = [
     quiz: [
       {
         q: {
-          en: 'A mother scores 8 on the EPDS but says she has sometimes thought of harming herself. You should…',
-          sw: 'Mama amepata alama 8 kwenye EPDS lakini anasema wakati mwingine amefikiria kujidhuru. Unapaswa…',
+          en: 'A new parent scores 8 on the EPDS but says they have sometimes thought of harming themselves. You should…',
+          sw: 'Mzazi mpya amepata alama 8 kwenye EPDS lakini anasema wakati mwingine amefikiria kujidhuru. Unapaswa…',
         },
         options: [
-          { en: 'Reassure her the score is low', sw: 'Mhakikishie kwamba alama ni ndogo' },
-          { en: 'Act the same day and connect her to urgent support', sw: 'Chukua hatua siku hiyo hiyo na umuunganishe na msaada wa haraka' },
+          { en: 'Reassure them the score is low', sw: 'Mhakikishie kwamba alama ni ndogo' },
+          { en: 'Act the same day and connect them to urgent support', sw: 'Chukua hatua siku hiyo hiyo na umuunganishe na msaada wa haraka' },
           { en: 'Re-screen next month', sw: 'Mkague tena mwezi ujao' },
         ],
         answer: 1,

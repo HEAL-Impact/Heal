@@ -105,7 +105,7 @@ export default function ServicesPage() {
           <div className="mx-auto max-w-2xl text-center">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#2C4A4E]">{tr("Reach", "Ufikiaji")}</p>
             <h2 id="channels-heading" className="mt-2 text-3xl md:text-4xl font-normal text-[#2C4A4E] font-acme">
-              {tr("On any phone, in her language", "Kwenye simu yoyote, kwa lugha yake")}
+              {tr("On any phone, in your language", "Kwenye simu yoyote, kwa lugha yako")}
             </h2>
           </div>
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">

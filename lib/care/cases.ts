@@ -76,7 +76,7 @@ async function post(caseCode: string, req: CaseRequest, token?: string): Promise
   }
 }
 
-/** Opens a case. She always gets her case code, even offline. */
+/** Opens a case. The survivor always gets their case code, even offline. */
 export async function openCase(req: CaseRequest, token?: string): Promise<{ caseCode: string; sent: boolean }> {
   const caseCode = newCaseCode();
   const sent = await post(caseCode, req, token);

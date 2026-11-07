@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import { useLang } from '@/lib/i18n';
 
 // A neutral health-tips page shown when someone is nearby. Tapping the title
-// three times returns to where she was.
+// three times returns to where they were.
 export default function Decoy({ onReturn }: { onReturn: () => void }) {
   const { lang } = useLang();
   const taps = useRef<number[]>([]);

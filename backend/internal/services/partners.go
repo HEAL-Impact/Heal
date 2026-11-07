@@ -419,8 +419,8 @@ func roundKM(v *float64) *float64 {
 // ---------- referral ----------
 
 // refer sends the case to a partner chosen from the directory (Workflow 8:
-// the CHP links her to the nearest relevant service). The survivor must agree
-// to every service she is referred to; a new one is recorded when confirmed.
+// the CHP links the survivor to the nearest relevant service). The survivor must
+// agree to every service they are referred to; a new one is recorded when confirmed.
 func (s *CareService) refer(c *caseRow, actor, fromPartnerID string, in CaseAction) error {
 	target, err := s.getPartner(in.PartnerID)
 	if err != nil || target.Status != PartnerApproved || !target.Active || target.Type == care.Coordinator {
@@ -443,7 +443,7 @@ func (s *CareService) refer(c *caseRow, actor, fromPartnerID string, in CaseActi
 	}
 	if !contains(c.Consent, service) {
 		if !in.ConsentConfirmed {
-			return fmt.Errorf("%w: she has not agreed to %s yet. Ask her first, then tick that she agreed", ErrInvalidCase, responderLabel(service))
+			return fmt.Errorf("%w: the survivor has not agreed to %s yet. Ask them first, then tick that they agreed", ErrInvalidCase, responderLabel(service))
 		}
 		c.Consent = append(c.Consent, service)
 		b, _ := json.Marshal(c.Consent)

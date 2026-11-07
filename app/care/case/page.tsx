@@ -24,7 +24,7 @@ const EVENT: Record<string, L> = {
   created: { en: 'Case opened', sw: 'Kesi imefunguliwa' },
   alerted: { en: 'Partner alerted', sw: 'Mshirika amearifiwa' },
   referred: { en: 'Referred to a partner', sw: 'Amepewa rufaa kwa mshirika' },
-  consent_added: { en: 'She agreed to a new service', sw: 'Amekubali huduma mpya' },
+  consent_added: { en: 'Survivor agreed to a new service', sw: 'Amekubali huduma mpya' },
   reminded: { en: 'Reminder sent', sw: 'Ukumbusho umetumwa' },
   expired: { en: 'Not accepted in time', sw: 'Haikukubaliwa kwa wakati' },
   accepted: { en: 'Accepted', sw: 'Imekubaliwa' },
@@ -113,10 +113,10 @@ function CaseDetail() {
             <div><dt className="text-gray-500">{tr('Screening', 'Ukaguzi')}</dt><dd className="text-[#2C4A4E]">{c.screening.instrument.toUpperCase()} {c.screening.score} · {c.screening.band}</dd></div>
           )}
           <div><dt className="text-gray-500">{tr('Needs', 'Mahitaji')}</dt><dd className="text-[#2C4A4E]">{c.needs.length ? c.needs.map((n) => tr(NEEDS.find((x) => x.id === n)?.label ?? { en: n, sw: n })).join(', ') : '–'}</dd></div>
-          <div><dt className="text-gray-500">{tr('She agreed to', 'Amekubali')}</dt><dd className="text-[#2C4A4E]">{c.consent.map((r) => tr(RESPONDER[r].label)).join(', ') || '–'}</dd></div>
+          <div><dt className="text-gray-500">{tr('Survivor agreed to', 'Amekubali')}</dt><dd className="text-[#2C4A4E]">{c.consent.map((r) => tr(RESPONDER[r].label)).join(', ') || '–'}</dd></div>
           {c.followUpAt && <div><dt className="text-gray-500">{tr('Follow-up', 'Ufuatiliaji')}</dt><dd className="text-[#2C4A4E]">{new Date(c.followUpAt).toLocaleDateString()}</dd></div>}
           {c.outcome && <div><dt className="text-gray-500">{tr('Outcome', 'Matokeo')}</dt><dd className="text-[#2C4A4E]">{c.outcome}</dd></div>}
-          {c.feedback !== null && <div><dt className="text-gray-500">{tr('Her feedback', 'Maoni yake')}</dt><dd className="text-[#2C4A4E]">{c.feedback ? tr('Got the help she needed', 'Alipata msaada aliohitaji') : tr('Did not get the help she needed', 'Hakupata msaada aliohitaji')}</dd></div>}
+          {c.feedback !== null && <div><dt className="text-gray-500">{tr('Survivor’s feedback', 'Maoni yake')}</dt><dd className="text-[#2C4A4E]">{c.feedback ? tr('Got the help they needed', 'Alipata msaada aliohitaji') : tr('Did not get the help they needed', 'Hakupata msaada aliohitaji')}</dd></div>}
         </dl>
       </div>
 
@@ -151,7 +151,7 @@ function CaseDetail() {
       {/* Contact: unlocked only after accepting */}
       <div className="rounded-2xl bg-white p-5 shadow-sm">
         <h2 className="flex items-center gap-2 font-acme text-xl text-[#2C4A4E]">
-          <Phone className="h-5 w-5 text-[#2C4A4E]" /> {tr('How to reach her safely', 'Jinsi ya kumfikia kwa usalama')}
+          <Phone className="h-5 w-5 text-[#2C4A4E]" /> {tr('How to reach the survivor safely', 'Jinsi ya kumfikia kwa usalama')}
         </h2>
         {!accepted ? (
           <p className="mt-2 flex items-center gap-2 text-sm text-gray-600">
@@ -164,7 +164,7 @@ function CaseDetail() {
                 <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0" />
                 {c.contact.method === 'sms'
                   ? tr('SMS ONLY. Never call. Send a neutral message.', 'SMS TU. Usipige simu kamwe. Tuma ujumbe usio na dalili.')
-                  : tr('Text first and wait for her reply before calling.', 'Tuma ujumbe kwanza na usubiri ajibu kabla ya kupiga simu.')}
+                  : tr('Text first and wait for a reply before calling.', 'Tuma ujumbe kwanza na usubiri ajibu kabla ya kupiga simu.')}
               </p>
             )}
             <p><span className="text-gray-500">{tr('Method', 'Njia')}:</span> <span className="font-semibold text-[#2C4A4E]">{c.contact.method}</span></p>
@@ -175,11 +175,11 @@ function CaseDetail() {
             <p className="text-xs text-gray-500">{tr('If someone else answers, say it is a wrong number. Never mention HEAL, GBV or the case.', 'Mtu mwingine akijibu, sema ni namba isiyo sahihi. Usitaje HEAL, ukatili au kesi kamwe.')}</p>
           </div>
         ) : (
-          <p className="mt-2 text-sm text-gray-600">{tr('She chose not to be contacted. Act only if she comes to you with her case code.', 'Alichagua kutowasiliana. Chukua hatua tu akikuja kwako na namba yake ya kesi.')}</p>
+          <p className="mt-2 text-sm text-gray-600">{tr('The survivor chose not to be contacted. Act only if they come to you with their case code.', 'Alichagua kutowasiliana. Chukua hatua tu akikuja kwako na namba yake ya kesi.')}</p>
         )}
         {accepted && c.summary && (
           <div className="mt-4 rounded-xl bg-[#ECE5DA] p-3 text-sm text-[#2C4A4E]">
-            <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">{tr('What she shared', 'Alichoshiriki')}</p>
+            <p className="text-xs font-semibold uppercase tracking-wider text-gray-500">{tr('What the survivor shared', 'Alichoshiriki')}</p>
             <p className="mt-1 whitespace-pre-wrap">{c.summary}</p>
           </div>
         )}
@@ -191,13 +191,13 @@ function CaseDetail() {
           <h2 className="font-acme text-xl text-[#2C4A4E]">{tr('Record what happened', 'Rekodi kilichotokea')}</h2>
           <div className="mt-3 flex flex-wrap gap-2">
             <button type="button" disabled={!!busy} onClick={() => act('contacted', { note })} className={`${btn} bg-[#2C4A4E] text-white`}>
-              <Check className="mr-1 inline h-4 w-4" />{tr('Contacted her safely', 'Nimewasiliana naye kwa usalama')}
+              <Check className="mr-1 inline h-4 w-4" />{tr('Contacted them safely', 'Nimewasiliana naye kwa usalama')}
             </button>
             <button type="button" disabled={!!busy} onClick={() => act('attempt_failed', { note })} className={`${btn} border border-gray-300 text-[#2C4A4E]`}>
-              {tr(`Couldn't reach her (${c.failedAttempts}/3)`, `Sikumpata (${c.failedAttempts}/3)`)}
+              {tr(`Couldn't reach them (${c.failedAttempts}/3)`, `Sikumpata (${c.failedAttempts}/3)`)}
             </button>
             <button type="button" disabled={!!busy} onClick={() => act('seen', { note })} className={`${btn} border border-gray-300 text-[#2C4A4E]`}>
-              {tr('She was seen', 'Ameonwa')}
+              {tr('Survivor was seen', 'Ameonwa')}
             </button>
             <button type="button" onClick={() => setPanel(panel === 'follow_up' ? null : 'follow_up')} className={`${btn} border border-gray-300 text-[#2C4A4E]`}>
               {tr('Set follow-up', 'Panga ufuatiliaji')}
@@ -235,7 +235,7 @@ function CaseDetail() {
         </div>
       )}
 
-      {/* Refer her to the nearest relevant partner (tracked as an alert) */}
+      {/* Refer the survivor to the nearest relevant partner (tracked as an alert) */}
       {open && accepted && <ReferPanel c={c} onUpdated={setC} />}
 
       {/* Who was alerted */}

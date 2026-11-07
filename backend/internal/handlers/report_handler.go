@@ -44,7 +44,7 @@ func (h *ReportHandler) CreateReport(c *gin.Context) {
 	c.JSON(code, status)
 }
 
-// GetReportStatus lets a survivor check progress with her case code.
+// GetReportStatus lets a survivor check progress with their case code.
 func (h *ReportHandler) GetReportStatus(c *gin.Context) {
 	status, err := h.reportService.GetStatus(c.Param("code"))
 	if errors.Is(err, services.ErrReportNotFound) {

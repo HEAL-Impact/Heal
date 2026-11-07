@@ -20,7 +20,7 @@ export default function SafeNowPage() {
     setTrusted(loadMySpace().safetyPlan.safePeople.filter((p) => p.phone));
   }, []);
 
-  // Location is only requested when she taps, and only an approximate (~1 km) position is used.
+  // Location is only requested when the survivor taps, and only an approximate (~1 km) position is used.
   const getLocation = async () => {
     setLocating(true);
     setLocError(null);

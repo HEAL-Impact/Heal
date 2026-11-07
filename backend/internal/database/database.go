@@ -209,7 +209,7 @@ func createTables(db *sql.DB) error {
 		)`,
 
 		// One case per survivor request for care. Contact details and any summary
-		// she approved are AES-GCM sealed and bound to the case code.
+		// the survivor approved are AES-GCM sealed and bound to the case code.
 		`CREATE TABLE IF NOT EXISTS cases (
 			id TEXT PRIMARY KEY,
 			case_code TEXT UNIQUE NOT NULL,
@@ -217,7 +217,7 @@ func createTables(db *sql.DB) error {
 			pathway TEXT NOT NULL, -- 'emergency', 'facility_today', 'refer', 'chp_follow_up', 'report'
 			urgent BOOLEAN NOT NULL DEFAULT FALSE,
 			needs JSONB NOT NULL DEFAULT '[]',
-			consent JSONB NOT NULL DEFAULT '[]', -- responder types she agreed to
+			consent JSONB NOT NULL DEFAULT '[]', -- responder types the survivor agreed to
 			county TEXT NOT NULL DEFAULT '',
 			ward TEXT NOT NULL DEFAULT '',
 			latitude DOUBLE PRECISION,

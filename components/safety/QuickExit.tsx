@@ -9,8 +9,8 @@ const EXIT_URL = 'https://www.google.com/search?q=weather+kisumu';
 
 /**
  * Leaves HEAL instantly. Clears this tab's session data and replaces the page,
- * so the browser's Back button can't bring someone back to it. Things she chose
- * to keep in My Space stay (she can delete them there).
+ * so the browser's Back button can't bring someone back to it. Things the survivor
+ * chose to keep in My Space stay (they can delete them there).
  */
 export function quickExit() {
   try {

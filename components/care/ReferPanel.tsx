@@ -19,8 +19,8 @@ const ALERT_LABEL: Record<string, { en: string; sw: string }> = {
 };
 
 /**
- * "Partners near her": the partners nearest the survivor for a service, so the
- * CHP (or the HEAL desk) can refer her to a specific one. Every referral becomes
+ * "Partners near the survivor": the nearest partners for a service, so the
+ * CHP (or the HEAL desk) can refer the survivor to a specific one. Every referral becomes
  * a tracked alert on the case, with a deadline and a WhatsApp message.
  */
 export default function ReferPanel({ c, onUpdated }: { c: CaseView; onUpdated: (c: CaseView) => void }) {
@@ -72,12 +72,12 @@ export default function ReferPanel({ c, onUpdated }: { c: CaseView; onUpdated: (
   return (
     <div className="rounded-2xl bg-white p-5 shadow-sm transition-shadow hover:shadow-lg">
       <h2 className="flex items-center gap-2 font-acme text-xl text-[#2C4A4E]">
-        <Users className="h-5 w-5" /> {tr('Partners near her', 'Washirika walio karibu naye')}
+        <Users className="h-5 w-5" /> {tr('Partners near the survivor', 'Washirika walio karibu naye')}
       </h2>
       <p className="mt-1 text-sm text-gray-600">
         {c.county
-          ? tr(`Nearest to ${[c.ward, c.county].filter(Boolean).join(', ')} first. Refer her to the one that fits; they get a WhatsApp alert and the referral is tracked below.`, `Walio karibu zaidi na ${[c.ward, c.county].filter(Boolean).join(', ')} kwanza. Mpe rufaa kwa anayefaa; wanapata arifa ya WhatsApp na rufaa inafuatiliwa hapa chini.`)
-          : tr('She did not share her area, so default routes are shown first. Ask her where she can safely go.', 'Hakushiriki eneo lake, kwa hivyo njia za kawaida zinaonyeshwa kwanza. Muulize anaweza kwenda wapi kwa usalama.')}
+          ? tr(`Nearest to ${[c.ward, c.county].filter(Boolean).join(', ')} first. Refer the survivor to the one that fits; they get a WhatsApp alert and the referral is tracked below.`, `Walio karibu zaidi na ${[c.ward, c.county].filter(Boolean).join(', ')} kwanza. Mpe rufaa kwa anayefaa; wanapata arifa ya WhatsApp na rufaa inafuatiliwa hapa chini.`)
+          : tr('The survivor did not share their area, so default routes are shown first. Ask where they can safely go.', 'Hakushiriki eneo lake, kwa hivyo njia za kawaida zinaonyeshwa kwanza. Muulize anaweza kwenda wapi kwa usalama.')}
       </p>
 
       <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label={tr('Service', 'Huduma')}>
@@ -99,14 +99,14 @@ export default function ReferPanel({ c, onUpdated }: { c: CaseView; onUpdated: (
           </button>
         ))}
       </div>
-      <p className="mt-1 text-xs text-gray-500">{tr('✓ = she has already agreed to this service.', '✓ = tayari amekubali huduma hii.')}</p>
+      <p className="mt-1 text-xs text-gray-500">{tr('✓ = the survivor has already agreed to this service.', '✓ = tayari amekubali huduma hii.')}</p>
 
       {sent && <p className="mt-3 rounded-xl bg-[#2C4A4E]/10 p-3 text-sm text-[#2C4A4E]">{tr(`Referred to ${sent}. They have been alerted on WhatsApp.`, `Amepewa rufaa kwa ${sent}. Wamearifiwa kwa WhatsApp.`)}</p>}
       {error && <p className="mt-3 rounded-xl bg-[#F9EBEB] p-3 text-sm text-[#B34D4D]">{error}</p>}
       {!list && !error && <Loader2 className="mx-auto mt-6 h-5 w-5 animate-spin text-[#2C4A4E]" />}
       {list && near.length === 0 && !showAll && (
         <p className="mt-4 text-sm text-gray-600">
-          {tr(`No ${tr(RESPONDER[service].label)} is registered near her yet.`, `Hakuna ${tr(RESPONDER[service].label)} aliyesajiliwa karibu naye bado.`)}{' '}
+          {tr(`No ${tr(RESPONDER[service].label)} is registered near the survivor yet.`, `Hakuna ${tr(RESPONDER[service].label)} aliyesajiliwa karibu naye bado.`)}{' '}
           {list.length > 0 && tr('You can still choose one from another area.', 'Bado unaweza kuchagua kutoka eneo jingine.')}
         </p>
       )}
@@ -146,13 +146,13 @@ export default function ReferPanel({ c, onUpdated }: { c: CaseView; onUpdated: (
                     onChange={(e) => setNote(e.target.value)}
                     rows={2}
                     maxLength={1000}
-                    placeholder={tr('Note for them (no names or story details; they see her contact only after accepting)', 'Dokezo kwao (bila majina wala maelezo ya tukio; wanaona mawasiliano yake tu baada ya kukubali)')}
+                    placeholder={tr('Note for them (no names or story details; they see contact details only after accepting)', 'Dokezo kwao (bila majina wala maelezo ya tukio; wanaona mawasiliano yake tu baada ya kukubali)')}
                     className={fieldCls}
                   />
                   {needsConsent && (
                     <label className="flex cursor-pointer items-start gap-2 text-sm text-[#2C4A4E]">
                       <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} className="mt-0.5 h-4 w-4 accent-[#2C4A4E]" />
-                      {tr(`I asked her and she agreed to be referred to ${tr(RESPONDER[service].label)}.`, `Nimemuuliza na amekubali kupewa rufaa kwa ${tr(RESPONDER[service].label)}.`)}
+                      {tr(`I asked the survivor and they agreed to be referred to ${tr(RESPONDER[service].label)}.`, `Nimemuuliza na amekubali kupewa rufaa kwa ${tr(RESPONDER[service].label)}.`)}
                     </label>
                   )}
                   <button

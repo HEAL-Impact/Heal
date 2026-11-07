@@ -11,8 +11,8 @@ import { emailError } from '@/lib/auth-validation';
 import { useLang } from '@/lib/i18n';
 
 const CONDUCT: { en: string; sw: string }[] = [
-  { en: 'Keep every survivor’s details confidential, and only use them for the help she agreed to.', sw: 'Kuweka siri taarifa za kila mhusika, na kuzitumia tu kwa msaada aliokubali.' },
-  { en: 'Contact her only through the safe channel she chose (for example SMS only, never call).', sw: 'Kuwasiliana naye tu kupitia njia salama aliyochagua (kwa mfano SMS tu, usipige simu).' },
+  { en: 'Keep every survivor’s details confidential, and only use them for the help they agreed to.', sw: 'Kuweka siri taarifa za kila mhusika, na kuzitumia tu kwa msaada aliokubali.' },
+  { en: 'Contact survivors only through the safe channel they chose (for example SMS only, never call).', sw: 'Kuwasiliana naye tu kupitia njia salama aliyochagua (kwa mfano SMS tu, usipige simu).' },
   { en: 'Accept or pass on each alert quickly, and record what happened so nobody is lost.', sw: 'Kukubali au kupitisha kila arifa haraka, na kurekodi kilichotokea ili hakuna anayepotea.' },
   { en: 'Never charge survivors, pressure them, or share anything outside HEAL.', sw: 'Kutowatoza wahusika pesa, kutowashinikiza, wala kushiriki chochote nje ya HEAL.' },
 ];

@@ -58,7 +58,7 @@ function Connect() {
       setCoords({ latitude: loc.latitude, longitude: loc.longitude });
       if (loc.county) setCounty(loc.county);
     } catch {
-      /* she can still pick a county or skip */
+      /* the survivor can still pick a county or skip */
     } finally {
       setLocating(false);
     }

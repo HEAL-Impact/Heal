@@ -23,8 +23,8 @@ export const TEAM: TeamMember[] = [
     name: 'Asman Malika',
     role: { en: 'Co-Founder & Community Engagement Lead', sw: 'Mwanzilishi Mwenza na Kiongozi wa Ushirikishaji wa Jamii' },
     bio: {
-      en: 'Builds trust with communities, survivors and local leaders so that HEAL’s services reach the women and girls who need them most.',
-      sw: 'Anajenga uaminifu na jamii, wahusika na viongozi wa eneo ili huduma za HEAL ziwafikie wanawake na wasichana wanaozihitaji zaidi.',
+      en: 'Builds trust with communities, survivors and local leaders so that HEAL’s services reach the survivors who need them most.',
+      sw: 'Anajenga uaminifu na jamii, wahusika na viongozi wa eneo ili huduma za HEAL ziwafikie wahusika wanaozihitaji zaidi.',
     },
     photo: '/images/team/asman-malika.jpg',
   },

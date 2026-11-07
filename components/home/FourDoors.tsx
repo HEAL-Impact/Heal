@@ -23,7 +23,7 @@ export default function FourDoors() {
             {tr("One safety check, then four doors", "Ukaguzi mmoja wa usalama, kisha milango minne")}
           </h2>
           <p className="mt-3 text-gray-600">
-            {tr("We first ask if it’s safe to continue. If someone is nearby, HEAL becomes a page of health tips. Then she chooses what she needs, and can leave in one tap at any time.", "Kwanza tunauliza kama ni salama kuendelea. Kama kuna mtu karibu, HEAL inageuka kuwa ukurasa wa vidokezo vya afya. Kisha anachagua anachohitaji, na anaweza kuondoka kwa mguso mmoja wakati wowote.")}
+            {tr("We first ask if it’s safe to continue. If someone is nearby, HEAL becomes a page of health tips. Then you choose what you need, and you can leave in one tap at any time.", "Kwanza tunauliza kama ni salama kuendelea. Kama kuna mtu karibu, HEAL inageuka kuwa ukurasa wa vidokezo vya afya. Kisha unachagua unachohitaji, na unaweza kuondoka kwa mguso mmoja wakati wowote.")}
           </p>
         </div>
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

@@ -62,7 +62,7 @@ export const NEEDS: { id: string; label: L }[] = [
   { id: 'legal', label: { en: 'Legal advice', sw: 'Ushauri wa kisheria' } },
 ];
 
-/** Who each pathway offers to connect her with, in order. */
+/** Who each pathway offers to connect the survivor with, in order. */
 export const OFFER: Record<CasePathway, ResponderType[]> = {
   emergency: ['rescue_centre', 'police_desk', 'chp', 'facility'],
   facility_today: ['facility', 'chp', 'police_desk', 'counsellor'],

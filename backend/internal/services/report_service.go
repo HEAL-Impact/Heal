@@ -17,7 +17,7 @@ var (
 	ErrReportNotFound = errors.New("report not found")
 )
 
-// Recipients a survivor can choose to send her report to.
+// Recipients a survivor can choose to send their report to.
 var reportRecipients = map[string]bool{
 	"heal": true, "hotline_1195": true, "gbvrc": true, "fida": true, "police_gender_desk": true,
 }
