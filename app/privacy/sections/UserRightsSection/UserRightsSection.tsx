@@ -7,7 +7,7 @@ export const UserRightsSection = (): React.ReactElement => {
         Privacy Policy
       </h1>
 
-      <p className=" font-light text-[#403f3e] text-sm text-center tracking-[0] leading-6">
+      <p className=" font-light text-[#2C4A4E] text-sm text-center tracking-[0] leading-6">
         Protecting Your Data: Safeguarding Your Privacy in an Online World
       </p>
     </section>

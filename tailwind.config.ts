@@ -32,15 +32,15 @@ const config: Config = {
         foreground: 'hsl(var(--foreground))',
         // Brand colors
         brand: {
-          primary: '#044750',    // Dark teal
-          secondary: '#0C444B',  // Teal dark
-          teal: '#016A79',       // Medium teal
-          gray: '#81A9AD',       // Light teal gray
-          light: '#DBE2E4',      // Very light gray
+          primary: '#2C4A4E',    // HEAL teal (primary)
+          secondary: '#2C4A4E',  // HEAL teal
+          teal: '#2C4A4E',       // HEAL teal
+          gray: '#2C4A4E',       // HEAL teal
+          light: '#EAEDED',      // 10% HEAL teal tint
           dark: '#000000',       // Black
-          accent: '#275960',     // Accent teal
-          white: '#E8F4F7',      // Off-white
-          cream: '#FEF5E3',      // Light cream
+          accent: '#2C4A4E',     // HEAL teal
+          white: '#ECE5DA',      // HEAL cream
+          cream: '#ECE5DA',      // HEAL cream (background)
           offwhite: '#FFFFFF',   // Pure white
         },
         card: {

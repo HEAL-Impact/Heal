@@ -20,43 +20,44 @@
 @layer base {
   :root {
     /* Heal Theme Colors - Based on Auth Pages */
-    --heal-cream: #FAEFD9;
-    --heal-sage: #677E83;
-    --heal-dark-teal: #0B3C49;
-    --heal-medium-teal: #044750;
-    --heal-light-teal: #006C67;
+    --heal-cream: #ECE5DA;
+    --heal-sage: #2C4A4E;
+    --heal-dark-teal: #2C4A4E;
+    --heal-medium-teal: #2C4A4E;
+    --heal-light-teal: #2C4A4E;
     --heal-beige: #C2BCAE;
-    --heal-light-blue: #C8E1E7;
-    --heal-accent-blue: #2AB1F4;
+    --heal-light-blue: #EAEDED;
+    --heal-accent-blue: #2C4A4E;
     --heal-light-gray: #B0BEC0;
-    --heal-off-white: #FEF5E3;
-    --heal-warm-white: #FBF9F4;
+    --heal-off-white: #ECE5DA;
+    --heal-warm-white: #ECE5DA;
     
     /* CSS Variables for easy theming */
-    --background: 254 240 211; /* #FEF5E3 */
-    --foreground: 11 60 73; /* #0B3C49 */
-    --card: 255 255 255;
-    --card-foreground: 11 60 73;
-    --popover: 255 255 255;
-    --popover-foreground: 11 60 73;
-    --primary: 11 60 73; /* #0B3C49 */
-    --primary-foreground: 250 239 217;
-    --secondary: 103 126 131; /* #677E83 */
-    --secondary-foreground: 250 239 217;
-    --muted: 194 188 174; /* #C2BCAE */
-    --muted-foreground: 11 60 73;
-    --accent: 42 177 244; /* #2AB1F4 */
-    --accent-foreground: 11 60 73;
-    --destructive: 220 38 38;
-    --destructive-foreground: 255 255 255;
-    --border: 194 188 174;
-    --input: 194 188 174;
-    --ring: 11 60 73;
+    /* HEAL primary colours: cream #ECE5DA (backgrounds), teal #2C4A4E (components). HSL for shadcn. */
+    --background: 37 32% 89%; /* #ECE5DA */
+    --foreground: 187 28% 24%; /* #2C4A4E */
+    --card: 0 0% 100%;
+    --card-foreground: 187 28% 24%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 187 28% 24%;
+    --primary: 187 28% 24%; /* #2C4A4E */
+    --primary-foreground: 37 32% 89%;
+    --secondary: 180 4% 92%; /* #EAEDED teal tint */
+    --secondary-foreground: 187 28% 24%;
+    --muted: 180 4% 92%;
+    --muted-foreground: 187 12% 40%;
+    --accent: 180 4% 92%;
+    --accent-foreground: 187 28% 24%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 187 12% 85%;
+    --input: 187 12% 85%;
+    --ring: 187 28% 24%;
     --radius: 0.75rem;
     
     /* Legacy heal variables for backward compatibility */
-    --heal-primary: 11 60 73;
-    --heal-secondary: 103 126 131;
+    --heal-primary: 44 74 78;
+    --heal-secondary: 44 74 78;
     --heal-warning: 43 96% 56%;
     --heal-danger: 0 84% 60%;
     --heal-success: 142 76% 36%;
@@ -164,7 +165,7 @@
   
   /* Button Components */
   .heal-button {
-    @apply bg-gradient-to-r from-[#04aec9] to-[#04aec9] hover:from-blue-700 hover:to-blue-800 text-white font-medium py-2 px-4 sm:py-3 sm:px-6 rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl text-sm sm:text-base;
+    @apply bg-gradient-to-r from-[#2C4A4E] to-[#2C4A4E] hover:opacity-90 text-white font-medium py-2 px-4 sm:py-3 sm:px-6 rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl text-sm sm:text-base;
     @apply border border-current font-medium transition-all duration-200 hover:scale-105 active:scale-95;
     background-color: transparent;
     color: var(--heal-medium-teal);

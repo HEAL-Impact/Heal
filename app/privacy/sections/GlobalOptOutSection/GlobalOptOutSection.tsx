@@ -7,7 +7,7 @@ export const GlobalOptOutSection = (): React.ReactElement => {
       whether we hold, or process on behalf of a third party, any of your
       personal information that we are aware of. To request this information,
       contact us at{" "}
-      <a href="mailto:info@heal-impact.org" className="text-[#021577]">
+      <a href="mailto:info@heal-impact.org" className="text-[#2C4A4E]">
         info@heal-impact.org
       </a>
       .

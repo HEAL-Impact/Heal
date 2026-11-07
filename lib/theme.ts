@@ -4,52 +4,52 @@
 export const healTheme = {
   colors: {
     // Primary colors from auth pages
-    cream: '#FAEFD9',
-    sage: '#677E83', 
-    darkTeal: '#0B3C49',
-    mediumTeal: '#044750',
-    lightTeal: '#006C67',
+    cream: '#ECE5DA',
+    sage: '#2C4A4E', 
+    darkTeal: '#2C4A4E',
+    mediumTeal: '#2C4A4E',
+    lightTeal: '#2C4A4E',
     beige: '#C2BCAE',
-    lightBlue: '#C8E1E7',
-    accentBlue: '#2AB1F4',
+    lightBlue: '#EAEDED',
+    accentBlue: '#2C4A4E',
     lightGray: '#B0BEC0',
-    offWhite: '#FEF5E3',
-    warmWhite: '#FBF9F4',
+    offWhite: '#ECE5DA',
+    warmWhite: '#ECE5DA',
   },
   
   // CSS custom properties for dynamic theming
   cssVars: {
-    '--heal-cream': '#FAEFD9',
-    '--heal-sage': '#677E83',
-    '--heal-dark-teal': '#0B3C49',
-    '--heal-medium-teal': '#044750',
-    '--heal-light-teal': '#006C67',
+    '--heal-cream': '#ECE5DA',
+    '--heal-sage': '#2C4A4E',
+    '--heal-dark-teal': '#2C4A4E',
+    '--heal-medium-teal': '#2C4A4E',
+    '--heal-light-teal': '#2C4A4E',
     '--heal-beige': '#C2BCAE',
-    '--heal-light-blue': '#C8E1E7',
-    '--heal-accent-blue': '#2AB1F4',
+    '--heal-light-blue': '#EAEDED',
+    '--heal-accent-blue': '#2C4A4E',
     '--heal-light-gray': '#B0BEC0',
-    '--heal-off-white': '#FEF5E3',
-    '--heal-warm-white': '#FBF9F4',
+    '--heal-off-white': '#ECE5DA',
+    '--heal-warm-white': '#ECE5DA',
   },
   
   // Semantic color mappings
   semantic: {
-    primary: '#0B3C49',
-    secondary: '#677E83',
-    accent: '#2AB1F4',
-    background: '#FAEFD9',
+    primary: '#2C4A4E',
+    secondary: '#2C4A4E',
+    accent: '#2C4A4E',
+    background: '#ECE5DA',
     surface: '#FFFFFF',
     text: {
-      primary: '#0B3C49',
-      secondary: '#677E83',
-      accent: '#2AB1F4',
-      light: '#FEF5E3',
+      primary: '#2C4A4E',
+      secondary: '#2C4A4E',
+      accent: '#2C4A4E',
+      light: '#ECE5DA',
     },
     status: {
-      success: '#006C67',
+      success: '#2C4A4E',
       warning: '#F59E0B',
       error: '#DC2626',
-      info: '#2AB1F4',
+      info: '#2C4A4E',
     }
   },
   
@@ -62,26 +62,26 @@ export const healTheme = {
     },
     button: {
       primary: {
-        background: '#0B3C49',
-        color: '#FAEFD9',
-        hover: '#044750',
+        background: '#2C4A4E',
+        color: '#ECE5DA',
+        hover: '#2C4A4E',
       },
       secondary: {
         background: 'transparent',
-        color: '#044750',
-        border: '#FEF5E3',
+        color: '#2C4A4E',
+        border: '#ECE5DA',
         hover: {
-          background: '#0B3C49',
-          color: '#FEF5E3',
+          background: '#2C4A4E',
+          color: '#ECE5DA',
         }
       }
     },
     input: {
       background: 'transparent',
-      border: '#FEF5E3',
-      color: '#FEF5E3',
-      placeholder: '#FEF5E3',
-      focus: '#FEF5E3',
+      border: '#ECE5DA',
+      color: '#ECE5DA',
+      placeholder: '#ECE5DA',
+      focus: '#ECE5DA',
     }
   },
   

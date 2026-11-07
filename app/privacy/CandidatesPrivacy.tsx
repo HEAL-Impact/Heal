@@ -18,10 +18,10 @@ import { UserRightsSection } from "./sections/UserRightsSection";
 
 export const CandidatesPrivacy = (): React.JSX.Element => {
   return (
-    <div className="bg-[#fcf4e3] overflow-hidden w-full min-h-screen flex flex-col">
+    <div className="bg-[#ECE5DA] overflow-hidden w-full min-h-screen flex flex-col">
       {/* Header */}
       <header className="flex items-center justify-around bg-transparent shadow-sm">
-        <div className="flex items-center">
+        <Link href="/" className="flex items-center" aria-label="HEAL-Impact home">
           <Image
             src="/images/heal-impact-logo.png"
             alt="HEAL-Impact"
@@ -29,7 +29,7 @@ export const CandidatesPrivacy = (): React.JSX.Element => {
             height={52}
             className="h-12 w-auto object-contain"
           />
-        </div>
+        </Link>
         <Link
           href="/"
           className="font-acme bg-brand-primary hover:bg-brand-accent text-white py-2.5 px-6 rounded-full transition-all duration-300 text-sm uppercase tracking-wide shadow-md hover:shadow-xl hover:scale-105 active:scale-95 hover:-translate-y-0.5"
@@ -75,7 +75,7 @@ export const CandidatesPrivacy = (): React.JSX.Element => {
             Francisco, CA 94105 or by emailing us at{" "}
           </span>
 
-          <span className="text-[#021577]">info@heal-impact.org</span>
+          <span className="text-[#2C4A4E]">info@heal-impact.org</span>
 
           <span className="text-black">.</span>
         </div>
@@ -276,7 +276,7 @@ export const CandidatesPrivacy = (): React.JSX.Element => {
             information, you can contact us at{" "}
           </span>
 
-          <span className="text-[#021577]">info@heal-impact.org</span>
+          <span className="text-[#2C4A4E]">info@heal-impact.org</span>
 
           <span className="text-black">.</span>
         </div>
@@ -420,23 +420,23 @@ export const CandidatesPrivacy = (): React.JSX.Element => {
           the following links:
         </div>
 
-        <div className="relative flex items-center justify-center self-stretch font-normal text-[#021577] text-base tracking-[0] leading-[26.4px]">
+        <div className="relative flex items-center justify-center self-stretch font-normal text-[#2C4A4E] text-base tracking-[0] leading-[26.4px]">
           Apple Safari
         </div>
 
-        <div className="relative flex items-center justify-center self-stretch font-normal text-[#021577] text-base tracking-[0] leading-[26.4px]">
+        <div className="relative flex items-center justify-center self-stretch font-normal text-[#2C4A4E] text-base tracking-[0] leading-[26.4px]">
           Google Chrome
         </div>
 
-        <div className="relative flex items-center justify-center self-stretch font-normal text-[#021577] text-base tracking-[0] leading-[26.4px]">
+        <div className="relative flex items-center justify-center self-stretch font-normal text-[#2C4A4E] text-base tracking-[0] leading-[26.4px]">
           Mozilla Firefox
         </div>
 
-        <div className="relative flex items-center justify-center self-stretch font-normal text-[#021577] text-base tracking-[0] leading-[26.4px]">
+        <div className="relative flex items-center justify-center self-stretch font-normal text-[#2C4A4E] text-base tracking-[0] leading-[26.4px]">
           Microsoft Edge
         </div>
 
-        <div className="relative flex items-center justify-center self-stretch font-normal text-[#021577] text-base tracking-[0] leading-[26.4px]">
+        <div className="relative flex items-center justify-center self-stretch font-normal text-[#2C4A4E] text-base tracking-[0] leading-[26.4px]">
           Microsoft Internet Explorer
         </div>
 

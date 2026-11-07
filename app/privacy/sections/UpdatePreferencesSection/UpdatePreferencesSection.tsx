@@ -9,7 +9,7 @@ export const UpdatePreferencesSection = (): React.ReactElement => {
         emailing us at{" "}
         <a
           href="mailto:info@heal-impact.org"
-          className="text-[#021577] hover:underline"
+          className="text-[#2C4A4E] hover:underline"
         >
           info@heal-impact.org
         </a>
@@ -18,7 +18,7 @@ export const UpdatePreferencesSection = (): React.ReactElement => {
         your account, please email us at{" "}
         <a
           href="mailto:info@heal-impact.org"
-          className="text-[#021577] hover:underline"
+          className="text-[#2C4A4E] hover:underline"
         >
           info@heal-impact.org
         </a>

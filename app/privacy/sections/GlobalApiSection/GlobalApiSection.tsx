@@ -11,7 +11,7 @@ export const GlobalApiSection = (): React.ReactElement => {
       </span>
       <a
         href="mailto:info@heal-impact.org"
-        className="text-[#021577] hover:underline"
+        className="text-[#2C4A4E] hover:underline"
       >
         info@heal-impact.org
       </a>
