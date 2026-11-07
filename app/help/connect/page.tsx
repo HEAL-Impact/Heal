@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Check, Copy, Loader2, MapPin, ShieldCheck } from 'lucide-react';
@@ -66,9 +66,25 @@ function Connect() {
   };
 
   const needsContact = method !== 'none';
-  const ready = consent.length > 0 && (!needsContact || phone.replace(/\D/g, '').length >= 9);
+  const phoneDigits = phone.replace(/\D/g, '').length;
+  const [problems, setProblems] = useState<{ consent?: boolean; phone?: boolean }>({});
+  const phoneRef = useRef<HTMLInputElement>(null);
+  const consentRef = useRef<HTMLFieldSetElement>(null);
 
   const submit = async () => {
+    if (sending) return;
+    // Say exactly what is missing instead of silently doing nothing.
+    const missing = { consent: consent.length === 0, phone: needsContact && (phoneDigits < 9 || phoneDigits > 15) };
+    setProblems(missing);
+    if (missing.consent) {
+      consentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    if (missing.phone) {
+      phoneRef.current?.focus();
+      phoneRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
     setSending(true);
     const result = await openCase({
       source,
@@ -160,13 +176,16 @@ function Connect() {
         </p>
       </div>
 
-      <fieldset className="rounded-3xl bg-white p-5 shadow-sm">
+      <fieldset ref={consentRef} className={`rounded-3xl bg-white p-5 shadow-sm ${problems.consent ? 'ring-2 ring-[#B34D4D]' : ''}`}>
         <legend className="sr-only">{tr("Who can we contact?", "Tuwasiliane na nani?")}</legend>
         <p className="font-semibold text-[#2C4A4E]">1. {tr("Who can we share your request with?", "Tushiriki ombi lako na nani?")}</p>
         <div className="mt-3 space-y-2">
           {OFFER[pathway].map((r) => (
             <label key={r} className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-3 ${consent.includes(r) ? 'border-[#2C4A4E] bg-[#2C4A4E]/10' : 'border-gray-200'}`}>
-              <input type="checkbox" checked={consent.includes(r)} onChange={() => setConsent(toggle(consent, r))} className="mt-1 h-4 w-4 accent-[#2C4A4E]" />
+              <input type="checkbox" checked={consent.includes(r)} onChange={() => {
+                  setConsent(toggle(consent, r));
+                  if (problems.consent) setProblems({ ...problems, consent: false });
+                }} className="mt-1 h-4 w-4 accent-[#2C4A4E]" />
               <span>
                 <span className="block font-semibold text-[#2C4A4E]">{tr(RESPONDER[r].label)}</span>
                 <span className="block text-sm text-gray-600">{tr(RESPONDER[r].who)}</span>
@@ -235,7 +254,25 @@ function Connect() {
           <p className="mt-3 text-sm text-gray-600">{tr("Nobody will contact you. Use your case code to check progress. A partner can only act if you visit them with the code.", "Hakuna atakayewasiliana nawe. Tumia namba yako ya kesi kukagua maendeleo. Mshirika anaweza kuchukua hatua tu ukimtembelea na namba hiyo.")}</p>
         ) : (
           <div className="mt-3 space-y-2">
-            <input value={phone} onChange={(e) => setPhone(e.target.value)} inputMode="tel" placeholder={tr("Phone number that is safe to use", "Namba ya simu iliyo salama kutumia")} className={field} />
+            <input
+              ref={phoneRef}
+              value={phone}
+              onChange={(e) => {
+                setPhone(e.target.value);
+                if (problems.phone) setProblems({ ...problems, phone: false });
+              }}
+              inputMode="tel"
+              autoComplete="tel"
+              aria-invalid={!!problems.phone}
+              aria-describedby={problems.phone ? 'phone-error' : undefined}
+              placeholder={tr("Phone number that is safe to use", "Namba ya simu iliyo salama kutumia")}
+              className={`${field} ${problems.phone ? 'ring-2 ring-[#B34D4D]' : ''}`}
+            />
+            {problems.phone && (
+              <p id="phone-error" role="alert" className="text-sm text-[#B34D4D]">
+                {tr("Enter a phone number that is safe to use (e.g. 0712 345 678), or choose “Don’t contact me”.", "Weka namba ya simu iliyo salama kutumia (k.m. 0712 345 678), au chagua “Usiniwasiliane”.")}
+              </p>
+            )}
             <input value={safeTimes} onChange={(e) => setSafeTimes(e.target.value)} placeholder={tr("Safe times (e.g. weekdays 10am–2pm)", "Nyakati salama (k.m. siku za kazi saa 4–8 mchana)")} className={field} />
             <input value={codeWord} onChange={(e) => setCodeWord(e.target.value)} placeholder={tr("A code word so you know it’s us (optional)", "Neno la siri ili ujue ni sisi (si lazima)")} className={field} />
             <input value={name} onChange={(e) => setName(e.target.value)} placeholder={tr("A name they can use (optional, can be any name)", "Jina wanaloweza kutumia (si lazima, linaweza kuwa jina lolote)")} className={field} />
@@ -265,13 +302,18 @@ function Connect() {
       <button
         type="button"
         onClick={submit}
-        disabled={!ready || sending}
+        disabled={sending}
+        aria-busy={sending}
         className={`flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-lg font-semibold text-white disabled:opacity-50 ${emergency ? 'bg-[#2C4A4E] hover:bg-black' : 'bg-[#2C4A4E] hover:bg-[#2C4A4E]/90'}`}
       >
         {sending && <Loader2 className="h-5 w-5 animate-spin" />}
         {emergency ? tr("Yes, send help now", "Ndiyo, tuma msaada sasa") : tr("Yes, connect me", "Ndiyo, niunganishe")}
       </button>
-      {consent.length === 0 && <p className="text-center text-sm text-gray-600">{tr("Choose at least one service in step 1.", "Chagua angalau huduma moja katika hatua ya 1.")}</p>}
+      {(problems.consent || consent.length === 0) && (
+        <p role={problems.consent ? 'alert' : undefined} className={`text-center text-sm ${problems.consent ? 'font-semibold text-[#B34D4D]' : 'text-gray-600'}`}>
+          {tr("Choose at least one service in step 1.", "Chagua angalau huduma moja katika hatua ya 1.")}
+        </p>
+      )}
       {emergency && (
         <p className="text-center text-sm text-gray-600">
           {tr("In immediate danger? Don’t wait:", "Uko hatarini sasa hivi? Usisubiri:")}{' '}
