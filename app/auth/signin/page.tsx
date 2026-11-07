@@ -1,217 +1,206 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/use-auth';
-import { Loader2, ArrowLeft, Headset, Eye, EyeOff } from 'lucide-react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
+import AuthShell from '@/components/auth/AuthShell';
+import { FormNotice, PasswordField, TextField } from '@/components/auth/AuthFields';
+import { useAuth } from '@/hooks/use-auth';
+import { useOnline, useSlowRequest, useCountdown } from '@/hooks/use-auth-form';
+import { authErrorMessage, emailError, emailSuggestion, normalizeEmail, safeNext } from '@/lib/auth-validation';
+import { useLang, type L } from '@/lib/i18n';
 
-export default function SignInPage() {
+function SignInForm() {
+  const { tr } = useLang();
   const router = useRouter();
+  const params = useSearchParams();
+  const next = safeNext(params.get('next'));
   const { login, isAuthenticated, isLoading: authLoading } = useAuth();
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({ email: '', password: '' });
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [keepSignedIn, setKeepSignedIn] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [fieldErrors, setFieldErrors] = useState<{ email?: L | null; password?: L | null }>({});
+  const [formError, setFormError] = useState<{ code?: string; message: L } | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const online = useOnline();
+  const slow = useSlowRequest(submitting);
+  const [lockedFor, startLock] = useCountdown();
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
 
-  // Redirect authenticated users
+  // Read URL params after mount (static export) to prefill the email.
   useEffect(() => {
-    if (isAuthenticated && !authLoading) {
-      router.push('/dashboard');
-    }
-  }, [isAuthenticated, authLoading, router]);
+    const e = params.get('email');
+    if (e) setEmail(e);
+    if (params.get('reason') === 'expired') setFormError({ code: 'session_expired', message: { en: 'Your session ended. Please sign in again.', sw: 'Muda wako wa kuingia umeisha. Tafadhali ingia tena.' } });
+  }, [params]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
-  };
+  // Already signed in: go straight on.
+  useEffect(() => {
+    if (isAuthenticated && !authLoading && !submitting) router.replace(next);
+  }, [isAuthenticated, authLoading, submitting, router, next]);
 
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email';
-    }
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    }
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  const suggestion = emailSuggestion(email);
+
+  const validate = () => {
+    const errs = {
+      email: emailError(email),
+      password: password ? null : ({ en: 'Enter your password.', sw: 'Weka nenosiri lako.' } as L),
+    };
+    setFieldErrors(errs);
+    if (errs.email) emailRef.current?.focus();
+    else if (errs.password) passwordRef.current?.focus();
+    return !errs.email && !errs.password;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateForm()) return;
-    setIsLoading(true);
-
-    try {
-      const result = await login(formData.email, formData.password);
-      if (result.success) router.push('/dashboard');
-      else setErrors({ general: result.error || 'Authentication failed' });
-    } catch (err) {
-      setErrors({ general: 'An unexpected error occurred' });
-    } finally {
-      setIsLoading(false);
+    if (submitting || lockedFor > 0) return;
+    setFormError(null);
+    if (!validate()) return;
+    if (!online) {
+      setFormError({ code: 'offline', message: authErrorMessage('offline') });
+      return;
     }
+
+    setSubmitting(true);
+    const result = await login(normalizeEmail(email), password);
+    if (result.success) {
+      router.replace(next);
+      return;
+    }
+    setSubmitting(false);
+    if (result.code === 'too_many_attempts') startLock(result.retryAfter ?? 900);
+    if (result.code === 'invalid_credentials') {
+      setPassword('');
+      passwordRef.current?.focus();
+    }
+    setFormError({ code: result.code, message: authErrorMessage(result.code, result.retryAfter) });
   };
 
-  if (authLoading) {
-    return (
-      <div className="min-h-screen bg-[#C8E1E7] flex items-center justify-center">
-        <div className="flex items-center space-x-2 text-[#0B3C49]">
-          <Loader2 className="h-5 w-5 animate-spin" />
-          <span>Loading...</span>
-        </div>
-      </div>
-    );
-  }
+  if (authLoading && !submitting) return <AuthShell loading>{null}</AuthShell>;
 
   return (
-    <main className="min-h-screen bg-[#FEF5E3] flex items-center justify-center p-4 md:p-10 relative overflow-hidden">
-      {/* Decorative Sunbursts scattered across background */}
-      <Image src="/images/decoration.png" alt="Decoration" className="absolute" style={{ inset: '15% 5% auto 50%' }} width={50} height={50} priority />
-      <Image src="/images/decoration.png" alt="Decoration" className="absolute hidden lg:block -rotate-6" style={{ inset: '20% auto auto 48%' }} width={70} height={70} priority />
-      <Image src="/images/decoration.png" alt="Decoration" className="absolute" style={{ inset: '15% 5% auto auto' }} width={50} height={50} priority />
-      <Image src="/images/decoration.png" alt="Decoration" className="absolute -rotate-6" style={{ inset: '20% auto auto 88%' }} width={70} height={70} priority />
-      <Image src="/images/decoration.png" alt="Decoration" className="absolute rotate-12" style={{ inset: '20% auto auto 8%' }} width={70} height={70} priority />
-      <Image src="/images/decoration.png" alt="Decoration" className="absolute rotate-45 z-30" style={{ inset: '75% 60% auto auto' }} width={70} height={70} priority />
-
-      <div className="flex flex-col lg:flex-row w-full max-w-7xl gap-10 items-center relative z-10">
-        
-        {/* LEFT SIDE: Content & Illustration */}
-        <div className="flex flex-col items-center lg:w-1/2 text-center space-y-4">
-          <Link href="/" className="w-full flex justify-left -mb-12">
-            <Image src="/images/heal-impact-logo.png" alt="HEAL-Impact" width={204} height={52} className="h-12 w-auto object-contain" priority />
-          </Link>
-          <div className="space-y-2">
-            <h2 className="text-4xl md:text-5xl font-bold text-[#0B3C49] font-acme">Join Our Platform</h2>
-            <p className="text-base lg:text-lg text-gray-600 font-medium italic font-inter">Get full access to all platform features</p>
-          </div>
-
-          <div className="relative">
-            <div className="rounded-[3rem] overflow-hidden shadow-xl max-w-[350px]">
-              <Image src="/images/hugging-friends.png" alt="Group hugging" width={350} height={350} className="object-cover" />
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <p className="text-[#056173] text-2xl md:text-3xl font-bold font-acme leading-tight max-w-md">
-              “Access confidential, dignified mental health support anytime, anywhere.”<span className="text-[#0B3C49]">-24/7</span>
-            </p>
-            
-            <div className="flex flex-col items-center space-y-4 pt-8">
-                <div className="flex items-center w-full max-w-xs">
-                    <div className="flex-1 h-px bg-gray-300"></div>
-                    <span className="px-4 text-gray-400 font-bold text-sm">OR</span>
-                    <div className="flex-1 h-px bg-gray-300"></div>
-                </div>
-                <Link href="/anonymous" className="px-10 py-3 border-2 border-[#056173] text-[#056173] rounded-full font-bold font-acme hover:bg-[#056173] hover:text-white transition-all text-lg">
-                    Join Anonymously
-                </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* RIGHT SIDE: Sign In Form Card */}
-        <div className="w-full lg:w-1/2 flex justify-center">
-          <div className="w-full max-w-[580px] bg-[#DDE8D2] p-8 md:p-20 rounded-lg shadow-2xl">
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-[#0B3C49] font-acme mb-1">Welcome back!</h1>
-              <p className="text-[#0B3C49] font-medium opacity-80">Login to access all your data</p>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Email Field */}
-              <div className="space-y-1">
-                <label className="text-base lg:text-lg font-normal text-[#016A79]">Email Address</label>
-                <input 
-                  name="email" 
-                  type="email" 
-                  placeholder="Enter your email address" 
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-4 rounded-md border border-gray-200 focus:ring-2 focus:ring-[#056173] outline-none text-base lg:text-lg bg-white/60" 
-                />
-              </div>
-
-              {/* Password Field */}
-              <div className="space-y-1 relative">
-                <label className="text-base lg:text-lg font-normal text-[#016A79]">Password</label>
-                <div className="relative">
-                  <input 
-                    name="password" 
-                    type={showPassword ? "text" : "password"} 
-                    placeholder="Enter your password" 
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-4 rounded-md border border-gray-200 focus:ring-2 focus:ring-[#056173] outline-none text-base lg:text-lg bg-white/60" 
-                  />
-                  <button 
-                    type="button" 
-                    onClick={() => setShowPassword(!showPassword)} 
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#016A79] opacity-60"
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-              </div>
-
-              {/* Error Message */}
-              {errors.general && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-                  <p className="font-medium">Authentication Error</p>
-                  <p>{errors.general}</p>
-                  {errors.general.includes('Invalid email or password') && (
-                    <p className="mt-2 text-xs">
-                      Don't have an account? <Link href="/auth/signup" className="underline font-medium">Sign up here</Link>
-                    </p>
-                  )}
-                </div>
-              )}
-
-              {/* Login Button */}
-              <button 
-                type="submit" 
-                className="w-full py-4 bg-[#056173] text-white rounded-2xl font-bold font-acme text-lg hover:bg-[#0B3C49] transition-all shadow-lg"
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Signing in...
-                  </span>
-                ) : (
-                  'Login'
-                )}
-              </button>
-
-              {/* Continue With Divider */}
-              <div className="relative flex items-center justify-center py-2">
-                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-300"></div></div>
-                <span className="relative px-3 bg-[#DDE8D2] text-sm text-gray-500 font-medium">Continue with</span>
-              </div>
-
-              {/* Social Logins */}
-              <div className="space-y-3">
-                <button type="button" className="w-full flex items-center justify-center gap-2 py-3 bg-white/60 border border-gray-200 rounded-md hover:bg-white transition-all text-sm lg:text-base font-bold text-gray-700">
-                  Login with Google <Image src="/images/google-icon.jpg" width={18} height={18} alt="Google" />
-                </button>
-                <button type="button" className="w-full flex items-center justify-center gap-2 py-3 bg-white/60 border border-gray-200 rounded-md hover:bg-white transition-all text-sm lg:text-base font-bold text-gray-700">
-                  Login with Facebook <Image src="/images/facebook-icon.jpg" width={28} height={28} alt="Facebook" />
-                </button>
-              </div>
-
-              {/* Redirect to Register */}
-              <p className="text-center text-sm font-medium text-gray-600 pt-2">
-                Don't have an account? <Link href="/auth/signup" className="text-blue-500 font-bold hover:underline">Register</Link>
-              </p>
-            </form>
-          </div>
-        </div>
+    <AuthShell>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-[#2C4A4E] font-acme mb-1">{tr('Welcome back!', 'Karibu tena!')}</h1>
+        <p className="text-[#2C4A4E] font-medium opacity-80">{tr('Sign in to see your conversations, check-ins and safety plan.', 'Ingia kuona mazungumzo yako, ukaguzi na mpango wako wa usalama.')}</p>
       </div>
-    </main>
+
+      <form onSubmit={handleSubmit} noValidate className="space-y-5">
+        {!online && (
+          <FormNotice tone="info">{tr('You’re offline. You can sign in once you’re connected again.', 'Huna mtandao. Utaweza kuingia ukiunganishwa tena.')}</FormNotice>
+        )}
+
+        <TextField
+          ref={emailRef}
+          id="email"
+          name="email"
+          type="email"
+          inputMode="email"
+          autoComplete="email"
+          autoCapitalize="none"
+          spellCheck={false}
+          maxLength={254}
+          label={tr('Email Address', 'Barua Pepe')}
+          placeholder={tr('Enter your email address', 'Weka barua pepe yako')}
+          value={email}
+          disabled={submitting}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            if (fieldErrors.email) setFieldErrors({ ...fieldErrors, email: null });
+          }}
+          onBlur={() => email && setFieldErrors((f) => ({ ...f, email: emailError(email) }))}
+          error={fieldErrors.email ? tr(fieldErrors.email) : null}
+          hint={
+            suggestion ? (
+              <span>
+                {tr('Did you mean', 'Ulimaanisha')}{' '}
+                <button type="button" className="rounded font-semibold text-[#2C4A4E] underline underline-offset-2 transition-colors hover:bg-[#2C4A4E]/10" onClick={() => setEmail(suggestion)}>{suggestion}</button>?
+              </span>
+            ) : undefined
+          }
+        />
+
+        <PasswordField
+          ref={passwordRef}
+          id="password"
+          name="password"
+          autoComplete="current-password"
+          maxLength={200}
+          label={tr('Password', 'Nenosiri')}
+          placeholder={tr('Enter your password', 'Weka nenosiri lako')}
+          value={password}
+          disabled={submitting}
+          onChange={(e) => {
+            setPassword(e.target.value);
+            if (fieldErrors.password) setFieldErrors({ ...fieldErrors, password: null });
+          }}
+          error={fieldErrors.password ? tr(fieldErrors.password) : null}
+        />
+
+        {formError && (
+          <FormNotice tone="error" title={tr('We couldn’t sign you in', 'Hatukuweza kukuingiza')}>
+            <p>{tr(formError.message)}</p>
+            {formError.code === 'too_many_attempts' && lockedFor > 0 && (
+              <p className="mt-1 text-xs">{tr(`You can try again in ${Math.ceil(lockedFor / 60)} min.`, `Unaweza kujaribu tena baada ya dakika ${Math.ceil(lockedFor / 60)}.`)}</p>
+            )}
+            {formError.code === 'invalid_credentials' && (
+              <p className="mt-2 text-xs text-[#2C4A4E]">
+                {tr('New to HEAL?', 'Mgeni HEAL?')}{' '}
+                <Link href={`/auth/signup?email=${encodeURIComponent(normalizeEmail(email))}`} className="font-semibold underline">{tr('Create an account', 'Fungua akaunti')}</Link>
+              </p>
+            )}
+          </FormNotice>
+        )}
+
+        {slow && (
+          <FormNotice tone="info">{tr('Still working… the server may be waking up. This can take up to a minute.', 'Bado inashughulikia… seva huenda inaamka. Hii inaweza kuchukua hadi dakika moja.')}</FormNotice>
+        )}
+
+        <button
+          type="submit"
+          className="w-full py-4 bg-[#2C4A4E] text-white rounded-2xl font-bold font-acme text-lg shadow-sm transition-all duration-300 hover:bg-[#2C4A4E]/90 hover:shadow-xl hover:-translate-y-1 active:translate-y-0 active:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2C4A4E] focus-visible:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-sm motion-reduce:transition-none motion-reduce:transform-none"
+          disabled={submitting || lockedFor > 0}
+          aria-busy={submitting}
+        >
+          {submitting ? (
+            <span className="flex items-center justify-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              {tr('Signing in...', 'Inaingia...')}
+            </span>
+          ) : lockedFor > 0 ? (
+            tr(`Try again in ${Math.ceil(lockedFor / 60)} min`, `Jaribu tena baada ya dakika ${Math.ceil(lockedFor / 60)}`)
+          ) : (
+            tr('Sign in', 'Ingia')
+          )}
+        </button>
+
+        <p className="text-center text-xs text-gray-600">
+          {tr('Forgot your password? Email', 'Umesahau nenosiri? Tuma barua pepe kwa')}{' '}
+          <a href="mailto:info@heal-impact.org?subject=Password%20help" className="rounded font-semibold text-[#2C4A4E] underline underline-offset-2 transition-colors hover:bg-[#2C4A4E]/10">info@heal-impact.org</a>{' '}
+          {tr('from the address you signed up with and we’ll help you back in.', 'kutoka kwa anwani uliyojisajili nayo na tutakusaidia kuingia tena.')}
+        </p>
+
+        <p className="text-center text-sm font-medium text-gray-600">
+          {tr('Don’t have an account?', 'Huna akaunti?')}{' '}
+          <Link href={`/auth/signup${params.get('next') ? `?next=${encodeURIComponent(next)}` : ''}`} className="text-[#2C4A4E] font-bold underline-offset-4 decoration-2 transition-colors hover:underline hover:text-[#2C4A4E]/80">{tr('Create one', 'Fungua akaunti')}</Link>
+        </p>
+        <p className="text-center text-xs text-gray-500">
+          {tr('On a shared phone? Use', 'Unatumia simu ya pamoja? Tumia')}{' '}
+          <Link href="/anonymous" className="underline">{tr('anonymous mode', 'hali ya bila jina')}</Link>{' '}
+          {tr('or sign out when you finish.', 'au utoke ukimaliza.')}
+        </p>
+      </form>
+    </AuthShell>
+  );
+}
+
+export default function SignInPage() {
+  return (
+    <Suspense fallback={null}>
+      <SignInForm />
+    </Suspense>
   );
 }

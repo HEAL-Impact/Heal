@@ -10,6 +10,14 @@ export interface User {
   updatedAt: string;
 }
 
+export interface AuthResult {
+  success: boolean;
+  error?: string;
+  /** invalid_credentials, email_taken, too_many_attempts, invalid_input, password_mismatch, server_error, network, timeout, offline */
+  code?: string;
+  retryAfter?: number;
+}
+
 export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
@@ -93,7 +101,7 @@ class AuthManager {
     return this.state;
   }
 
-  async login(email: string, password: string): Promise<{ success: boolean; error?: string }> {
+  async login(email: string, password: string): Promise<AuthResult> {
     this.setState({ isLoading: true });
 
     try {
@@ -101,7 +109,7 @@ class AuthManager {
       
       if (response.error) {
         this.setState({ isLoading: false });
-        return { success: false, error: response.error };
+        return { success: false, error: response.error, code: response.code, retryAfter: response.retryAfter };
       }
 
       if (response.data) {
@@ -117,10 +125,10 @@ class AuthManager {
         return { success: true };
       }
 
-      return { success: false, error: 'Login failed' };
+      return { success: false, error: 'Login failed', code: 'server_error' };
     } catch (error) {
       this.setState({ isLoading: false });
-      return { success: false, error: 'Network error occurred' };
+      return { success: false, error: 'Network error occurred', code: 'network' };
     }
   }
 
@@ -130,7 +138,7 @@ class AuthManager {
     confirmPassword: string;
     firstName: string;
     lastName: string;
-  }): Promise<{ success: boolean; error?: string }> {
+  }): Promise<AuthResult> {
     this.setState({ isLoading: true });
 
     try {
@@ -143,7 +151,7 @@ class AuthManager {
         if (response.error.includes('already exists') || response.error.includes('conflict')) {
           errorMessage = 'An account with this email already exists. Please try signing in instead.';
         }
-        return { success: false, error: errorMessage };
+        return { success: false, error: errorMessage, code: response.code, retryAfter: response.retryAfter };
       }
 
       if (response.data) {
@@ -159,10 +167,10 @@ class AuthManager {
         return { success: true };
       }
 
-      return { success: false, error: 'Registration failed' };
+      return { success: false, error: 'Registration failed', code: 'server_error' };
     } catch (error) {
       this.setState({ isLoading: false });
-      return { success: false, error: 'Network error occurred' };
+      return { success: false, error: 'Network error occurred', code: 'network' };
     }
   }
 

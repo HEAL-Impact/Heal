@@ -4,7 +4,15 @@ interface ApiResponse<T = any> {
   data?: T;
   error?: string;
   message?: string;
+  /** Stable error code from the API (e.g. invalid_credentials), or a client one: network, timeout, offline. */
+  code?: string;
+  status?: number;
+  /** Seconds to wait, when the API rate-limits. */
+  retryAfter?: number;
 }
+
+// Free hosting can take a while to wake up; give up after this long.
+const REQUEST_TIMEOUT_MS = 45000;
 
 // Define specific response types
 interface ChatSessionsResponse {
@@ -128,9 +136,16 @@ class ApiClient {
       };
     }
 
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+      return { error: 'You are offline', code: 'offline' };
+    }
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
     try {
-      const response = await fetch(url, config);
-      const data = await response.json();
+      const response = await fetch(url, { ...config, signal: controller.signal });
+      // Some failures (proxies, a waking server) return HTML, not JSON.
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
         // On 401, attempt a token refresh once then retry
@@ -141,27 +156,32 @@ class ApiClient {
           }
           // Refresh failed – clear stored credentials
           this.removeToken();
-          return { error: 'Session expired. Please sign in again.' };
+          return { error: 'Session expired. Please sign in again.', code: 'session_expired', status: 401 };
         }
 
         let errorMessage = data.error || data.message || 'An error occurred';
-        
-        // Handle specific HTTP status codes
-        if (response.status === 409) {
-          errorMessage = 'An account with this email already exists';
-        } else if (response.status === 401) {
-          errorMessage = data.error || 'Invalid email or password';
-        } else if (response.status === 400) {
-          errorMessage = data.message || 'Invalid request data';
+        let code: string | undefined = data.code;
+
+        // Older API versions send no code; infer one from the status.
+        if (!code) {
+          if (response.status === 409) code = 'email_taken';
+          else if (response.status === 401) code = 'invalid_credentials';
+          else if (response.status === 429) code = 'too_many_attempts';
+          else if (response.status === 400) code = 'invalid_input';
+          else if (response.status >= 500) code = 'server_error';
         }
-        
-        return { error: errorMessage };
+        if (response.status === 409) errorMessage = 'An account with this email already exists';
+
+        return { error: errorMessage, code, status: response.status, retryAfter: data.retryAfter ?? (Number(response.headers.get('Retry-After')) || undefined) };
       }
 
-      return { data };
+      return { data, status: response.status };
     } catch (error) {
+      const timedOut = error instanceof DOMException && error.name === 'AbortError';
       console.error('API request failed:', error);
-      return { error: 'Network error occurred' };
+      return { error: timedOut ? 'The server took too long to respond' : 'Network error occurred', code: timedOut ? 'timeout' : 'network' };
+    } finally {
+      clearTimeout(timer);
     }
   }
 

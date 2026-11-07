@@ -1,341 +1,325 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/use-auth';
-import { Eye, EyeOff, Mail, Lock, User, Loader2, ArrowLeft, Heart, Check, Headset } from 'lucide-react';
-import Image from 'next/image';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Check, Circle, Loader2 } from 'lucide-react';
+import AuthShell from '@/components/auth/AuthShell';
+import { FormNotice, PasswordField, TextField } from '@/components/auth/AuthFields';
+import { useAuth } from '@/hooks/use-auth';
+import { useCountdown, useOnline, useSlowRequest } from '@/hooks/use-auth-form';
+import {
+  NAME_MAX,
+  authErrorMessage,
+  emailError,
+  emailSuggestion,
+  nameError,
+  normalizeEmail,
+  passwordChecks,
+  safeNext,
+  signUpPasswordError,
+} from '@/lib/auth-validation';
+import { useLang, type L } from '@/lib/i18n';
 
-export default function SignUpPage() {
+type Field = 'firstName' | 'lastName' | 'email' | 'password' | 'confirmPassword' | 'consent';
+const ORDER: Field[] = ['firstName', 'lastName', 'email', 'password', 'confirmPassword', 'consent'];
+
+function SignUpForm() {
+  const { tr } = useLang();
   const router = useRouter();
+  const params = useSearchParams();
+  const next = safeNext(params.get('next'));
   const { register, isAuthenticated, isLoading: authLoading } = useAuth();
-  
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    agreeToTerms: false,
-    agreeToPrivacy: false,
-  });
-  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Redirect if already authenticated
+  const [form, setForm] = useState({ firstName: '', lastName: '', email: '', password: '', confirmPassword: '', consent: false });
+  const [errors, setErrors] = useState<Partial<Record<Field, L | null>>>({});
+  const [touched, setTouched] = useState<Partial<Record<Field, boolean>>>({});
+  const [formError, setFormError] = useState<{ code?: string; message: L } | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const online = useOnline();
+  const slow = useSlowRequest(submitting);
+  const [lockedFor, startLock] = useCountdown();
+  const refs = useRef<Partial<Record<Field, HTMLInputElement | null>>>({});
+
   useEffect(() => {
-    if (isAuthenticated && !authLoading) {
-      router.push('/dashboard');
+    const e = params.get('email');
+    if (e) setForm((f) => ({ ...f, email: e }));
+  }, [params]);
+
+  useEffect(() => {
+    if (isAuthenticated && !authLoading && !submitting) router.replace(next);
+  }, [isAuthenticated, authLoading, submitting, router, next]);
+
+  const check = (field: Field, f = form): L | null => {
+    switch (field) {
+      case 'firstName':
+        return nameError(f.firstName, 'first');
+      case 'lastName':
+        return nameError(f.lastName, 'last');
+      case 'email':
+        return emailError(f.email);
+      case 'password':
+        return signUpPasswordError(f.password, f.email);
+      case 'confirmPassword':
+        if (!f.confirmPassword) return { en: 'Type your password again.', sw: 'Andika nenosiri lako tena.' };
+        return f.confirmPassword === f.password ? null : { en: 'The passwords don’t match.', sw: 'Manenosiri hayalingani.' };
+      case 'consent':
+        return f.consent ? null : { en: 'Please agree to the terms and privacy policy to continue.', sw: 'Tafadhali kubali masharti na sera ya faragha ili kuendelea.' };
     }
-  }, [isAuthenticated, authLoading, router]);
-
-  const validateForm = (): boolean => {
-    const newErrors: Record<string, string> = {};
-
-    if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
-    if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
-    
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email';
-    }
-
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters';
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
-    }
-
-    if (!formData.agreeToTerms) newErrors.agreeToTerms = 'You must agree to the terms';
-    if (!formData.agreeToPrivacy) newErrors.agreeToPrivacy = 'You must agree to the privacy policy';
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
-    
-    // Clear error when user starts typing
-    if (errors[name as keyof typeof errors]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
-    }
+  const update = (field: Field, value: string | boolean) => {
+    const nextForm = { ...form, [field]: value };
+    setForm(nextForm);
+    // Re-check fields already shown as wrong, so errors clear as soon as they're fixed.
+    const recheck: Field[] = [field];
+    if (field === 'password' && touched.confirmPassword) recheck.push('confirmPassword');
+    if (field === 'email' && touched.password) recheck.push('password');
+    setErrors((prev) => {
+      const out = { ...prev };
+      for (const f of recheck) if (prev[f] || (f !== field && touched[f])) out[f] = check(f, nextForm);
+      if (field === 'consent') out.consent = check('consent', nextForm);
+      return out;
+    });
+  };
+
+  const blur = (field: Field) => {
+    setTouched((t) => ({ ...t, [field]: true }));
+    const raw = form[field];
+    if (typeof raw === 'string' && raw === '' && field !== 'confirmPassword') return; // don't nag on an untouched empty field
+    setErrors((e) => ({ ...e, [field]: check(field) }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!validateForm()) return;
-
-    setIsLoading(true);
-    
-    try {
-      const result = await register({
-        email: formData.email,
-        password: formData.password,
-        confirmPassword: formData.confirmPassword,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-      });
-
-      if (result.success) {
-        router.push('/dashboard');
-      } else {
-        setErrors({ general: result.error || 'Registration failed' });
-      }
-    } catch (error) {
-      setErrors({ general: 'An unexpected error occurred' });
-    } finally {
-      setIsLoading(false);
+    if (submitting || lockedFor > 0) return;
+    setFormError(null);
+    const all = Object.fromEntries(ORDER.map((f) => [f, check(f)])) as Record<Field, L | null>;
+    setErrors(all);
+    setTouched(Object.fromEntries(ORDER.map((f) => [f, true])));
+    const first = ORDER.find((f) => all[f]);
+    if (first) {
+      refs.current[first]?.focus();
+      return;
     }
+    if (!online) {
+      setFormError({ code: 'offline', message: authErrorMessage('offline') });
+      return;
+    }
+
+    setSubmitting(true);
+    const result = await register({
+      email: normalizeEmail(form.email),
+      password: form.password,
+      confirmPassword: form.confirmPassword,
+      firstName: form.firstName.trim().replace(/\s+/g, ' '),
+      lastName: form.lastName.trim().replace(/\s+/g, ' '),
+    });
+    if (result.success) {
+      router.replace(next);
+      return;
+    }
+    setSubmitting(false);
+    if (result.code === 'too_many_attempts') startLock(result.retryAfter ?? 3600);
+    if (result.code === 'email_taken') {
+      setErrors((x) => ({ ...x, email: authErrorMessage('email_taken') }));
+      refs.current.email?.focus();
+    }
+    if (result.code === 'password_mismatch') setErrors((x) => ({ ...x, confirmPassword: authErrorMessage('password_mismatch') }));
+    setFormError({ code: result.code, message: authErrorMessage(result.code, result.retryAfter) });
   };
 
-  if (authLoading) {
-    return (
-      <main className="min-h-screen bg-[#FAEFD9] flex items-center justify-center p-6 relative overflow-hidden">
-        <div className="flex items-center space-x-2">
-          <div className="h-5 w-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-          <span className="text-gray-600">Loading...</span>
-        </div>
-      </main>
-    );
-  }
+  if (authLoading && !submitting) return <AuthShell loading>{null}</AuthShell>;
+
+  const suggestion = emailSuggestion(form.email);
+  const checks = passwordChecks(form.password, form.email);
+  const err = (f: Field) => (errors[f] ? tr(errors[f]!) : null);
+  const disabled = submitting;
 
   return (
-    <main className="min-h-screen bg-[#FEF5E3] flex items-center justify-center p-4 md:p-10 relative overflow-hidden">
-      
-      {/* Decorative Sunbursts scattered across background */}
-      <Image 
-              src="/images/decoration.png" 
-              alt="Decorative sunburst" 
-              className="absolute"
-              style={{ inset: '15% 5% auto 50%' }}
-              width={50}
-              height={50}
-              priority 
-            />
-            <Image 
-              src="/images/decoration.png" 
-              alt="Decorative sunburst" 
-              className="absolute hidden lg:block -rotate-6"
-              style={{ inset: '20% auto auto 48%' }}
-              width={70}
-              height={70}
-              priority 
-            />
-            <Image 
-              src="/images/decoration.png" 
-              alt="Decorative sunburst" 
-              className="absolute"
-              style={{ inset: '15% 5% auto auto' }}
-              width={50}
-              height={50}
-              priority 
-            />
-            <Image 
-              src="/images/decoration.png" 
-              alt="Decorative sunburst" 
-              className="absolute -rotate-6"
-              style={{ inset: '20% auto auto 88%' }}
-              width={70}
-              height={70}
-              priority 
-            />
-            <Image 
-              src="/images/decoration.png" 
-              alt="Decorative sunburst" 
-              className="absolute rotate-12"
-              style={{ inset: '20% auto auto 8%' }}
-              width={70}
-              height={70}
-              priority 
-            />
-            <Image 
-              src="/images/decoration.png" 
-              alt="Decorative sunburst" 
-              className="absolute rotate-45 z-30"
-              style={{ inset: '75% 60% auto auto' }}
-              width={70}
-              height={70}
-              priority 
-            />
-
-      <div className="flex flex-col lg:flex-row w-full max-w-7xl gap-10 items-center relative z-10">
-      {/* Logo */}
-        
-        {/* LEFT SIDE: Content & Illustration */}
-        <div className="flex flex-col items-center lg:w-1/2 text-center space-y-4">
-          <Link href="/" className="w-full flex justify-left -mb-12">
-            <Image src="/images/heal-impact-logo.png" alt="HEAL-Impact" width={204} height={52} className="h-12 w-auto object-contain" priority />
-          </Link>
-          <div className="space-y-2">
-            <h2 className="text-4xl md:text-5xl font-bold text-[#0B3C49] font-acme">Join Our Platform</h2>
-            <p className="text-base lg:text-lg text-gray-600 font-medium italic font-inter">Get full access to all platform features</p>
-          </div>
-
-          <div className="relative">
-            {/* Decorative background shape for image */}
-            <div className="rounded-[3rem] overflow-hidden shadow-xl max-w-[350px]">
-              <Image src="/images/hugging-friends.png" alt="Group hugging" width={350} height={350} className="object-cover" />
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <p className="text-[#056173] text-2xl md:text-3xl font-bold font-acme leading-tight max-w-md">
-              “Access confidential, dignified mental health support anytime, anywhere.”<span className="text-[#0B3C49]">-24/7</span>
-            </p>
-            
-            <div className="flex flex-col items-center space-y-4 pt-8">
-                <div className="flex items-center w-full max-w-xs">
-                    <div className="flex-1 h-px bg-gray-300"></div>
-                    <span className="px-4 text-gray-400 font-bold text-sm">OR</span>
-                    <div className="flex-1 h-px bg-gray-300"></div>
-                </div>
-                <Link href="/anonymous" className="px-10 py-3 border-2 border-[#056173] text-[#056173] rounded-full font-bold font-acme hover:bg-[#056173] hover:text-white transition-all text-lg">
-                    Join Anonymously
-                </Link>
-            </div>
-          </div>
-        </div>
-
-        {/* RIGHT SIDE: Sign Up Form Card */}
-        <div className="w-full lg:w-1/2 flex justify-center">
-          <div className="w-full max-w-[580px] bg-[#DDE8D2] p-8 md:p-12 rounded-lg shadow-2xl">
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-[#0B3C49] font-acme mb-1 whitespace-nowrap">Welcome To HEAL!</h1>
-              <p className="text-[#0B3C49] font-medium opacity-80">Sign up to access all your data</p>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-base lg:text-lg font-normal text-[#016A79]">First Name</label>
-                  <input name="firstName" type="text" placeholder="Enter your first name" onChange={handleInputChange}
-                    className="w-full px-4 py-3 rounded-md border border-gray-200 focus:ring-2 focus:ring-[#056173] outline-none text-base lg:text-lg bg-white/60" />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-base lg:text-lg font-normal text-[#016A79]">Last Name</label>
-                  <input name="lastName" type="text" placeholder="Enter your last name" onChange={handleInputChange}
-                    className="w-full px-4 py-3 rounded-md border border-gray-200 focus:ring-2 focus:ring-[#056173] outline-none text-base lg:text-lg bg-white/60" />
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-base lg:text-lg font-normal text-[#016A79]">Email Address</label>
-                <input name="email" type="email" placeholder="Enter your email address" onChange={handleInputChange}
-                  className="w-full px-4 py-3 rounded-md border border-gray-200 focus:ring-2 focus:ring-[#056173] outline-none text-base lg:text-lg bg-white/60" />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1 relative">
-                  <label className="text-base lg:text-lg font-normal text-[#016A79]">Password</label>
-                  <input name="password" type={showPassword ? "text" : "password"} placeholder="Enter your password" onChange={handleInputChange}
-                    className="w-full px-4 py-3 rounded-md border border-gray-200 focus:ring-2 focus:ring-[#056173] outline-none text-base lg:text-lg bg-white/60" />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-9 text-[#016A79] opacity-60">
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-                <div className="space-y-1 relative">
-                  <label className="text-base lg:text-lg font-normal text-[#016A79]">Confirm Password</label>
-                  <input name="confirmPassword" type={showConfirmPassword ? "text" : "password"} placeholder="Confirm your password" onChange={handleInputChange}
-                    className="w-full px-4 py-3 rounded-md border border-gray-200 focus:ring-2 focus:ring-[#016A79] outline-none text-base lg:text-lg bg-white/60" />
-                  <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} className="absolute right-3 top-9 text-[#016A79] opacity-60">
-                    {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex flex-col md:flex-row justify-between py-2">
-                <label className="flex items-center gap-2 text-xs lg:text-sm text-[#056173] font-medium cursor-pointer">
-                  <input 
-                    type="checkbox" 
-                    name="agreeToTerms"
-                    checked={formData.agreeToTerms}
-                    onChange={handleInputChange}
-                    className="rounded text-sm lg:text-base text-[#056173]" 
-                  /> I agree to the Terms and Conditions
-                </label>
-                <label className="flex items-center gap-2 text-xs lg:text-sm text-[#056173] font-medium cursor-pointer">
-                  <input 
-                    type="checkbox" 
-                    name="agreeToPrivacy"
-                    checked={formData.agreeToPrivacy}
-                    onChange={handleInputChange}
-                    className="rounded text-sm lg:text-base text-[#056173]" 
-                  /> I agree to the <span className="text-blue-500 underline">Privacy Policy</span>
-                </label>
-              </div>
-
-              {/* Error Message */}
-              {errors.general && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-                  <p className="font-medium">Registration Error</p>
-                  <p>{errors.general}</p>
-                  {errors.general.includes('already exists') && (
-                    <p className="mt-2 text-xs">
-                      Already have an account? <Link href="/auth/signin" className="underline font-medium">Sign in here</Link>
-                    </p>
-                  )}
-                </div>
-              )}
-
-              {/* Individual Field Errors */}
-              {Object.entries(errors).filter(([key]) => key !== 'general').map(([key, error]) => (
-                error && (
-                  <div key={key} className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-lg text-xs">
-                    {error}
-                  </div>
-                )
-              ))}
-
-              <button 
-                type="submit" 
-                className="w-full py-4 bg-[#056173] text-white rounded-2xl font-bold font-acme text-lg hover:bg-[#0B3C49] transition-all shadow-lg"
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Creating Account...
-                  </span>
-                ) : (
-                  'Create Account'
-                )}
-              </button>
-
-              <div className="relative flex items-center justify-center py-4">
-                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-300"></div></div>
-                <span className="relative px-3 bg-[#DDE8D2] text-base lg:text-lg text-gray-500 font-medium">Continue with</span>
-              </div>
-
-              <div className="grid grid-row-2 gap-4">
-                <button type="button" className="flex items-center justify-center gap-2 py-3 bg-white/60 border border-gray-200 rounded-md hover:bg-white transition-all text-sm lg:text-base font-bold text-gray-700">
-                  Login with Google <Image src="/images/google-icon.jpg" width={18} height={18} alt="Google" />
-                </button>
-                <button type="button" className="flex items-center justify-center gap-2 py-3 bg-white/60 border border-gray-200 rounded-md hover:bg-white transition-all text-sm lg:text-base font-bold text-gray-700">
-                  Login with Facebook <Image src="/images/facebook-icon.jpg" width={28} height={28} alt="Facebook" />
-                </button>
-              </div>
-
-              <p className="text-center text-sm font-medium text-gray-600 pt-4">
-                Already Have an Account? <Link href="/auth/signin" className="text-blue-500 font-bold hover:underline">Login</Link>
-              </p>
-            </form>
-          </div>
-        </div>
+    <AuthShell>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-[#2C4A4E] font-acme mb-1">{tr('Welcome To HEAL!', 'Karibu HEAL!')}</h1>
+        <p className="text-[#2C4A4E] font-medium opacity-80">{tr('Create an account to save your conversations, check-ins and safety plan.', 'Fungua akaunti kuhifadhi mazungumzo yako, ukaguzi na mpango wako wa usalama.')}</p>
       </div>
-    </main>
+
+      <form onSubmit={handleSubmit} noValidate className="space-y-5">
+        {!online && <FormNotice tone="info">{tr('You’re offline. You can create your account once you’re connected again.', 'Huna mtandao. Utaweza kufungua akaunti ukiunganishwa tena.')}</FormNotice>}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <TextField
+            ref={(el) => { refs.current.firstName = el; }}
+            id="firstName"
+            name="firstName"
+            autoComplete="given-name"
+            maxLength={NAME_MAX + 10}
+            label={tr('First Name', 'Jina la Kwanza')}
+            placeholder={tr('First name', 'Jina la kwanza')}
+            value={form.firstName}
+            disabled={disabled}
+            onChange={(e) => update('firstName', e.target.value)}
+            onBlur={() => blur('firstName')}
+            error={err('firstName')}
+          />
+          <TextField
+            ref={(el) => { refs.current.lastName = el; }}
+            id="lastName"
+            name="lastName"
+            autoComplete="family-name"
+            maxLength={NAME_MAX + 10}
+            label={tr('Last Name', 'Jina la Mwisho')}
+            placeholder={tr('Last name', 'Jina la mwisho')}
+            value={form.lastName}
+            disabled={disabled}
+            onChange={(e) => update('lastName', e.target.value)}
+            onBlur={() => blur('lastName')}
+            error={err('lastName')}
+          />
+        </div>
+        <p className="-mt-3 text-xs text-gray-600">{tr('You can use a nickname. Only you see it.', 'Unaweza kutumia jina la utani. Ni wewe tu unayeliona.')}</p>
+
+        <TextField
+          ref={(el) => { refs.current.email = el; }}
+          id="email"
+          name="email"
+          type="email"
+          inputMode="email"
+          autoComplete="email"
+          autoCapitalize="none"
+          spellCheck={false}
+          maxLength={254}
+          label={tr('Email Address', 'Barua Pepe')}
+          placeholder={tr('Enter your email address', 'Weka barua pepe yako')}
+          value={form.email}
+          disabled={disabled}
+          onChange={(e) => update('email', e.target.value)}
+          onBlur={() => blur('email')}
+          error={err('email')}
+          hint={
+            suggestion ? (
+              <span>
+                {tr('Did you mean', 'Ulimaanisha')}{' '}
+                <button type="button" className="rounded font-semibold text-[#2C4A4E] underline underline-offset-2 transition-colors hover:bg-[#2C4A4E]/10" onClick={() => update('email', suggestion)}>{suggestion}</button>?
+              </span>
+            ) : (
+              tr('Use an email only you can open. We never email anything about what you share.', 'Tumia barua pepe ambayo ni wewe tu unaweza kufungua. Hatutumi barua pepe kuhusu unachoshiriki.')
+            )
+          }
+        />
+        {formError?.code === 'email_taken' && (
+          <p className="-mt-3 text-sm text-[#2C4A4E]">
+            <Link href={`/auth/signin?email=${encodeURIComponent(normalizeEmail(form.email))}${params.get('next') ? `&next=${encodeURIComponent(next)}` : ''}`} className="rounded font-semibold text-[#2C4A4E] underline underline-offset-2 transition-colors hover:bg-[#2C4A4E]/10">
+              {tr('Sign in with this email instead', 'Ingia kwa barua pepe hii badala yake')}
+            </Link>
+          </p>
+        )}
+
+        <PasswordField
+          ref={(el) => { refs.current.password = el; }}
+          id="password"
+          name="password"
+          autoComplete="new-password"
+          maxLength={200}
+          label={tr('Password', 'Nenosiri')}
+          placeholder={tr('Create a password', 'Tengeneza nenosiri')}
+          value={form.password}
+          disabled={disabled}
+          onChange={(e) => update('password', e.target.value)}
+          onBlur={() => blur('password')}
+          error={err('password')}
+          hint={
+            <ul className="grid grid-cols-2 gap-x-3 gap-y-1 pt-1 text-xs" aria-label={tr('Password rules', 'Masharti ya nenosiri')}>
+              {checks.map((c) => (
+                <li key={c.id} className={`flex items-center gap-1.5 transition-colors duration-300 ${c.ok ? 'text-[#2C4A4E] font-semibold' : 'text-gray-600'}`}>
+                  {c.ok ? <Check className="h-3.5 w-3.5 animate-in zoom-in duration-300" aria-hidden="true" /> : <Circle className="h-3 w-3" aria-hidden="true" />}
+                  <span>{tr(c.label)}</span>
+                  <span className="sr-only">{c.ok ? tr('(done)', '(imetimia)') : tr('(not yet)', '(bado)')}</span>
+                </li>
+              ))}
+            </ul>
+          }
+        />
+
+        <PasswordField
+          ref={(el) => { refs.current.confirmPassword = el; }}
+          id="confirmPassword"
+          name="confirmPassword"
+          autoComplete="new-password"
+          maxLength={200}
+          label={tr('Confirm Password', 'Thibitisha Nenosiri')}
+          placeholder={tr('Type your password again', 'Andika nenosiri lako tena')}
+          value={form.confirmPassword}
+          disabled={disabled}
+          onPaste={(e) => e.preventDefault()}
+          onChange={(e) => update('confirmPassword', e.target.value)}
+          onBlur={() => blur('confirmPassword')}
+          error={err('confirmPassword')}
+        />
+
+        <div className="space-y-1">
+          <label className="flex items-start gap-2 rounded-xl p-3 -mx-3 text-sm text-[#2C4A4E] font-medium cursor-pointer transition-colors duration-200 hover:bg-[#2C4A4E]/5">
+            <input
+              ref={(el) => { refs.current.consent = el; }}
+              type="checkbox"
+              name="consent"
+              checked={form.consent}
+              disabled={disabled}
+              onChange={(e) => update('consent', e.target.checked)}
+              aria-invalid={!!errors.consent}
+              aria-describedby={errors.consent ? 'consent-error' : undefined}
+              className="mt-0.5 h-4 w-4 cursor-pointer accent-[#2C4A4E] transition-transform hover:scale-110"
+            />
+            <span>
+              {tr('I agree to the Terms and the', 'Ninakubali Masharti na')}{' '}
+              <Link href="/privacy" target="_blank" className="underline">{tr('Privacy Policy', 'Sera ya Faragha')}</Link>
+              {tr(', and I am 18 or older, or have permission from a trusted adult.', ', na nina miaka 18 au zaidi, au nina ruhusa kutoka kwa mtu mzima ninayemwamini.')}
+            </span>
+          </label>
+          {errors.consent && <p id="consent-error" role="alert" className="text-sm text-[#B34D4D]">{tr(errors.consent)}</p>}
+        </div>
+
+        {formError && formError.code !== 'email_taken' && (
+          <FormNotice tone="error" title={tr('We couldn’t create your account', 'Hatukuweza kufungua akaunti yako')}>
+            <p>{tr(formError.message)}</p>
+            {formError.code === 'too_many_attempts' && lockedFor > 0 && (
+              <p className="mt-1 text-xs">{tr(`You can try again in ${Math.ceil(lockedFor / 60)} min.`, `Unaweza kujaribu tena baada ya dakika ${Math.ceil(lockedFor / 60)}.`)}</p>
+            )}
+          </FormNotice>
+        )}
+
+        {slow && <FormNotice tone="info">{tr('Still working… the server may be waking up. This can take up to a minute.', 'Bado inashughulikia… seva huenda inaamka. Hii inaweza kuchukua hadi dakika moja.')}</FormNotice>}
+
+        <button
+          type="submit"
+          className="w-full py-4 bg-[#2C4A4E] text-white rounded-2xl font-bold font-acme text-lg shadow-sm transition-all duration-300 hover:bg-[#2C4A4E]/90 hover:shadow-xl hover:-translate-y-1 active:translate-y-0 active:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2C4A4E] focus-visible:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-sm motion-reduce:transition-none motion-reduce:transform-none"
+          disabled={submitting || lockedFor > 0}
+          aria-busy={submitting}
+        >
+          {submitting ? (
+            <span className="flex items-center justify-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              {tr('Creating your account...', 'Inafungua akaunti yako...')}
+            </span>
+          ) : lockedFor > 0 ? (
+            tr(`Try again in ${Math.ceil(lockedFor / 60)} min`, `Jaribu tena baada ya dakika ${Math.ceil(lockedFor / 60)}`)
+          ) : (
+            tr('Create Account', 'Fungua Akaunti')
+          )}
+        </button>
+
+        <p className="text-center text-sm font-medium text-gray-600">
+          {tr('Already have an account?', 'Tayari una akaunti?')}{' '}
+          <Link href={`/auth/signin${params.get('next') ? `?next=${encodeURIComponent(next)}` : ''}`} className="text-[#2C4A4E] font-bold underline-offset-4 decoration-2 transition-colors hover:underline hover:text-[#2C4A4E]/80">{tr('Sign in', 'Ingia')}</Link>
+        </p>
+      </form>
+    </AuthShell>
+  );
+}
+
+export default function SignUpPage() {
+  return (
+    <Suspense fallback={null}>
+      <SignUpForm />
+    </Suspense>
   );
 }
