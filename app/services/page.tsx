@@ -110,7 +110,7 @@ export default function ServicesPage() {
           </div>
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
             {CHANNELS.map(({ icon: Icon, title, body, status }) => (
-              <div key={title.en} className="rounded-3xl bg-white p-6 shadow-sm">
+              <div key={title.en} className="rounded-3xl bg-white p-6 shadow-sm heal-card">
                 <Icon className="h-8 w-8 text-[#2C4A4E]" strokeWidth={1.5} aria-hidden="true" />
                 <h3 className="mt-4 text-lg font-bold uppercase tracking-tight text-[#2C4A4E] font-acme">{tr(title)}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-gray-600">{tr(body)}</p>

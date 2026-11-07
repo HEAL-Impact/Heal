@@ -118,7 +118,7 @@ function PinGate({ onUnlock }: { onUnlock: () => void }) {
         aria-label="PIN"
       />
       {error && <p className="mt-2 text-sm text-gray-600">{tr("That PIN didn’t match.", "PIN hiyo haikulingana.")}</p>}
-      <button type="submit" className="mt-5 w-full rounded-2xl bg-[#2C4A4E] py-3 font-semibold text-white">
+      <button type="submit" className="mt-5 w-full rounded-2xl bg-[#2C4A4E] py-3 font-semibold text-white hover:opacity-90 hover:shadow-md">
         {tr("Open", "Fungua")}
       </button>
     </form>
@@ -168,7 +168,7 @@ export default function MySpace({ signedInName }: { signedInName?: string }) {
   return (
     <div className="space-y-4 py-6">
       {/* Greeting + one-tap check-in */}
-      <section className="rounded-3xl bg-white p-6 shadow-sm">
+      <section className="rounded-3xl bg-white p-6 shadow-sm heal-panel">
         <h1 className="text-2xl sm:text-3xl font-acme text-[#2C4A4E]">
           {greeting(lang)}
           {data.nickname || signedInName ? `, ${data.nickname || signedInName}` : ''} 🌿
@@ -198,7 +198,7 @@ export default function MySpace({ signedInName }: { signedInName?: string }) {
         <p className="text-xs font-semibold uppercase tracking-wider text-[#D97E7E]">{tr("Your next step", "Hatua yako inayofuata")}</p>
         <h2 className="mt-2 text-2xl font-acme">{tr(step.title)}</h2>
         <p className="mt-1 text-white/80">{tr(step.body)}</p>
-        <a href={step.action.href} className="mt-4 inline-block rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-[#2C4A4E]">
+        <a href={step.action.href} className="mt-4 inline-block rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-[#2C4A4E] hover:opacity-90 hover:shadow-md">
           {tr(step.action.label)}
         </a>
       </section>
@@ -219,7 +219,7 @@ export default function MySpace({ signedInName }: { signedInName?: string }) {
       </section>
 
       {/* Case codes */}
-      <section className="rounded-3xl bg-white p-6 shadow-sm">
+      <section className="rounded-3xl bg-white p-6 shadow-sm heal-panel">
         <h2 className="text-xl font-acme text-[#2C4A4E]">{tr("My reports", "Ripoti zangu")}</h2>
         {data.cases.length === 0 ? (
           <p className="mt-2 text-sm text-gray-600">{tr("Case codes you choose to keep will appear here.", "Namba za kesi unazochagua kuhifadhi zitaonekana hapa.")}</p>
@@ -227,7 +227,7 @@ export default function MySpace({ signedInName }: { signedInName?: string }) {
           <ul className="mt-3 divide-y divide-gray-100">
             {data.cases.map((c) => (
               <li key={c.code}>
-                <Link href={`/report/status?code=${c.code}`} className="flex items-center justify-between py-3">
+                <Link href={`/report/status?code=${c.code}`} className="flex items-center justify-between py-3 hover:underline underline-offset-4">
                   <span className="font-mono font-semibold text-[#2C4A4E]">{c.code}</span>
                   <span className="flex items-center gap-2 text-sm text-gray-600">
                     {tr(STATUS_LABEL[c.status])} <ChevronRight className="h-4 w-4" />
@@ -241,7 +241,7 @@ export default function MySpace({ signedInName }: { signedInName?: string }) {
 
       {/* Self-check history in words */}
       {data.selfChecks.length > 0 && (
-        <section className="rounded-3xl bg-white p-6 shadow-sm">
+        <section className="rounded-3xl bg-white p-6 shadow-sm heal-panel">
           <h2 className="text-xl font-acme text-[#2C4A4E]">{tr("How I’ve been doing", "Nimekuwa nikiendeleaje")}</h2>
           <ul className="mt-3 space-y-2 text-sm">
             {data.selfChecks.slice(0, 5).map((c) => (
@@ -257,7 +257,7 @@ export default function MySpace({ signedInName }: { signedInName?: string }) {
       )}
 
       {/* Safety plan */}
-      <section id="safety-plan" className="rounded-3xl bg-white p-6 shadow-sm scroll-mt-20">
+      <section id="safety-plan" className="rounded-3xl bg-white p-6 shadow-sm scroll-mt-20 heal-panel">
         <h2 className="flex items-center gap-2 text-xl font-acme text-[#2C4A4E]">
           <ShieldCheck className="h-5 w-5 text-[#2C4A4E]" aria-hidden="true" /> {tr("My safety plan", "Mpango wangu wa usalama")}
         </h2>
@@ -331,7 +331,7 @@ export default function MySpace({ signedInName }: { signedInName?: string }) {
       </section>
 
       {/* Privacy */}
-      <section className="rounded-3xl bg-white p-6 shadow-sm">
+      <section className="rounded-3xl bg-white p-6 shadow-sm heal-panel">
         <h2 className="text-xl font-acme text-[#2C4A4E]">{tr("Privacy", "Faragha")}</h2>
         <label className="mt-3 block text-sm font-semibold text-[#2C4A4E]">
           {tr("A name to greet you with (optional)", "Jina la kukusalimia nalo (si lazima)")}

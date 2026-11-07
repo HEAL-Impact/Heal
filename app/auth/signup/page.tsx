@@ -271,7 +271,7 @@ function SignUpForm() {
             />
             <span>
               {tr('I agree to the Terms and the', 'Ninakubali Masharti na')}{' '}
-              <Link href="/privacy" target="_blank" className="underline">{tr('Privacy Policy', 'Sera ya Faragha')}</Link>
+              <Link href="/privacy" target="_blank" className="underline hover:opacity-80">{tr('Privacy Policy', 'Sera ya Faragha')}</Link>
               {tr(', and I am 18 or older, or have permission from a trusted adult.', ', na nina miaka 18 au zaidi, au nina ruhusa kutoka kwa mtu mzima ninayemwamini.')}
             </span>
           </label>

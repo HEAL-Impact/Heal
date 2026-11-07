@@ -134,7 +134,7 @@ export default function DonatePage() {
           </div>
 
           {/* Donation Form */}
-          <div className="bg-white rounded-2xl p-8 shadow-lg max-w-2xl mx-auto mb-8 border border-gray-200">
+          <div className="bg-white rounded-2xl p-8 shadow-lg max-w-2xl mx-auto mb-8 border border-gray-200 heal-panel">
             <div className="flex items-center gap-3 mb-6">
               <Heart className="h-6 w-6 text-[#2C4A4E]" />
               <h3 className="font-acme text-xl font-semibold text-[#2C4A4E]">{tr("Make a Donation", "Toa Mchango")}</h3>

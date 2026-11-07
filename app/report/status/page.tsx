@@ -132,7 +132,7 @@ function StatusLookup() {
       )}
 
       {data && canFeedback && !thanks && (
-        <div className="mt-8 rounded-3xl bg-white p-6 shadow-sm">
+        <div className="mt-8 rounded-3xl bg-white p-6 shadow-sm heal-card">
           <p className="font-semibold text-[#2C4A4E]">{tr("Did you get the help you needed?", "Je, ulipata msaada uliohitaji?")}</p>
           <p className="mt-1 text-sm text-gray-600">{tr("Your answer is private and helps us check every partner.", "Jibu lako ni la siri na linatusaidia kufuatilia kila mshirika.")}</p>
           <div className="mt-4 flex gap-2">

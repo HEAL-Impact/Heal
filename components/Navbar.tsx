@@ -99,7 +99,7 @@ export default function Navbar() {
           />
           <div className="relative z-10 flex items-center justify-between h-20">
           {/* Logo - Left */}
-          <Link href="/" className="flex items-center space-x-3 group flex-shrink-0">
+          <Link href="/" className="flex items-center space-x-3 group flex-shrink-0 hover:underline underline-offset-4">
             <Image
               src="/images/heal-impact-logo.png"
               alt="HEAL-Impact"

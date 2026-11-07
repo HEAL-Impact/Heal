@@ -94,7 +94,7 @@ function CaseDetail() {
         <ArrowLeft className="h-4 w-4" /> {tr('Caseload', 'Orodha ya kesi')}
       </Link>
 
-      <div className="rounded-2xl bg-white p-5 shadow-sm" style={{ borderLeft: `6px solid ${p.colour}` }}>
+      <div className="rounded-2xl bg-white p-5 shadow-sm heal-card" style={{ borderLeft: `6px solid ${p.colour}` }}>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h1 className="font-mono text-2xl font-bold text-[#2C4A4E]">
@@ -149,7 +149,7 @@ function CaseDetail() {
       )}
 
       {/* Contact: unlocked only after accepting */}
-      <div className="rounded-2xl bg-white p-5 shadow-sm">
+      <div className="rounded-2xl bg-white p-5 shadow-sm heal-card">
         <h2 className="flex items-center gap-2 font-acme text-xl text-[#2C4A4E]">
           <Phone className="h-5 w-5 text-[#2C4A4E]" /> {tr('How to reach the survivor safely', 'Jinsi ya kumfikia kwa usalama')}
         </h2>
@@ -187,7 +187,7 @@ function CaseDetail() {
 
       {/* Record what happened */}
       {open && accepted && (
-        <div className="rounded-2xl bg-white p-5 shadow-sm">
+        <div className="rounded-2xl bg-white p-5 shadow-sm heal-card">
           <h2 className="font-acme text-xl text-[#2C4A4E]">{tr('Record what happened', 'Rekodi kilichotokea')}</h2>
           <div className="mt-3 flex flex-wrap gap-2">
             <button type="button" disabled={!!busy} onClick={() => act('contacted', { note })} className={`${btn} bg-[#2C4A4E] text-white`}>
@@ -240,7 +240,7 @@ function CaseDetail() {
 
       {/* Who was alerted */}
       {c.alerts && c.alerts.length > 0 && (
-        <div className="rounded-2xl bg-white p-5 shadow-sm">
+        <div className="rounded-2xl bg-white p-5 shadow-sm heal-card">
           <h2 className="font-acme text-xl text-[#2C4A4E]">{tr('Partners on this case (tracking)', 'Washirika kwenye kesi hii (ufuatiliaji)')}</h2>
           <ul className="mt-3 divide-y divide-gray-100 text-sm">
             {c.alerts.map((a) => (
@@ -260,7 +260,7 @@ function CaseDetail() {
       )}
 
       {/* Timeline */}
-      <div className="rounded-2xl bg-white p-5 shadow-sm">
+      <div className="rounded-2xl bg-white p-5 shadow-sm heal-card">
         <h2 className="font-acme text-xl text-[#2C4A4E]">{tr('Timeline', 'Mfuatano')}</h2>
         <ol className="mt-3 space-y-3 border-l-2 border-[#ECE5DA] pl-4 text-sm">
           {(c.events ?? []).map((e, i) => (

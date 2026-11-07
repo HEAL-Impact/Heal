@@ -193,7 +193,7 @@ export default function AnonymousPage() {
         ) : (
         <div role="tabpanel" id="guest-panel-chat" aria-labelledby="guest-tab-chat">
         {/* AI Support Companion Header */}
-        <div className="bg-white/90 backdrop-blur-md border border-white/40 rounded-2xl shadow-lg p-6 mb-6">
+        <div className="bg-white/90 backdrop-blur-md border border-white/40 rounded-2xl shadow-lg p-6 mb-6 heal-card">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="bg-brand-primary p-3 rounded-full shadow-md">
@@ -211,7 +211,7 @@ export default function AnonymousPage() {
         </div>
 
         {/* Chat Area */}
-        <div className="bg-white/90 backdrop-blur-md border border-white/40 rounded-2xl shadow-lg p-6 mb-6 min-h-[400px] max-h-[500px] overflow-y-auto">
+        <div className="bg-white/90 backdrop-blur-md border border-white/40 rounded-2xl shadow-lg p-6 mb-6 min-h-[400px] max-h-[500px] overflow-y-auto heal-panel">
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center py-12">
               <div className="bg-brand-light/60 p-6 rounded-full mb-4 shadow-md">
@@ -236,7 +236,7 @@ export default function AnonymousPage() {
                         <a
                           key={a.href}
                           href={a.href}
-                          className={`rounded-full px-4 py-1.5 text-sm font-semibold ${i === 0 ? 'bg-white text-[#2C4A4E]' : 'border border-white/60 text-white'}`}
+                          className={`rounded-full px-4 py-1.5 text-sm font-semibold ${i === 0 ? 'bg-white text-[#2C4A4E]' : 'border border-white/60 text-white'} hover:bg-white/10`}
                         >
                           {tr(a.label)}
                         </a>
@@ -287,7 +287,7 @@ export default function AnonymousPage() {
         </div>
 
         {/* Input Area */}
-        <div className="bg-white/90 backdrop-blur-md border border-white/40 rounded-2xl shadow-lg p-4">
+        <div className="bg-white/90 backdrop-blur-md border border-white/40 rounded-2xl shadow-lg p-4 heal-card">
           <div className="flex items-end gap-3">
             <button
               className="p-3 hover:bg-brand-light/50 rounded-full transition-colors flex-shrink-0"
@@ -329,8 +329,8 @@ export default function AnonymousPage() {
           </div>
           <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
             <span className="text-brand-secondary">{tr('Prefer a person?', 'Ungependa kuongea na mtu?')}</span>
-            <a href="tel:1195" className="rounded-full bg-brand-light/60 px-3 py-1 font-semibold text-brand-primary">{tr('Call 1195', 'Piga 1195')}</a>
-            <a href="tel:+254722178177" className="rounded-full bg-brand-light/60 px-3 py-1 font-semibold text-brand-primary">Befrienders Kenya</a>
+            <a href="tel:1195" className="rounded-full bg-brand-light/60 px-3 py-1 font-semibold text-brand-primary hover:opacity-90 hover:shadow-md">{tr('Call 1195', 'Piga 1195')}</a>
+            <a href="tel:+254722178177" className="rounded-full bg-brand-light/60 px-3 py-1 font-semibold text-brand-primary hover:opacity-90 hover:shadow-md">Befrienders Kenya</a>
           </div>
         </div>
         </div>

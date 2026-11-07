@@ -71,7 +71,7 @@ export default function CheckMessagePage() {
         {findings && (
           <div className="mt-6 space-y-4">
             {findings.length === 0 ? (
-              <div className="rounded-3xl bg-white p-6 shadow-sm">
+              <div className="rounded-3xl bg-white p-6 shadow-sm heal-card">
                 <ShieldCheck className="h-7 w-7 text-[#2C4A4E]" aria-hidden="true" />
                 <h2 className="mt-2 text-xl font-acme text-[#2C4A4E]">{tr("We didn’t spot common warning signs", "Hatukuona dalili za kawaida za hatari")}</h2>
                 <p className="mt-1 text-sm text-gray-600">
@@ -80,7 +80,7 @@ export default function CheckMessagePage() {
               </div>
             ) : (
               findings.map((f) => (
-                <div key={f.kind} className="rounded-3xl bg-white p-6 shadow-sm">
+                <div key={f.kind} className="rounded-3xl bg-white p-6 shadow-sm heal-card">
                   <ShieldAlert className="h-7 w-7 text-[#B34D4D]" aria-hidden="true" />
                   <h2 className="mt-2 text-xl font-acme text-[#2C4A4E]">{tr(f.title)}</h2>
                   <p className="mt-1 text-gray-700">{tr(f.explain)}</p>
@@ -98,14 +98,14 @@ export default function CheckMessagePage() {
               <button
                 type="button"
                 onClick={downloadEvidence}
-                className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-[#2C4A4E] shadow-sm"
+                className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-[#2C4A4E] shadow-sm hover:opacity-90 hover:shadow-md"
               >
                 <Download className="h-4 w-4" /> {tr("Save an evidence record", "Hifadhi rekodi ya ushahidi")}
               </button>
-              <Link href="/report" className="rounded-full bg-[#2C4A4E] px-5 py-2.5 text-sm font-semibold text-white">
+              <Link href="/report" className="rounded-full bg-[#2C4A4E] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-90 hover:shadow-md">
                 {tr("Make a report", "Toa ripoti")}
               </Link>
-              <Link href="/anonymous" className="rounded-full border border-[#2C4A4E] px-5 py-2.5 text-sm font-semibold text-[#2C4A4E]">
+              <Link href="/anonymous" className="rounded-full border border-[#2C4A4E] px-5 py-2.5 text-sm font-semibold text-[#2C4A4E] hover:bg-[#2C4A4E]/10">
                 {tr("Talk it through with Nia", "Ongea na Nia kuhusu hili")}
               </Link>
             </div>

@@ -507,7 +507,7 @@ export default function ResourceDetailClient() {
             <h3 className="text-lg font-semibold heal-text-primary mb-2 font-acme">{error || 'Resource not found'}</h3>
             <p className="heal-text-secondary mb-6">{tr("The resource you're looking for doesn't exist or has been removed.", "Rasilimali unayotafuta haipo au imeondolewa.")}</p>
             <div className="flex justify-center space-x-4">
-              <Link href="/resources" className="heal-button-primary">
+              <Link href="/resources" className="heal-button-primary hover:underline underline-offset-4">
                 {tr("Back to Resources", "Rudi kwenye Rasilimali")}
               </Link>
               <button onClick={fetchResource} className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors">
@@ -693,7 +693,7 @@ export default function ResourceDetailClient() {
                   <button
                     onClick={playAudioContent}
                     disabled={isGeneratingAudio || isPlayingAudio}
-                    className="heal-button-primary flex items-center space-x-2 mx-auto mb-4"
+                    className="heal-button-primary flex items-center space-x-2 mx-auto mb-4 hover:opacity-80"
                   >
                     {isGeneratingAudio ? (
                       <>
@@ -730,7 +730,7 @@ export default function ResourceDetailClient() {
             <button 
               onClick={handleInteraction} 
               disabled={isGeneratingAudio}
-              className="heal-button-primary flex items-center space-x-2"
+              className="heal-button-primary flex items-center space-x-2 hover:opacity-80"
             >
               <Play className="h-4 w-4" />
               <span>
@@ -793,7 +793,7 @@ export default function ResourceDetailClient() {
           </p>
           <Link 
             href={`/resources?category=${encodeURIComponent(resource.category)}`}
-            className="heal-button-primary inline-flex items-center space-x-2"
+            className="heal-button-primary inline-flex items-center space-x-2 hover:underline underline-offset-4"
           >
             <BookOpen className="h-4 w-4" />
             <span>Browse {resource.category} Resources</span>

@@ -65,12 +65,12 @@ export default function SafeNowPage() {
         <p className="mt-2 text-sm text-white/85">
           {tr("We alert a rescue centre, the police gender desk and a Community Health Promoter near you, only the ones you agree to. You choose how they reach you, including SMS only.", "Tunaarifu kituo cha uokoaji, dawati la jinsia la polisi na Mhamasishaji wa Afya ya Jamii aliye karibu nawe, wale tu unaokubali. Wewe ndiye unachagua wakufikie vipi, ikiwemo SMS tu.")}
         </p>
-        <Link href="/help/connect?from=emergency&pathway=emergency&urgent=1" className="mt-4 inline-block rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-[#2C4A4E]">
+        <Link href="/help/connect?from=emergency&pathway=emergency&urgent=1" className="mt-4 inline-block rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-[#2C4A4E] hover:opacity-90 hover:shadow-md">
           {tr("Send help to me", "Nitumie msaada")}
         </Link>
       </section>
 
-      <section className="rounded-3xl bg-white p-6 shadow-sm">
+      <section className="rounded-3xl bg-white p-6 shadow-sm heal-panel">
         <h2 className="flex items-center gap-2 text-xl font-acme text-[#2C4A4E]">
           <Send className="h-5 w-5 text-[#2C4A4E]" aria-hidden="true" />
           {tr("Tell someone you trust", "Mwambie mtu unayemwamini")}
@@ -117,7 +117,7 @@ export default function SafeNowPage() {
         {trusted.length === 0 && (
           <p className="mt-3 text-xs text-gray-500">
             {tr('Tip: add trusted people to your', 'Kidokezo: ongeza watu unaowaamini kwenye')}{' '}
-            <Link href="/my-space#safety-plan" className="underline">
+            <Link href="/my-space#safety-plan" className="underline hover:opacity-80">
               {tr("safety plan", "mpango wa usalama")}
             </Link>{' '}
             {tr("so they appear here.", "ili waonekane hapa.")}
@@ -125,7 +125,7 @@ export default function SafeNowPage() {
         )}
       </section>
 
-      <section className="mt-4 rounded-3xl bg-white p-6 shadow-sm">
+      <section className="mt-4 rounded-3xl bg-white p-6 shadow-sm heal-panel">
         <h2 className="flex items-center gap-2 text-xl font-acme text-[#2C4A4E]">
           <Search className="h-5 w-5 text-[#2C4A4E]" aria-hidden="true" />
           {tr("Find help near you", "Pata msaada karibu nawe")}
@@ -145,7 +145,7 @@ export default function SafeNowPage() {
                 <span className="block font-semibold text-[#2C4A4E]">{lang === 'sw' ? line.nameSw : line.name}</span>
                 <span className="block text-xs text-gray-500">{lang === 'sw' ? line.noteSw : line.note}</span>
               </span>
-              <a href={telHref(line)} className="shrink-0 rounded-full bg-[#2C4A4E]/10 px-3 py-1.5 text-sm font-semibold text-[#2C4A4E]">
+              <a href={telHref(line)} className="shrink-0 rounded-full bg-[#2C4A4E]/10 px-3 py-1.5 text-sm font-semibold text-[#2C4A4E] hover:opacity-90 hover:shadow-md">
                 {line.display}
               </a>
             </li>
@@ -160,8 +160,8 @@ export default function SafeNowPage() {
           <li>• {tr("Go to a neighbour, a shop or anywhere with other people around.", "Nenda kwa jirani, dukani au mahali popote penye watu wengine.")}</li>
           <li>• {tr("If you were sexually assaulted, a clinic can give PEP within 72 hours to prevent HIV. Try not to wash first if you may report.", "Kama ulinajisiwa au kubakwa, kliniki inaweza kukupa PEP ndani ya saa 72 kuzuia VVU. Jaribu kutooga kwanza kama huenda ukaripoti.")}</li>
           <li>
-            • {tr("When you are ready, make a", "Ukiwa tayari, toa")} <Link href="/report" className="underline">{tr("safe report", "ripoti salama")}</Link> {tr("or build a", "au tengeneza")}{' '}
-            <Link href="/my-space#safety-plan" className="underline">{tr("safety plan", "mpango wa usalama")}</Link>.
+            • {tr("When you are ready, make a", "Ukiwa tayari, toa")} <Link href="/report" className="underline hover:opacity-80">{tr("safe report", "ripoti salama")}</Link> {tr("or build a", "au tengeneza")}{' '}
+            <Link href="/my-space#safety-plan" className="underline hover:opacity-80">{tr("safety plan", "mpango wa usalama")}</Link>.
           </li>
         </ul>
       </section>

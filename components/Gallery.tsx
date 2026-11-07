@@ -125,7 +125,7 @@ export default function Gallery() {
             ))}
           </div>
         ) : (
-          <div className="mt-8 rounded-xl bg-white/70 px-6 py-12 text-center shadow-sm">
+          <div className="mt-8 rounded-xl bg-white/70 px-6 py-12 text-center shadow-sm heal-card">
             <p className="text-[#2C4A4E] font-acme text-xl mb-2">{tr("Videos are on their way", "Video zinakuja")}</p>
             <p className="text-[#2C4A4E]/70 mb-6">{tr("Meanwhile, catch our latest stories and clips on LinkedIn.", "Kwa sasa, ona hadithi na video zetu za hivi karibuni kwenye LinkedIn.")}</p>
             <a

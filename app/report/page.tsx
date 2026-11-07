@@ -119,7 +119,7 @@ function GuidedReport() {
   if (step === 'done' && result) {
     return (
       <section className="py-8 space-y-4">
-        <div className="rounded-3xl bg-white p-6 sm:p-8 shadow-sm text-center">
+        <div className="rounded-3xl bg-white p-6 sm:p-8 shadow-sm text-center heal-panel">
           <ShieldCheck className="mx-auto h-10 w-10 text-[#2C4A4E]" aria-hidden="true" />
           <h1 className="mt-3 text-3xl font-acme text-[#2C4A4E]">{tr("Thank you for trusting us", "Asante kwa kutuamini")}</h1>
           <p className="mt-2 text-gray-600">
@@ -163,7 +163,7 @@ function GuidedReport() {
             <li>2. {draft.wantsContact ? tr("Contacted: someone reaches out the way you asked, at a safe time.", "Kuwasiliana: mtu atawasiliana nawe kwa njia uliyoomba, wakati salama.") : tr("Contacted: you chose not to be contacted; you can check your code any time.", "Kuwasiliana: ulichagua usiwasiliane nawe; unaweza kukagua namba yako wakati wowote.")}</li>
             <li>3. {tr("Seen: you get support from the service you chose.", "Kuonwa: unapata msaada kutoka kwa huduma uliyochagua.")}</li>
           </ol>
-          <Link href={`/report/status?code=${result.caseCode}`} className="mt-4 inline-block text-sm font-semibold underline">
+          <Link href={`/report/status?code=${result.caseCode}`} className="mt-4 inline-block text-sm font-semibold underline hover:opacity-80">
             {tr("Check status", "Kagua hali")}
           </Link>
         </div>
@@ -182,7 +182,7 @@ function GuidedReport() {
       )}
 
       {step === 'intro' && (
-        <div className="rounded-3xl bg-white p-6 sm:p-8 shadow-sm">
+        <div className="rounded-3xl bg-white p-6 sm:p-8 shadow-sm heal-panel">
           <h1 className="text-3xl font-acme text-[#2C4A4E]">{tr("Make a safe report", "Toa ripoti kwa usalama")}</h1>
           <ul className="mt-4 space-y-2 text-gray-700">
             <li>• {tr("You can skip any question.", "Unaweza kuruka swali lolote.")}</li>
@@ -193,7 +193,7 @@ function GuidedReport() {
           <button type="button" onClick={next} className="mt-6 w-full rounded-2xl bg-[#2C4A4E] px-5 py-4 font-semibold text-white hover:bg-[#2C4A4E]/90">
             {tr("Start", "Anza")}
           </button>
-          <Link href="/report/status" className="mt-4 block text-center text-sm text-gray-600 underline">
+          <Link href="/report/status" className="mt-4 block text-center text-sm text-gray-600 underline hover:opacity-80">
             {tr("I already have a case code", "Tayari nina namba ya kesi")}
           </Link>
         </div>
@@ -220,7 +220,7 @@ function GuidedReport() {
             <div className="mt-6 rounded-2xl bg-[#2C4A4E]/10 p-4 text-sm text-[#2C4A4E]">
               <strong>{tr("Time matters:", "Muda ni muhimu:")}</strong>{' '}
               {tr("within 72 hours a clinic can give PEP to prevent HIV, and emergency contraception. Call GVRC on", "ndani ya saa 72 kliniki inaweza kukupa PEP kuzuia VVU, na kidonge cha dharura cha kuzuia mimba. Piga GVRC")}{' '}
-              <a className="underline" href="tel:0709400200">0709 400 200</a> {tr("or 1195.", "au 1195.")}
+              <a className="underline hover:opacity-80" href="tel:0709400200">0709 400 200</a> {tr("or 1195.", "au 1195.")}
             </div>
           )}
           <h1 className="mt-6 text-2xl sm:text-3xl font-acme text-[#2C4A4E]">{tr("Are you safe right now?", "Je, uko salama sasa hivi?")}</h1>
@@ -229,9 +229,9 @@ function GuidedReport() {
             <div className="mt-4 rounded-2xl bg-[#2C4A4E] p-5 text-white">
               <p className="font-semibold">{tr("Please call for help now if you can. It’s free.", "Tafadhali piga simu kuomba msaada sasa kama unaweza. Ni bure.")}</p>
               <div className="mt-3 flex flex-wrap gap-2">
-                <a href="tel:1195" className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#2C4A4E]">{tr("Call 1195", "Piga 1195")}</a>
-                <a href="tel:999" className="rounded-full border border-white/60 px-4 py-2 text-sm font-semibold">{tr("Call 999", "Piga 999")}</a>
-                <button type="button" onClick={next} className="rounded-full border border-white/60 px-4 py-2 text-sm font-semibold">
+                <a href="tel:1195" className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#2C4A4E] hover:opacity-90 hover:shadow-md">{tr("Call 1195", "Piga 1195")}</a>
+                <a href="tel:999" className="rounded-full border border-white/60 px-4 py-2 text-sm font-semibold hover:bg-white/10">{tr("Call 999", "Piga 999")}</a>
+                <button type="button" onClick={next} className="rounded-full border border-white/60 px-4 py-2 text-sm font-semibold hover:bg-white/10">
                   {tr("Continue the report", "Endelea na ripoti")}
                 </button>
               </div>
@@ -276,7 +276,7 @@ function GuidedReport() {
             type="button"
             onClick={addLocation}
             disabled={locating || draft.latitude != null}
-            className="mt-3 inline-flex items-center gap-2 rounded-full border border-[#2C4A4E] px-4 py-2 text-sm font-semibold text-[#2C4A4E] disabled:opacity-60"
+            className="mt-3 inline-flex items-center gap-2 rounded-full border border-[#2C4A4E] px-4 py-2 text-sm font-semibold text-[#2C4A4E] disabled:opacity-60 hover:bg-[#2C4A4E]/10"
           >
             {locating ? <Loader2 className="h-4 w-4 animate-spin" /> : <MapPin className="h-4 w-4 text-[#2C4A4E]" />}
             {draft.latitude != null ? tr("Approximate location added", "Mahali pa takriban pameongezwa") : tr("Use my approximate location", "Tumia mahali nilipo kwa takriban")}
@@ -386,11 +386,11 @@ function GuidedReport() {
 
       {step !== 'intro' && (
         <div className="mt-6 flex items-center justify-between text-sm">
-          <button type="button" onClick={back} className="inline-flex items-center gap-1 text-gray-600">
+          <button type="button" onClick={back} className="inline-flex items-center gap-1 text-gray-600 hover:opacity-80">
             <ChevronLeft className="h-4 w-4" /> {tr("Back", "Rudi")}
           </button>
           {step !== 'review' && (
-            <button type="button" onClick={next} className="text-gray-600 underline">
+            <button type="button" onClick={next} className="text-gray-600 underline hover:opacity-80">
               {tr("Skip this question", "Ruka swali hili")}
             </button>
           )}

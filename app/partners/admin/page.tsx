@@ -146,7 +146,7 @@ function AccountForm({ partners, onSaved }: { partners: Partner[]; onSaved: () =
         </select>
       )}
       {error && <p className="text-sm text-[#B34D4D] sm:col-span-2">{error}</p>}
-      <button type="submit" disabled={busy} className="rounded-full bg-[#2C4A4E] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50 sm:w-fit">
+      <button type="submit" disabled={busy} className="rounded-full bg-[#2C4A4E] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50 sm:w-fit hover:opacity-90 hover:shadow-md">
         {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : tr('Create account', 'Unda akaunti')}
       </button>
     </form>
@@ -287,7 +287,7 @@ function Admin() {
             <AccountForm partners={partners.filter((p) => p.active && p.status === 'approved')} onSaved={() => (setAddingAccount(false), load())} />
           </div>
         )}
-        <div className="mt-4 overflow-x-auto rounded-2xl bg-white shadow-sm">
+        <div className="mt-4 overflow-x-auto rounded-2xl bg-white shadow-sm heal-panel">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b text-left text-gray-500">

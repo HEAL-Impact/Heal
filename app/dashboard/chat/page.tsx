@@ -451,7 +451,7 @@ export default function ChatPage() {
         <div className="text-center">
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">{tr("Please Sign In", "Tafadhali Ingia")}</h2>
           <p className="text-gray-600 mb-6 text-sm sm:text-base">{tr("You need to be signed in to access the chat.", "Unahitaji kuingia ili kufikia mazungumzo.")}</p>
-          <Link href="/auth/signin" className="heal-button">
+          <Link href="/auth/signin" className="heal-button hover:underline underline-offset-4">
             {tr("Sign In", "Ingia")}
           </Link>
         </div>
@@ -769,7 +769,7 @@ export default function ChatPage() {
                           <div className={`px-6 py-4 rounded-2xl backdrop-blur-md border shadow-lg ${message.sender === 'user'
                               ? 'bg-[#2C4A4E]/80 text-white border-[#2C4A4E]/50'
                               : 'bg-white/20 text-white border-white/30'
-                            }`}>
+                            } heal-card`}>
                             {message.isLoading ? (
                               <div className="flex items-center space-x-3">
                                 <Loader2 className="h-5 w-5 animate-spin" />

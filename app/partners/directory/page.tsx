@@ -58,7 +58,7 @@ function Directory() {
         {tr('Approved partners by location. Choose a county and ward to see who is nearest first.', 'Washirika walioidhinishwa kwa eneo. Chagua kaunti na wadi kuona aliye karibu zaidi kwanza.')}
       </p>
 
-      <div className="mt-5 grid gap-3 rounded-2xl bg-white p-4 shadow-sm sm:grid-cols-4">
+      <div className="mt-5 grid gap-3 rounded-2xl bg-white p-4 shadow-sm sm:grid-cols-4 heal-panel">
         <select value={county} onChange={(e) => setCounty(e.target.value)} className={fieldCls} aria-label={tr('County', 'Kaunti')}>
           <option value="">{tr('All counties', 'Kaunti zote')}</option>
           {COUNTIES.map((c) => (

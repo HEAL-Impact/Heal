@@ -47,7 +47,7 @@ function LoginForm() {
       <input type="email" required autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={tr("Work email", "Barua pepe ya kazi")} className={field} />
       <input type="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder={tr("Password", "Nenosiri")} className={field} />
       {error && <p className="text-sm text-[#B34D4D]">{error}</p>}
-      <button type="submit" disabled={busy} className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#2C4A4E] py-3 font-semibold text-white disabled:opacity-60">
+      <button type="submit" disabled={busy} className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#2C4A4E] py-3 font-semibold text-white disabled:opacity-60 hover:opacity-90 hover:shadow-md">
         {busy && <Loader2 className="h-4 w-4 animate-spin" />}
         {tr("Sign in", "Ingia")}
       </button>
@@ -59,7 +59,7 @@ export default function PartnerLoginPage() {
   const { tr } = useLang();
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#ECE5DA] px-4">
-      <div className="w-full max-w-sm rounded-3xl bg-white p-8 shadow-sm">
+      <div className="w-full max-w-sm rounded-3xl bg-white p-8 shadow-sm heal-panel">
         <div className="flex items-center justify-between">
           <Link href="/" aria-label={tr("HEAL-Impact home", "Mwanzo wa HEAL-Impact")}>
             <Image src="/images/heal-impact-logo.png" alt="HEAL-Impact" width={157} height={40} className="h-9 w-auto" />
@@ -81,7 +81,7 @@ export default function PartnerLoginPage() {
         </p>
         <p className="mt-4 text-xs text-gray-500">
           {tr("Looking for help for yourself?", "Unatafuta msaada kwa ajili yako?")}{' '}
-          <Link href="/help" className="underline">{tr("Go to Get help", "Nenda kwa Pata msaada")}</Link>
+          <Link href="/help" className="underline hover:opacity-80">{tr("Go to Get help", "Nenda kwa Pata msaada")}</Link>
         </p>
       </div>
     </div>

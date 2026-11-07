@@ -635,7 +635,7 @@ export default function ResourcesPage() {
               {error && (
                 <button 
                   onClick={fetchResources}
-                  className="mt-4 heal-button-primary"
+                  className="mt-4 heal-button-primary hover:opacity-80"
                 >
                   {tr("Reload Resources", "Pakia Rasilimali Tena")}
                 </button>

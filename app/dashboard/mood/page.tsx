@@ -417,7 +417,7 @@ export default function MoodTrackerPage() {
               <button
                 onClick={logMood}
                 disabled={isLogging}
-                className="w-full heal-button-primary flex items-center justify-center space-x-2"
+                className="w-full heal-button-primary flex items-center justify-center space-x-2 hover:opacity-80"
               >
                 {isLogging ? (
                   <>

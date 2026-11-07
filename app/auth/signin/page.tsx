@@ -149,7 +149,7 @@ function SignInForm() {
             {formError.code === 'invalid_credentials' && (
               <p className="mt-2 text-xs text-[#2C4A4E]">
                 {tr('New to HEAL?', 'Mgeni HEAL?')}{' '}
-                <Link href={`/auth/signup?email=${encodeURIComponent(normalizeEmail(email))}`} className="font-semibold underline">{tr('Create an account', 'Fungua akaunti')}</Link>
+                <Link href={`/auth/signup?email=${encodeURIComponent(normalizeEmail(email))}`} className="font-semibold underline hover:opacity-80">{tr('Create an account', 'Fungua akaunti')}</Link>
               </p>
             )}
           </FormNotice>
@@ -189,7 +189,7 @@ function SignInForm() {
         </p>
         <p className="text-center text-xs text-gray-500">
           {tr('On a shared phone? Use', 'Unatumia simu ya pamoja? Tumia')}{' '}
-          <Link href="/anonymous" className="underline">{tr('anonymous mode', 'hali ya bila jina')}</Link>{' '}
+          <Link href="/anonymous" className="underline hover:opacity-80">{tr('anonymous mode', 'hali ya bila jina')}</Link>{' '}
           {tr('or sign out when you finish.', 'au utoke ukimaliza.')}
         </p>
       </form>

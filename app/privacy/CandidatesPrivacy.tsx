@@ -21,7 +21,7 @@ export const CandidatesPrivacy = (): React.JSX.Element => {
     <div className="bg-[#ECE5DA] overflow-hidden w-full min-h-screen flex flex-col">
       {/* Header */}
       <header className="flex items-center justify-around bg-transparent shadow-sm">
-        <Link href="/" className="flex items-center" aria-label="HEAL-Impact home">
+        <Link href="/" className="flex items-center hover:underline underline-offset-4" aria-label="HEAL-Impact home">
           <Image
             src="/images/heal-impact-logo.png"
             alt="HEAL-Impact"

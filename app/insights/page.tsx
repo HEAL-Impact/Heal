@@ -86,7 +86,7 @@ function InsightsView() {
 
       <section className="mt-6 grid gap-3 sm:grid-cols-5">
         {data.funnel.map((f, i) => (
-          <div key={f.label} className="rounded-2xl bg-white p-4 shadow-sm">
+          <div key={f.label} className="rounded-2xl bg-white p-4 shadow-sm heal-card">
             <p className="text-2xl font-bold text-[#2C4A4E]">{f.count.toLocaleString()}</p>
             <p className="text-sm text-gray-600">{tr(f.label, FUNNEL_SW[f.label] ?? f.label)}</p>
             {i > 0 && data.funnel[0].count > 0 && (
@@ -97,22 +97,22 @@ function InsightsView() {
       </section>
 
       <section className="mt-3 grid gap-3 sm:grid-cols-3">
-        <div className="rounded-2xl bg-white p-4 shadow-sm">
+        <div className="rounded-2xl bg-white p-4 shadow-sm heal-card">
           <p className="text-2xl font-bold text-[#2C4A4E]">{data.medianAcceptMinutes === null ? '–' : `${data.medianAcceptMinutes} min`}</p>
           <p className="text-sm text-gray-600">{tr('Median time to acceptance', 'Muda wa wastani hadi kukubaliwa')}</p>
         </div>
-        <div className="rounded-2xl bg-white p-4 shadow-sm">
+        <div className="rounded-2xl bg-white p-4 shadow-sm heal-card">
           <p className="text-2xl font-bold" style={{ color: data.overdueAlerts ? '#B34D4D' : '#2C4A4E' }}>{data.overdueAlerts}</p>
           <p className="text-sm text-gray-600">{tr('Alerts past their deadline now', 'Arifa zilizopita muda sasa')}</p>
         </div>
-        <div className="rounded-2xl bg-white p-4 shadow-sm">
+        <div className="rounded-2xl bg-white p-4 shadow-sm heal-card">
           <p className="text-2xl font-bold text-[#2C4A4E]">{data.helpedYes} / {data.helpedYes + data.helpedNo}</p>
           <p className="text-sm text-gray-600">{tr('Survivors who said they got the help they needed', 'Waliosema walipata msaada waliohitaji')}</p>
         </div>
       </section>
 
       <section className="mt-6 grid gap-6 lg:grid-cols-2">
-        <div className="rounded-2xl bg-white p-5 shadow-sm">
+        <div className="rounded-2xl bg-white p-5 shadow-sm heal-card">
           <h2 className="font-acme text-xl text-[#2C4A4E]">{tr('Cases by month', 'Kesi kwa mwezi')}</h2>
           <div className="mt-4 h-64">
             <ResponsiveContainer>
@@ -129,7 +129,7 @@ function InsightsView() {
             </ResponsiveContainer>
           </div>
         </div>
-        <div className="rounded-2xl bg-white p-5 shadow-sm">
+        <div className="rounded-2xl bg-white p-5 shadow-sm heal-card">
           <h2 className="font-acme text-xl text-[#2C4A4E]">{tr('How cases start', 'Jinsi kesi zinavyoanza')}</h2>
           <div className="mt-4 h-64">
             <ResponsiveContainer>
@@ -159,7 +159,7 @@ function InsightsView() {
         </div>
       </section>
 
-      <section className="mt-6 rounded-2xl bg-white p-5 shadow-sm">
+      <section className="mt-6 rounded-2xl bg-white p-5 shadow-sm heal-panel">
         <h2 className="font-acme text-xl text-[#2C4A4E]">{tr('By county, all time', 'Kwa kaunti, tangu mwanzo')}</h2>
         <div className="mt-3 overflow-x-auto">
           <table className="w-full text-sm">
@@ -190,7 +190,7 @@ function InsightsView() {
         </p>
       </section>
 
-      <section className="mt-6 rounded-2xl bg-white p-5 shadow-sm">
+      <section className="mt-6 rounded-2xl bg-white p-5 shadow-sm heal-panel">
         <h2 className="flex items-center gap-2 font-acme text-xl text-[#2C4A4E]">
           <Database className="h-5 w-5 text-[#2C4A4E]" /> {tr('DHIS2 / KHIS export', 'Usafirishaji kwa DHIS2 / KHIS')}
         </h2>

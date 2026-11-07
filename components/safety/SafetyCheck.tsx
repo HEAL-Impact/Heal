@@ -40,7 +40,7 @@ export default function SafetyCheck({ children }: { children: React.ReactNode })
 
   return (
     <div className="mx-auto max-w-lg px-4 py-10 sm:py-16">
-      <div className="rounded-3xl bg-white p-7 sm:p-10 shadow-sm">
+      <div className="rounded-3xl bg-white p-7 sm:p-10 shadow-sm heal-card">
         {state === 'ask' ? (
           <>
             <ShieldCheck className="h-10 w-10 text-[#2C4A4E]" strokeWidth={1.5} aria-hidden="true" />

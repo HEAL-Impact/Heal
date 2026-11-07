@@ -148,7 +148,7 @@ function Questionnaire({ instrument }: { instrument: Instrument }) {
     };
     return (
       <section className="py-8 space-y-4">
-        <div className="rounded-3xl bg-white p-6 sm:p-8 shadow-sm">
+        <div className="rounded-3xl bg-white p-6 sm:p-8 shadow-sm heal-panel">
           <p className="text-sm font-semibold uppercase tracking-wider text-[#2C4A4E]">{tr(instrument.title, instrument.titleSw)}</p>
           <h1 className="mt-2 text-2xl sm:text-3xl font-acme text-[#2C4A4E]">{tr("Thank you for checking in", "Asante kwa kujikagua")}</h1>
           <p className="mt-3 text-gray-700 leading-relaxed">{tr(result.band.summary, result.band.summarySw)}</p>
@@ -189,7 +189,7 @@ function Questionnaire({ instrument }: { instrument: Instrument }) {
           </div>
         </div>
 
-        <div id="connect" className="rounded-3xl bg-white p-6 sm:p-8 shadow-sm">
+        <div id="connect" className="rounded-3xl bg-white p-6 sm:p-8 shadow-sm heal-panel">
           <h2 className="text-2xl font-acme text-[#2C4A4E]">
             {result.step === 'self_care' ? tr("Would you like a CHP to check in on you?", "Ungependa CHP akutembelee?") : tr("Would you like us to connect you with care?", "Ungependa tukuunganishe na huduma?")}
           </h2>
@@ -212,12 +212,12 @@ function Questionnaire({ instrument }: { instrument: Instrument }) {
             type="button"
             onClick={save}
             disabled={saved}
-            className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-[#2C4A4E] shadow-sm disabled:opacity-70"
+            className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-[#2C4A4E] shadow-sm disabled:opacity-70 hover:opacity-90 hover:shadow-md"
           >
             {saved ? <Check className="h-4 w-4 text-[#2C4A4E]" /> : null}
             {saved ? tr("Saved to My Space", "Imehifadhiwa kwenye Nafasi Yangu") : tr("Save to My Space", "Hifadhi kwenye Nafasi Yangu")}
           </button>
-          <Link href="/help/check-in" className="text-sm text-gray-600 underline">
+          <Link href="/help/check-in" className="text-sm text-gray-600 underline hover:opacity-80">
             {tr("Try another check", "Jaribu ukaguzi mwingine")}
           </Link>
         </div>
@@ -265,7 +265,7 @@ function Questionnaire({ instrument }: { instrument: Instrument }) {
         >
           <ChevronLeft className="h-4 w-4" /> {tr("Back", "Rudi")}
         </button>
-        <Link href="/help" className="text-gray-600 underline">
+        <Link href="/help" className="text-gray-600 underline hover:opacity-80">
           {tr("Stop for now", "Simama kwa sasa")}
         </Link>
       </div>

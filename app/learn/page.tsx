@@ -14,7 +14,7 @@ function ModuleView({ module, onDone }: { module: Module; onDone: () => void }) 
 
   return (
     <div className="mx-auto max-w-3xl">
-      <button type="button" onClick={onDone} className="inline-flex items-center gap-1 text-sm text-gray-600">
+      <button type="button" onClick={onDone} className="inline-flex items-center gap-1 text-sm text-gray-600 hover:opacity-80">
         <ChevronLeft className="h-4 w-4" /> {tr("All modules", "Moduli zote")}
       </button>
       <h1 className="mt-3 text-3xl font-acme text-[#2C4A4E]">{tr(module.title)}</h1>
@@ -22,7 +22,7 @@ function ModuleView({ module, onDone }: { module: Module; onDone: () => void }) 
 
       <div className="mt-6 space-y-4">
         {module.lessons.map((l) => (
-          <section key={l.title.en} className="rounded-2xl bg-white p-5 shadow-sm">
+          <section key={l.title.en} className="rounded-2xl bg-white p-5 shadow-sm heal-panel">
             <h2 className="font-acme text-xl text-[#2C4A4E]">{tr(l.title)}</h2>
             <ul className="mt-2 space-y-1.5 text-gray-700">
               {l.points.map((p) => (
@@ -33,7 +33,7 @@ function ModuleView({ module, onDone }: { module: Module; onDone: () => void }) 
         ))}
       </div>
 
-      <section className="mt-6 rounded-2xl bg-white p-5 shadow-sm">
+      <section className="mt-6 rounded-2xl bg-white p-5 shadow-sm heal-panel">
         <h2 className="font-acme text-xl text-[#2C4A4E]">{tr("Check your understanding", "Pima uelewa wako")}</h2>
         <ol className="mt-3 space-y-5">
           {module.quiz.map((q, i) => (

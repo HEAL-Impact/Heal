@@ -11,7 +11,7 @@ export const CaliforniaPrivacyRightsSection = (): React.ReactElement => {
         time after granting approval email{" "}
         <a
           href="mailto:info@heal-impact.org"
-          className="text-[#2C4A4E]"
+          className="text-[#2C4A4E] hover:underline underline-offset-4"
         >
           info@heal-impact.org
         </a>

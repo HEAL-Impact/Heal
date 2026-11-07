@@ -75,7 +75,7 @@ export default function PartnerRegisterPage() {
 
       <main className="mx-auto max-w-3xl">
         {done ? (
-          <div className="rounded-3xl bg-white p-8 text-center shadow-sm">
+          <div className="rounded-3xl bg-white p-8 text-center shadow-sm heal-panel">
             <CheckCircle2 className="mx-auto h-12 w-12 text-[#2C4A4E]" />
             <h1 className="mt-4 font-acme text-3xl text-[#2C4A4E]">{tr('Thank you for registering', 'Asante kwa kujisajili')}</h1>
             <p className="mt-2 text-gray-700">

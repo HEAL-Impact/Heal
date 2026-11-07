@@ -62,7 +62,7 @@ function Queue() {
           { label: tr('Urgent', 'Za dharura'), value: urgent, colour: PATHWAY.facility_today.colour },
           { label: tr('Follow-ups due', 'Ufuatiliaji unaodaiwa'), value: followUps, colour: PATHWAY.refer.colour },
         ].map((t) => (
-          <div key={t.label} className="rounded-2xl bg-white p-4 shadow-sm">
+          <div key={t.label} className="rounded-2xl bg-white p-4 shadow-sm heal-card">
             <p className="text-3xl font-bold" style={{ color: t.colour }}>{cases ? t.value : '–'}</p>
             <p className="text-sm text-gray-600">{t.label}</p>
           </div>
@@ -226,7 +226,7 @@ function ChvScreening() {
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
-      <div className="rounded-2xl bg-white p-5 shadow-sm">
+      <div className="rounded-2xl bg-white p-5 shadow-sm heal-card">
         <div className="flex flex-wrap gap-2">
           {INSTRUMENTS.map((i) => (
             <button

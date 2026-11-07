@@ -112,7 +112,7 @@ function Connect() {
   if (done) {
     return (
       <section className="py-8">
-        <div className="rounded-3xl bg-white p-6 sm:p-8 shadow-sm">
+        <div className="rounded-3xl bg-white p-6 sm:p-8 shadow-sm heal-panel">
           <ShieldCheck className="h-9 w-9 text-[#2C4A4E]" aria-hidden="true" />
           <h1 className="mt-3 text-3xl font-acme text-[#2C4A4E]">
             {done.sent ? tr("We’ve passed your request on", "Tumepeleka ombi lako") : tr("Saved on your phone", "Imehifadhiwa kwenye simu yako")}
@@ -155,7 +155,7 @@ function Connect() {
               {kept && <Check className="h-4 w-4" />}
               {kept ? tr("Kept in My Space", "Imehifadhiwa kwenye Nafasi Yangu") : tr("Keep this code in My Space", "Hifadhi namba hii kwenye Nafasi Yangu")}
             </button>
-            <Link href={`/report/status?code=${done.caseCode}`} className="rounded-full border border-[#2C4A4E] px-5 py-2.5 text-sm font-semibold text-[#2C4A4E]">
+            <Link href={`/report/status?code=${done.caseCode}`} className="rounded-full border border-[#2C4A4E] px-5 py-2.5 text-sm font-semibold text-[#2C4A4E] hover:bg-[#2C4A4E]/10">
               {tr("Check progress", "Kagua maendeleo")}
             </Link>
           </div>
@@ -293,8 +293,8 @@ function Connect() {
           {refused && <p className="mt-1 text-sm">{refused}</p>}
           <p className="mt-2 text-sm">
             {tr('Please try again. If you need help now, call', 'Tafadhali jaribu tena. Kama unahitaji msaada sasa, piga')}{' '}
-            <a href="tel:1195" className="font-bold underline">1195</a>, <a href="tel:999" className="font-bold underline">999</a> {tr('or', 'au')}{' '}
-            <a href="tel:112" className="font-bold underline">112</a>.
+            <a href="tel:1195" className="font-bold underline hover:opacity-80">1195</a>, <a href="tel:999" className="font-bold underline hover:opacity-80">999</a> {tr('or', 'au')}{' '}
+            <a href="tel:112" className="font-bold underline hover:opacity-80">112</a>.
           </p>
         </div>
       )}
@@ -317,7 +317,7 @@ function Connect() {
       {emergency && (
         <p className="text-center text-sm text-gray-600">
           {tr("In immediate danger? Don’t wait:", "Uko hatarini sasa hivi? Usisubiri:")}{' '}
-          <a href="tel:999" className="font-semibold underline">999</a> · <a href="tel:112" className="font-semibold underline">112</a> · <a href="tel:1195" className="font-semibold underline">1195</a>
+          <a href="tel:999" className="font-semibold underline hover:opacity-80">999</a> · <a href="tel:112" className="font-semibold underline hover:opacity-80">112</a> · <a href="tel:1195" className="font-semibold underline hover:opacity-80">1195</a>
         </p>
       )}
     </section>
