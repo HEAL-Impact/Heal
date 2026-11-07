@@ -39,8 +39,14 @@ export interface Band {
 
 export interface Instrument {
   id: string;
+  /** Clinical name, for CHPs and records (e.g. "Mood check (PHQ-9)"). */
   name: string;
   nameSw: string;
+  /** Plain words shown to survivors when choosing a check. */
+  title: string;
+  titleSw: string;
+  hint: string;
+  hintSw: string;
   shortName: string;
   about: string;
   aboutSw: string;
@@ -66,6 +72,10 @@ const FREQUENCY: Option[] = [
 export const PHQ9: Instrument = {
   id: 'phq9',
   name: 'Mood check (PHQ-9)',
+  title: 'Feeling low or down',
+  titleSw: 'Unajisikia mnyonge au mwenye huzuni',
+  hint: 'Sad, tired, or not enjoying things like you used to?',
+  hintSw: 'Una huzuni, uchovu, au hufurahii mambo kama zamani?',
   nameSw: 'Ukaguzi wa hisia (PHQ-9)',
   shortName: 'Mood',
   about: 'Nine questions about low mood and interest over the last two weeks.',
@@ -100,6 +110,10 @@ export const PHQ9: Instrument = {
 export const GAD7: Instrument = {
   id: 'gad7',
   name: 'Worry check (GAD-7)',
+  title: 'Feeling worried or on edge',
+  titleSw: 'Una wasiwasi au hutulii',
+  hint: 'Can’t stop worrying, feeling nervous, restless or easily scared?',
+  hintSw: 'Huwezi kuacha kuwaza, una hofu, hutulii au unashtuka haraka?',
   nameSw: 'Ukaguzi wa wasiwasi (GAD-7)',
   shortName: 'Worry',
   about: 'Seven questions about worry and feeling on edge over the last two weeks.',
@@ -131,6 +145,10 @@ export const GAD7: Instrument = {
 export const EPDS: Instrument = {
   id: 'epds',
   name: 'Pregnancy & new-baby check (EPDS)',
+  title: 'If you’re pregnant or just had a baby',
+  titleSw: 'Kama u mjamzito au umejifungua karibuni',
+  hint: 'How you’ve been feeling while expecting, or since your baby came (in the last year).',
+  hintSw: 'Jinsi umekuwa ukijihisi ukiwa mjamzito, au tangu mtoto wako azaliwe (katika mwaka uliopita).',
   nameSw: 'Ukaguzi wa ujauzito na mtoto mchanga (EPDS)',
   shortName: 'Pregnancy',
   about: 'Ten questions about how you have felt in the past 7 days.',

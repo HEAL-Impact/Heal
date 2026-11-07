@@ -8,7 +8,7 @@ const DOORS = [
   { href: '/help/safe-now', icon: LifeBuoy, title: { en: "I'm not safe now", sw: "Siko salama sasa" }, body: { en: "One tap to 1195, 999 or 112, an optional message to someone you trust, and the nearest recovery centre.", sw: "Mguso mmoja kupiga 1195, 999 au 112, ujumbe kwa mtu unayemwamini ukipenda, na kituo cha kupona kilicho karibu." }, dark: true },
   { href: '/anonymous', icon: MessageCircle, title: { en: "I want to talk", sw: "Nataka kuongea" }, body: { en: "Nia, our AI companion, in English or Kiswahili. Every message is checked for risk, and a person is always one tap away.", sw: "Nia, msaidizi wetu wa AI, kwa Kiswahili au Kiingereza. Kila ujumbe unakaguliwa kwa hatari, na mtu halisi yuko mguso mmoja tu." } },
   { href: '/report', icon: FileText, title: { en: "I want to report", sw: "Nataka kuripoti" }, body: { en: "One question per screen, skip anything, no name needed. Encrypted, with a case code to follow up.", sw: "Swali moja kwa kila skrini, ruka chochote, huhitaji jina. Imesimbwa kwa usiri, na namba ya kesi ya kufuatilia." } },
-  { href: '/help/check-in', icon: Sprout, title: { en: "How am I doing?", sw: "Ninaendeleaje?" }, body: { en: "Validated check-ins (PHQ-9, GAD-7, EPDS, trauma) with one clear next step, not a score.", sw: "Ukaguzi uliothibitishwa (PHQ-9, GAD-7, EPDS, kiwewe) wenye hatua moja wazi inayofuata, si alama tu." } },
+  { href: '/help/check-in', icon: Sprout, title: { en: "How are you doing?", sw: "Unaendeleaje?" }, body: { en: "A few quick, private questions about how you’re feeling, and one clear next step.", sw: "Maswali machache ya haraka na ya siri kuhusu unavyojisikia, na hatua moja wazi inayofuata." } },
 ];
 
 /** The survivor flow in one glance: safety check, then four doors. */

@@ -69,9 +69,9 @@ function Chooser() {
   const { lang, tr } = useLang();
   return (
     <section className="py-8">
-      <h1 className="text-3xl font-acme text-[#2C4A4E]">{tr("How am I doing?", "Ninaendeleaje?")}</h1>
+      <h1 className="text-3xl font-acme text-[#2C4A4E]">{tr("How are you doing?", "Unaendeleaje?")}</h1>
       <p className="mt-2 text-gray-600">
-        {tr("Short, private check-ins used by health workers worldwide. They take a few minutes and stay on this phone unless you choose to save them.", "Ukaguzi mfupi wa faragha unaotumiwa na wahudumu wa afya duniani kote. Unachukua dakika chache na unabaki kwenye simu hii usipochagua kuuhifadhi.")}
+        {tr("Pick the one that sounds most like you. It’s a few quick questions, just for you: nothing is shared unless you choose.", "Chagua kinachokufanana zaidi. Ni maswali machache ya haraka, kwa ajili yako tu: hakuna kinachoshirikiwa usipochagua.")}
       </p>
       <div className="mt-6 space-y-3">
         {INSTRUMENTS.map((inst) => (
@@ -81,10 +81,10 @@ function Chooser() {
             className="flex items-center gap-4 rounded-3xl bg-white p-5 shadow-sm hover:shadow-md transition-shadow"
           >
             <span className="flex-1">
-              <span className="block font-acme text-xl text-[#2C4A4E]">{lang === 'sw' ? inst.nameSw : inst.name}</span>
-              <span className="block text-sm text-gray-600">{lang === 'sw' ? inst.aboutSw : inst.about}</span>
+              <span className="block font-acme text-xl text-[#2C4A4E]">{lang === 'sw' ? inst.titleSw : inst.title}</span>
+              <span className="block text-sm text-gray-600">{lang === 'sw' ? inst.hintSw : inst.hint}</span>
               <span className="mt-1 block text-xs text-gray-500">
-                {lang === 'sw' ? `${inst.forWhoSw} · kama dakika ${inst.minutes}` : `${inst.forWho} · about ${inst.minutes} minutes`}
+                {lang === 'sw' ? `Maswali ${inst.questions.length} · kama dakika ${inst.minutes}` : `${inst.questions.length} quick questions · about ${inst.minutes} minutes`}
                 {lang === 'sw' && !hasKiswahiliItems(inst) && ' · maswali kwa Kiingereza kwa sasa'}
               </span>
             </span>
@@ -96,8 +96,9 @@ function Chooser() {
           className="flex items-center gap-4 rounded-3xl bg-white p-5 shadow-sm hover:shadow-md transition-shadow"
         >
           <span className="flex-1">
-            <span className="block font-acme text-xl text-[#2C4A4E]">{tr("After something frightening (trauma check)", "Baada ya tukio la kutisha (ukaguzi wa kiwewe)")}</span>
-            <span className="block text-sm text-gray-600">{tr("Eight questions about how a stressful experience affects you now. Works offline.", "Maswali manane kuhusu jinsi tukio la dhiki linavyokuathiri sasa. Inafanya kazi bila mtandao.")}</span>
+            <span className="block font-acme text-xl text-[#2C4A4E]">{tr("After something frightening", "Baada ya jambo la kutisha")}</span>
+            <span className="block text-sm text-gray-600">{tr("Bad memories, nightmares, or feeling jumpy or numb since something scary happened?", "Kumbukumbu mbaya, ndoto za kutisha, au kushtuka au kukosa hisia tangu jambo la kutisha litokee?")}</span>
+            <span className="mt-1 block text-xs text-gray-500">{tr("8 quick questions · about 3 minutes · works without internet", "Maswali 8 · kama dakika 3 · inafanya kazi bila intaneti")}</span>
           </span>
           <ChevronRight className="h-5 w-5 text-[#2C4A4E]" aria-hidden="true" />
         </Link>
@@ -136,7 +137,7 @@ function Questionnaire({ instrument }: { instrument: Instrument }) {
     const save = () => {
       saveSelfCheck({
         tool: instrument.id,
-        toolName: tr(instrument.name, instrument.nameSw),
+        toolName: tr(instrument.title, instrument.titleSw),
         score: result.score,
         band: result.band.id,
         bandLabel: tr(result.band.label, result.band.labelSw),
@@ -148,7 +149,7 @@ function Questionnaire({ instrument }: { instrument: Instrument }) {
     return (
       <section className="py-8 space-y-4">
         <div className="rounded-3xl bg-white p-6 sm:p-8 shadow-sm">
-          <p className="text-sm font-semibold uppercase tracking-wider text-[#2C4A4E]">{tr(instrument.name, instrument.nameSw)}</p>
+          <p className="text-sm font-semibold uppercase tracking-wider text-[#2C4A4E]">{tr(instrument.title, instrument.titleSw)}</p>
           <h1 className="mt-2 text-2xl sm:text-3xl font-acme text-[#2C4A4E]">{tr("Thank you for checking in", "Asante kwa kujikagua")}</h1>
           <p className="mt-3 text-gray-700 leading-relaxed">{tr(result.band.summary, result.band.summarySw)}</p>
           <p className="mt-2 text-xs text-gray-500">
