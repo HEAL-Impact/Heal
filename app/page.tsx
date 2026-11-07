@@ -101,8 +101,12 @@ export default function HomePage() {
               </span>
             </h1>
             
-            <p className="mt-6 text-base md:text-lg lg:text-xl font-medium text-[#2C4A4E] text-center font-acme max-w-2xl mx-auto lg:mx-0 leading-snug md:whitespace-nowrap">
-              AI powered Mental health care and support anytime, anywhere. Immediate •<br className="hidden md:block" /> Confidential • Judgment-Free and Culturally-sensitive Care designed <br className="hidden md:block" />with you in mind.
+            <p className="mt-6 text-base md:text-lg lg:text-xl font-medium text-[#2C4A4E] text-center font-acme max-w-2xl mx-auto lg:mx-0 leading-snug text-balance">
+              {tr("AI-powered mental health care and support, anytime, anywhere.", "Huduma na msaada wa afya ya akili kwa AI, wakati wowote, mahali popote.")}
+              <br className="hidden md:block" />{' '}
+              {tr("Immediate • Confidential • Judgment-free • Culturally sensitive", "Ya haraka • Ya siri • Bila hukumu • Inayoheshimu utamaduni")}
+              <br className="hidden md:block" />{' '}
+              {tr("Care designed with you in mind.", "Huduma iliyoundwa kwa ajili yako.")}
             </p>
 
             <div className="mt-10 flex flex-wrap justify-center gap-4">
