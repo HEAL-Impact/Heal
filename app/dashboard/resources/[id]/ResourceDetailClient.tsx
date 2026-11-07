@@ -1,5 +1,7 @@
 'use client';
 
+import { useLang } from '@/lib/i18n';
+import { RESOURCES_SW } from '@/lib/resources-sw';
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import {
@@ -166,7 +168,7 @@ const getStaticResourceData = (): Record<string, Resource> => ({
     id: 'kenya-police',
     title: 'Kenya Police Emergency Services',
     description: 'National police emergency services for immediate crisis intervention.',
-    content: 'For immediate emergency situations involving threats to personal safety, domestic violence, or when someone is in immediate danger. Police can provide immediate intervention and connect you with appropriate mental health crisis services.\n\nWhen to Call:\n• Immediate threats to safety\n• Domestic violence situations\n• Someone is in immediate danger\n• Emergency mental health crisis\n• Suicidal behavior requiring intervention\n\nContact Information:\nEmergency: 999\nAlternative: 911\nPolice Hotline: +254 20 341 4906\n\nAvailable 24/7 for emergency situations requiring immediate intervention.',
+    content: 'For immediate emergency situations involving threats to personal safety, domestic violence, or when someone is in immediate danger. Police can provide immediate intervention and connect you with appropriate mental health crisis services.\n\nWhen to Call:\n• Immediate threats to safety\n• Domestic violence situations\n• Someone is in immediate danger\n• Emergency mental health crisis\n• Suicidal behavior requiring intervention\n\nContact Information:\nEmergency: 999\nAlternative: 112\nPolice Hotline: +254 20 341 4906\n\nAvailable 24/7 for emergency situations requiring immediate intervention.',
     type: 'contact',
     category: 'Crisis Support',
     difficulty: 'Easy',
@@ -213,6 +215,7 @@ const getStaticResourceData = (): Record<string, Resource> => ({
 });
 
 export default function ResourceDetailClient() {
+  const { tr } = useLang();
   const { id } = useParams();
   const router = useRouter();
   const [resource, setResource] = useState<Resource | null>(null);
@@ -262,7 +265,7 @@ export default function ResourceDetailClient() {
       setResource(resourceData);
     } catch (err: any) {
       console.error('Failed to fetch resource:', err);
-      setError('Failed to load resource. Please try again.');
+      setError(tr("Failed to load resource. Please try again.", "Imeshindikana kupakia rasilimali. Tafadhali jaribu tena."));
     } finally {
       setLoading(false);
     }
@@ -284,7 +287,7 @@ export default function ResourceDetailClient() {
     switch (difficulty.toLowerCase()) {
       case 'beginner':
       case 'easy': 
-        return 'text-green-600 bg-green-100';
+        return 'text-[#2C4A4E] bg-[#2C4A4E]/10';
       case 'intermediate': 
         return 'text-yellow-600 bg-yellow-100';
       case 'advanced': 
@@ -360,7 +363,7 @@ export default function ResourceDetailClient() {
       }
 
       // Prepare text for speech
-      const textToSpeak = prepareTextForSpeech(resource.content);
+      const textToSpeak = prepareTextForSpeech(tr(resource.content, RESOURCES_SW[resource.id]?.content));
       
       // Limit text length for better performance (ElevenLabs has character limits)
       const maxLength = 2500;
@@ -397,7 +400,7 @@ export default function ResourceDetailClient() {
       };
       
       audio.onerror = () => {
-        setAudioError('Failed to play audio');
+        setAudioError(tr("Failed to play audio", "Imeshindikana kucheza sauti"));
         setIsPlayingAudio(false);
         setIsGeneratingAudio(false);
         setCurrentAudio(null);
@@ -409,7 +412,7 @@ export default function ResourceDetailClient() {
       
     } catch (error) {
       console.error('Error playing audio:', error);
-      setAudioError(error instanceof Error ? error.message : 'Failed to generate audio');
+      setAudioError(error instanceof Error ? error.message : tr("Failed to generate audio", "Imeshindikana kutengeneza sauti"));
       setIsGeneratingAudio(false);
       setIsPlayingAudio(false);
     }
@@ -463,7 +466,7 @@ export default function ResourceDetailClient() {
               </Link>
               <div className="flex items-center space-x-2">
                 <BookOpen className="h-6 w-6 heal-text-accent" />
-                <h1 className="text-xl font-bold heal-text-primary font-acme">Loading...</h1>
+                <h1 className="text-xl font-bold heal-text-primary font-acme">{tr("Loading...", "Inapakia...")}</h1>
               </div>
             </div>
           </div>
@@ -473,7 +476,7 @@ export default function ResourceDetailClient() {
           <div className="flex items-center justify-center py-20">
             <div className="flex items-center space-x-3">
               <Loader2 className="h-6 w-6 animate-spin heal-text-accent" />
-              <span className="heal-text-secondary">Loading resource...</span>
+              <span className="heal-text-secondary">{tr("Loading resource...", "Inapakia rasilimali...")}</span>
             </div>
           </div>
         </div>
@@ -492,7 +495,7 @@ export default function ResourceDetailClient() {
               </Link>
               <div className="flex items-center space-x-2">
                 <BookOpen className="h-6 w-6 heal-text-accent" />
-                <h1 className="text-xl font-bold heal-text-primary font-acme">Resource Not Found</h1>
+                <h1 className="text-xl font-bold heal-text-primary font-acme">{tr("Resource Not Found", "Rasilimali Haikupatikana")}</h1>
               </div>
             </div>
           </div>
@@ -502,13 +505,13 @@ export default function ResourceDetailClient() {
           <div className="heal-card p-12 text-center">
             <AlertCircle className="h-16 w-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-semibold heal-text-primary mb-2 font-acme">{error || 'Resource not found'}</h3>
-            <p className="heal-text-secondary mb-6">The resource you're looking for doesn't exist or has been removed.</p>
+            <p className="heal-text-secondary mb-6">{tr("The resource you're looking for doesn't exist or has been removed.", "Rasilimali unayotafuta haipo au imeondolewa.")}</p>
             <div className="flex justify-center space-x-4">
               <Link href="/resources" className="heal-button-primary">
-                Back to Resources
+                {tr("Back to Resources", "Rudi kwenye Rasilimali")}
               </Link>
               <button onClick={fetchResource} className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors">
-                Try Again
+                {tr("Try Again", "Jaribu Tena")}
               </button>
             </div>
           </div>
@@ -533,7 +536,7 @@ export default function ResourceDetailClient() {
             </Link>
             <div className="flex items-center space-x-2">
               <IconComponent className="h-6 w-6 heal-text-accent" />
-              <h1 className="text-xl font-bold heal-text-primary font-acme">{resource.title}</h1>
+              <h1 className="text-xl font-bold heal-text-primary font-acme">{tr(resource.title, RESOURCES_SW[resource.id]?.title)}</h1>
             </div>
           </div>
         </div>
@@ -542,12 +545,12 @@ export default function ResourceDetailClient() {
       <div className="max-w-4xl mx-auto px-4 py-8">
         <div className="heal-card p-6">
           <div className="flex items-start space-x-4 mb-6">
-            <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-              <IconComponent className="h-8 w-8 text-blue-600" />
+            <div className="w-16 h-16 bg-[#2C4A4E]/10 rounded-lg flex items-center justify-center flex-shrink-0">
+              <IconComponent className="h-8 w-8 text-[#2C4A4E]" />
             </div>
             <div className="flex-1">
-              <h2 className="text-2xl font-bold heal-text-primary mb-2 font-acme">{resource.title}</h2>
-              <p className="heal-text-secondary mb-4">{resource.description}</p>
+              <h2 className="text-2xl font-bold heal-text-primary mb-2 font-acme">{tr(resource.title, RESOURCES_SW[resource.id]?.title)}</h2>
+              <p className="heal-text-secondary mb-4">{tr(resource.description, RESOURCES_SW[resource.id]?.description)}</p>
               
               <div className="flex items-center space-x-6 text-sm heal-text-secondary">
                 {resource.duration_minutes > 0 && (
@@ -565,7 +568,7 @@ export default function ResourceDetailClient() {
                 <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(resource.difficulty)}`}>
                   {resource.difficulty}
                 </span>
-                <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+                <span className="px-2 py-1 rounded-full text-xs font-medium bg-[#2C4A4E]/10 text-[#2C4A4E]">
                   {resource.type}
                 </span>
               </div>
@@ -574,18 +577,18 @@ export default function ResourceDetailClient() {
 
           {/* Audio Controls */}
           {(isPlayingAudio || isGeneratingAudio || audioError) && (
-            <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="mb-6 bg-[#2C4A4E]/10 border border-[#2C4A4E]/20 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   {isGeneratingAudio ? (
                     <>
-                      <Loader2 className="h-5 w-5 animate-spin text-blue-600" />
-                      <span className="text-blue-800">Generating audio...</span>
+                      <Loader2 className="h-5 w-5 animate-spin text-[#2C4A4E]" />
+                      <span className="text-[#2C4A4E]">{tr("Generating audio...", "Inatengeneza sauti...")}</span>
                     </>
                   ) : isPlayingAudio ? (
                     <>
-                      <Volume2 className="h-5 w-5 text-blue-600" />
-                      <span className="text-blue-800">Playing audio narration</span>
+                      <Volume2 className="h-5 w-5 text-[#2C4A4E]" />
+                      <span className="text-[#2C4A4E]">{tr("Playing audio narration", "Inacheza usomaji wa sauti")}</span>
                     </>
                   ) : audioError ? (
                     <>
@@ -599,17 +602,17 @@ export default function ResourceDetailClient() {
                   <div className="flex items-center space-x-2">
                     <button
                       onClick={toggleMute}
-                      className="p-2 text-blue-600 hover:text-blue-700 transition-colors"
-                      title={isMuted ? 'Unmute' : 'Mute'}
+                      className="p-2 text-[#2C4A4E] hover:text-[#2C4A4E] transition-colors"
+                      title={isMuted ? tr("Unmute", "Washa sauti") : tr("Mute", "Zima sauti")}
                     >
                       {isMuted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}
                     </button>
                     <button
                       onClick={stopAudio}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition-colors flex items-center space-x-1"
+                      className="bg-[#2C4A4E] hover:bg-[#2C4A4E]/90 text-white px-3 py-1 rounded text-sm transition-colors flex items-center space-x-1"
                     >
                       <Pause className="h-3 w-3" />
-                      <span>Stop</span>
+                      <span>{tr("Stop", "Simamisha")}</span>
                     </button>
                   </div>
                 )}
@@ -620,10 +623,10 @@ export default function ResourceDetailClient() {
           {/* Content */}
           <div className="prose prose-lg max-w-none mb-6">
             {resource.type === 'contact' ? (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                <h3 className="text-lg font-semibold heal-text-primary mb-4 font-acme">Contact Information</h3>
+              <div className="bg-[#2C4A4E]/10 border border-[#2C4A4E]/20 rounded-lg p-6">
+                <h3 className="text-lg font-semibold heal-text-primary mb-4 font-acme">{tr("Contact Information", "Mawasiliano")}</h3>
                 <div className="whitespace-pre-line heal-text-primary mb-6">
-                  {resource.content}
+                  {tr(resource.content, RESOURCES_SW[resource.id]?.content)}
                 </div>
                 
                 {/* Contact Actions */}
@@ -632,7 +635,7 @@ export default function ResourceDetailClient() {
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => makeCall(phoneNumber)}
-                        className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center space-x-2"
+                        className="bg-[#2C4A4E] hover:bg-[#2C4A4E]/90 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center space-x-2"
                       >
                         <Phone className="h-4 w-4" />
                         <span>Call {phoneNumber}</span>
@@ -643,7 +646,7 @@ export default function ResourceDetailClient() {
                         title="Copy phone number"
                       >
                         {copiedText === phoneNumber ? (
-                          <CheckCircle className="h-4 w-4 text-green-600" />
+                          <CheckCircle className="h-4 w-4 text-[#2C4A4E]" />
                         ) : (
                           <Copy className="h-4 w-4" />
                         )}
@@ -654,10 +657,10 @@ export default function ResourceDetailClient() {
                   {email && (
                     <button
                       onClick={() => sendEmail(email)}
-                      className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center space-x-2"
+                      className="bg-[#2C4A4E] hover:bg-[#2C4A4E]/90 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center space-x-2"
                     >
                       <ExternalLink className="h-4 w-4" />
-                      <span>Email</span>
+                      <span>{tr("Email", "Barua pepe")}</span>
                     </button>
                   )}
 
@@ -667,7 +670,7 @@ export default function ResourceDetailClient() {
                       className="bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center space-x-2"
                     >
                       <ExternalLink className="h-4 w-4" />
-                      <span>Website</span>
+                      <span>{tr("Website", "Tovuti")}</span>
                     </button>
                   )}
                 </div>
@@ -676,16 +679,16 @@ export default function ResourceDetailClient() {
               <div className="w-full bg-gray-200 rounded-lg flex items-center justify-center" style={{ height: '300px' }}>
                 <div className="text-center">
                   <Video className="h-12 w-12 text-gray-500 mx-auto mb-2" />
-                  <p className="text-gray-500">Video Player Placeholder</p>
-                  <p className="text-sm text-gray-400 mt-2 max-w-md">{resource.content}</p>
+                  <p className="text-gray-500">{tr("Video Player Placeholder", "Nafasi ya Kicheza Video")}</p>
+                  <p className="text-sm text-gray-400 mt-2 max-w-md">{tr(resource.content, RESOURCES_SW[resource.id]?.content)}</p>
                 </div>
               </div>
             ) : resource.type === 'audio' ? (
-              <div className="w-full bg-gradient-to-r from-blue-50 to-green-50 border border-blue-200 rounded-lg p-8">
+              <div className="w-full bg-gradient-to-r from-[#2C4A4E]/20 to-[#2C4A4E]/20 border border-[#2C4A4E]/20 rounded-lg p-8">
                 <div className="text-center">
-                  <Headphones className="h-16 w-16 text-blue-600 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold heal-text-primary mb-2 font-acme">Audio Content Available</h3>
-                  <p className="heal-text-secondary mb-6">Listen to this resource with AI-generated narration</p>
+                  <Headphones className="h-16 w-16 text-[#2C4A4E] mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold heal-text-primary mb-2 font-acme">{tr("Audio Content Available", "Maudhui ya Sauti Yanapatikana")}</h3>
+                  <p className="heal-text-secondary mb-6">{tr("Listen to this resource with AI-generated narration", "Sikiliza rasilimali hii kwa usomaji wa sauti wa AI")}</p>
                   
                   <button
                     onClick={playAudioContent}
@@ -695,29 +698,29 @@ export default function ResourceDetailClient() {
                     {isGeneratingAudio ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin" />
-                        <span>Generating Audio...</span>
+                        <span>{tr("Generating Audio...", "Inatengeneza Sauti...")}</span>
                       </>
                     ) : isPlayingAudio ? (
                       <>
                         <Pause className="h-4 w-4" />
-                        <span>Playing...</span>
+                        <span>{tr("Playing...", "Inacheza...")}</span>
                       </>
                     ) : (
                       <>
                         <Play className="h-4 w-4" />
-                        <span>Play Audio</span>
+                        <span>{tr("Play Audio", "Cheza Sauti")}</span>
                       </>
                     )}
                   </button>
                   
                   <div className="text-sm heal-text-secondary max-w-md mx-auto">
-                    <p className="whitespace-pre-line">{resource.content}</p>
+                    <p className="whitespace-pre-line">{tr(resource.content, RESOURCES_SW[resource.id]?.content)}</p>
                   </div>
                 </div>
               </div>
             ) : (
               <div className="whitespace-pre-line heal-text-primary leading-relaxed">
-                {resource.content}
+                {tr(resource.content, RESOURCES_SW[resource.id]?.content)}
               </div>
             )}
           </div>
@@ -731,10 +734,10 @@ export default function ResourceDetailClient() {
             >
               <Play className="h-4 w-4" />
               <span>
-                {resource.type === 'contact' ? 'Call / View Contact' : 
-                 resource.type === 'video' ? 'Play Video' :
-                 resource.type === 'audio' ? 'Play Audio' :
-                 'Start Resource'}
+                {resource.type === 'contact' ? tr("Call / View Contact", "Piga / Ona Mawasiliano") : 
+                 resource.type === 'video' ? tr("Play Video", "Cheza Video") :
+                 resource.type === 'audio' ? tr("Play Audio", "Cheza Sauti") :
+                 tr("Start Resource", "Anza Rasilimali")}
               </span>
             </button>
             
@@ -743,22 +746,22 @@ export default function ResourceDetailClient() {
               <button
                 onClick={playAudioContent}
                 disabled={isGeneratingAudio || isPlayingAudio}
-                className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center space-x-2 disabled:opacity-50"
+                className="bg-[#2C4A4E] hover:bg-[#2C4A4E]/90 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center space-x-2 disabled:opacity-50"
               >
                 {isGeneratingAudio ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    <span>Generating...</span>
+                    <span>{tr("Generating...", "Inatengeneza...")}</span>
                   </>
                 ) : isPlayingAudio ? (
                   <>
                     <Volume2 className="h-4 w-4" />
-                    <span>Playing</span>
+                    <span>{tr("Playing", "Inacheza")}</span>
                   </>
                 ) : (
                   <>
                     <Headphones className="h-4 w-4" />
-                    <span>Listen</span>
+                    <span>{tr("Listen", "Sikiliza")}</span>
                   </>
                 )}
               </button>
@@ -766,17 +769,17 @@ export default function ResourceDetailClient() {
             
             <button className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors flex items-center space-x-2">
               <Download className="h-4 w-4" />
-              <span>Save</span>
+              <span>{tr("Save", "Hifadhi")}</span>
             </button>
           </div>
 
           {/* ElevenLabs Status */}
           <div className="mt-4 text-xs text-gray-500 flex items-center space-x-2">
-            <div className={`w-2 h-2 rounded-full ${process.env.NEXT_PUBLIC_ELEVENLABS_API_KEY ? 'bg-green-500' : 'bg-red-500'}`}></div>
+            <div className={`w-2 h-2 rounded-full ${process.env.NEXT_PUBLIC_ELEVENLABS_API_KEY ? 'bg-[#2C4A4E]' : 'bg-red-500'}`}></div>
             <span>
               {process.env.NEXT_PUBLIC_ELEVENLABS_API_KEY 
-                ? 'AI Voice narration powered by ElevenLabs' 
-                : 'ElevenLabs API key required for voice narration'
+                ? tr("AI Voice narration powered by ElevenLabs", "Usomaji wa sauti wa AI unaoendeshwa na ElevenLabs") 
+                : tr("ElevenLabs API key required for voice narration", "Ufunguo wa API wa ElevenLabs unahitajika kwa usomaji wa sauti")
               }
             </span>
           </div>
@@ -784,7 +787,7 @@ export default function ResourceDetailClient() {
 
         {/* Related Resources */}
         <div className="mt-8 heal-card p-6">
-          <h3 className="text-lg font-semibold heal-text-primary mb-4 font-acme">Related Resources</h3>
+          <h3 className="text-lg font-semibold heal-text-primary mb-4 font-acme">{tr("Related Resources", "Rasilimali Zinazohusiana")}</h3>
           <p className="heal-text-secondary mb-4">
             Explore more resources in the {resource.category} category to continue your mental health journey.
           </p>

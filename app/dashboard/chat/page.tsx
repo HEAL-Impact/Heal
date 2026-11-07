@@ -1,5 +1,6 @@
 'use client';
 
+import { useLang } from '@/lib/i18n';
 import { useState, useRef, useEffect } from 'react';
 import {
   Heart,
@@ -52,30 +53,34 @@ interface ChatSession {
 type VoiceOption = 'off' | 'female' | 'male';
 
 // Choice Modal Component
-const ChoiceModal = ({ onSelect }: { onSelect: (choice: 'chat' | 'video') => void }) => (
+const ChoiceModal = ({ onSelect }: { onSelect: (choice: 'chat' | 'video') => void }) => {
+  const { tr } = useLang();
+  return (
   <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[100]">
     <div className="heal-card rounded-2xl p-8 sm:p-10 shadow-xl text-center max-w-sm mx-4 transform transition-all duration-300 ease-out scale-95 animate-in fade-in-0 zoom-in-95">
-      <h2 className="text-xl sm:text-2xl font-bold text-white mb-3">How would you like to connect?</h2>
-      <p className="text-gray-300 mb-8 text-sm sm:text-base">Choose your preferred method of communication.</p>
+      <h2 className="text-xl sm:text-2xl font-bold text-white mb-3">{tr("How would you like to connect?", "Ungependa kuwasiliana vipi?")}</h2>
+      <p className="text-gray-300 mb-8 text-sm sm:text-base">{tr("Choose your preferred method of communication.", "Chagua njia ya mawasiliano unayopendelea.")}</p>
       <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
         <button
           onClick={() => onSelect('chat')}
           className="heal-button-primary w-full"
         >
-          Text Chat / Maandishi
+          {tr("Text Chat / Maandishi", "Maandishi / Text Chat")}
         </button>
         <button
           onClick={() => onSelect('video')}
           className="heal-button-secondary w-full"
         >
-          Video Chat / Video
+          {tr("Video Chat / Video", "Video / Video Chat")}
         </button>
       </div>
     </div>
   </div>
-);
+  );
+};
 
 export default function ChatPage() {
+  const { tr } = useLang();
   const { user, isAuthenticated } = useAuth();
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
   const [sessions, setSessions] = useState<ChatSession[]>([]);
@@ -108,21 +113,21 @@ export default function ChatPage() {
   // Voice configuration
   const voiceConfigs = {
     off: {
-      label: 'Voice Off',
+      label: tr("Voice Off", "Sauti Imezimwa"),
       icon: VolumeX,
       color: 'text-gray-600 bg-gray-100',
       voiceId: null
     },
     female: {
-      label: 'Female Voice',
+      label: tr("Female Voice", "Sauti ya Kike"),
       icon: Volume2,
       color: 'text-pink-600 bg-pink-100',
       voiceId: 'EXAVITQu4vr4xnSDxMaL' // Bella - warm and empathetic female voice
     },
     male: {
-      label: 'Male Voice',
+      label: tr("Male Voice", "Sauti ya Kiume"),
       icon: Volume2,
-      color: 'text-teal-600 bg-teal-100',
+      color: 'text-[#2C4A4E] bg-[#2C4A4E]/10',
       voiceId: 'pNInz6obpgDQGcFmaJgB' // Adam - calm and supportive male voice
     }
   };
@@ -226,7 +231,7 @@ export default function ChatPage() {
   const deleteSession = async (sessionId: string, event: React.MouseEvent) => {
     event.stopPropagation();
 
-    if (!confirm('Are you sure you want to delete this chat session?')) {
+    if (!confirm(tr("Are you sure you want to delete this chat session?", "Una uhakika unataka kufuta mazungumzo haya?"))) {
       return;
     }
 
@@ -444,10 +449,10 @@ export default function ChatPage() {
     return (
       <div className="min-h-screen bg-transparent flex items-center justify-center p-4">
         <div className="text-center">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Please Sign In</h2>
-          <p className="text-gray-600 mb-6 text-sm sm:text-base">You need to be signed in to access the chat.</p>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">{tr("Please Sign In", "Tafadhali Ingia")}</h2>
+          <p className="text-gray-600 mb-6 text-sm sm:text-base">{tr("You need to be signed in to access the chat.", "Unahitaji kuingia ili kufikia mazungumzo.")}</p>
           <Link href="/auth/signin" className="heal-button">
-            Sign In
+            {tr("Sign In", "Ingia")}
           </Link>
         </div>
       </div>
@@ -455,8 +460,8 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg-gradient-to-br from-green-100 via-blue-50 to-teal-100" style={{
-      backgroundImage: `url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="leaves" patternUnits="userSpaceOnUse" width="20" height="20"><circle cx="10" cy="10" r="1" fill="%23059669" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23leaves)"/></svg>')`,
+    <div className="h-screen flex flex-col overflow-hidden bg-gradient-to-br from-[#2C4A4E]/20 via-[#2C4A4E]/20 to-[#2C4A4E]/20" style={{
+      backgroundImage: `url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="leaves" patternUnits="userSpaceOnUse" width="20" height="20"><circle cx="10" cy="10" r="1" fill="%232C4A4E" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23leaves)"/></svg>')`,
       backgroundSize: '200px 200px'
     }}>
       {/* {showChoiceModal && <ChoiceModal onSelect={handleChoice} />} */}
@@ -468,22 +473,22 @@ export default function ChatPage() {
               <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
             </Link>
             <div className="flex items-center space-x-2 sm:space-x-3">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-teal-500 to-green-500 rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-[#2C4A4E] to-[#2C4A4E] rounded-full flex items-center justify-center">
                 <Bot className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
               </div>
               <div>
-                <h1 className="font-semibold text-white text-sm sm:text-base">AI Support Companion</h1>
+                <h1 className="font-semibold text-white text-sm sm:text-base">{tr("AI Support Companion", "Nia, msaidizi wako wa AI")}</h1>
                 <p className="text-xs sm:text-sm text-white flex items-center">
                   {isPlayingAudio ? (
                     <>
                       <Volume2 className="h-3 w-3 mr-1" />
                       <span className="hidden sm:inline">Speaking ({voiceOption} voice)...</span>
-                      <span className="sm:hidden">Speaking...</span>
+                      <span className="sm:hidden">{tr("Speaking...", "Inazungumza...")}</span>
                     </>
                   ) : (
                     <>
-                      <span className="hidden sm:inline">Safe space to share - available 24/7</span>
-                      <span className="sm:hidden">Available</span>
+                      <span className="hidden sm:inline">{tr("Safe space to share - available 24/7", "Mahali salama pa kushiriki - saa 24")}</span>
+                      <span className="sm:hidden">{tr("Available", "Yupo")}</span>
                     </>
                   )}
                 </p>
@@ -506,12 +511,12 @@ export default function ChatPage() {
               {showSessions && (
                 <div className="absolute right-0 top-full mt-2 w-72 sm:w-80 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50 max-h-96 overflow-y-auto">
                   <div className="px-3 py-2 text-xs font-medium text-gray-600 border-b border-gray-200 flex items-center justify-between">
-                    <span>Chat Sessions</span>
+                    <span>{tr("Chat Sessions", "Mazungumzo")}</span>
                     <button
                       onClick={createNewSession}
-                      className="text-teal-600 hover:text-teal-700 text-xs"
+                      className="text-[#2C4A4E] hover:text-[#2C4A4E] text-xs"
                     >
-                      New Chat
+                      {tr("New Chat", "Mazungumzo Mapya")}
                     </button>
                   </div>
 
@@ -521,13 +526,13 @@ export default function ChatPage() {
                     </div>
                   ) : sessions.length === 0 ? (
                     <div className="p-4 text-center text-gray-600 text-sm">
-                      No chat sessions yet
+                      {tr("No chat sessions yet", "Bado hakuna mazungumzo")}
                     </div>
                   ) : (
                     sessions.map((session) => (
                       <div
                         key={session.id}
-                        className={`px-3 py-2 hover:bg-gray-50 cursor-pointer flex items-center justify-between group ${currentSessionId === session.id ? 'bg-teal-50 text-teal-700' : 'text-gray-700'
+                        className={`px-3 py-2 hover:bg-gray-50 cursor-pointer flex items-center justify-between group ${currentSessionId === session.id ? 'bg-[#2C4A4E]/10 text-[#2C4A4E]' : 'text-gray-700'
                           }`}
                         onClick={() => selectSession(session.id)}
                       >
@@ -556,7 +561,7 @@ export default function ChatPage() {
               <button
                 onClick={() => setShowVoiceDropdown(!showVoiceDropdown)}
                 className={`p-2 rounded-lg transition-colors flex items-center space-x-1 ${currentVoiceConfig.color}`}
-                title={`Current: ${currentVoiceConfig.label}`}
+                title={tr(`Current: ${currentVoiceConfig.label}`, `Sasa: ${currentVoiceConfig.label}`)}
               >
                 <VoiceIcon className="h-4 w-4 sm:h-5 sm:w-5" />
                 <ChevronDown className="h-3 w-3 hidden sm:block" />
@@ -565,7 +570,7 @@ export default function ChatPage() {
               {showVoiceDropdown && (
                 <div className="absolute right-0 top-full mt-2 w-44 sm:w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
                   <div className="px-3 py-2 text-xs font-medium text-gray-600 border-b border-gray-200">
-                    Voice Options
+                    {tr("Voice Options", "Chaguo za Sauti")}
                   </div>
                   {Object.entries(voiceConfigs).map(([key, config]) => {
                     const OptionIcon = config.icon;
@@ -573,21 +578,21 @@ export default function ChatPage() {
                       <button
                         key={key}
                         onClick={() => handleVoiceOptionChange(key as VoiceOption)}
-                        className={`w-full px-3 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 transition-colors ${voiceOption === key ? 'bg-teal-50 text-teal-700' : 'text-gray-700'
+                        className={`w-full px-3 py-2 text-left hover:bg-gray-50 flex items-center space-x-3 transition-colors ${voiceOption === key ? 'bg-[#2C4A4E]/10 text-[#2C4A4E]' : 'text-gray-700'
                           }`}
                       >
                         <OptionIcon className="h-4 w-4" />
                         <span className="text-sm">{config.label}</span>
                         {voiceOption === key && (
-                          <div className="ml-auto w-2 h-2 bg-teal-600 rounded-full"></div>
+                          <div className="ml-auto w-2 h-2 bg-[#2C4A4E] rounded-full"></div>
                         )}
                       </button>
                     );
                   })}
                   <div className="px-3 py-2 text-xs text-gray-500 border-t border-gray-200 mt-1">
                     {process.env.NEXT_PUBLIC_ELEVENLABS_API_KEY
-                      ? 'Powered by ElevenLabs AI'
-                      : 'API key required for voice'
+                      ? tr("Powered by ElevenLabs AI", "Inaendeshwa na ElevenLabs AI")
+                      : tr("API key required for voice", "Ufunguo wa API unahitajika kwa sauti")
                     }
                   </div>
                 </div>
@@ -597,15 +602,16 @@ export default function ChatPage() {
             <div className="relative">
               <button
                 onClick={() => setShowVideoConversation(true)}
-                className="p-2 bg-teal-100 hover:bg-teal-200 rounded-lg transition-colors text-teal-600 relative"
-                title="Start video conversation"
+                className="inline-flex items-center gap-1.5 rounded-full bg-[#2C4A4E] px-3 py-2 text-xs sm:text-sm font-semibold text-[#ECE5DA] hover:bg-[#2C4A4E]/90 transition-colors relative"
+                title={tr("Start a video conversation with Nia", "Anza mazungumzo ya video na Nia")}
               >
                 <Video className="h-4 w-4 sm:h-5 sm:w-5" />
+                <span>{tr("Video with Nia", "Video na Nia")}</span>
                 <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500/200 ring-2 ring-white"></span>
               </button>
               {showVideoTooltip && (
                 <div className="absolute top-full mt-2 right-1/2 translate-x-1/2 w-max bg-gray-800 text-white text-xs rounded py-1 px-2 shadow-lg z-20">
-                  Click here for a video chat!
+                  {tr("Click here for a video chat!", "Bofya hapa kwa mazungumzo ya video!")}
                   <button
                     onClick={(e) => { e.stopPropagation(); setShowVideoTooltip(false); }}
                     className="absolute -top-1 -right-1 bg-gray-600 hover:bg-gray-700 rounded-full p-0.5 leading-none"
@@ -671,15 +677,15 @@ export default function ChatPage() {
                   {/* Welcome Message */}
                   <div className="relative px-10 py-16 text-center flex-1 flex flex-col justify-center">
                     <h3 className="text-5xl font-bold text-white mb-4 drop-shadow-lg">Hey!</h3>
-                    <h4 className="text-3xl font-semibold text-white/90 mb-16 drop-shadow-md">Can I help you with anything?</h4>
+                    <h4 className="text-3xl font-semibold text-white/90 mb-16 drop-shadow-md">{tr("Can I help you with anything?", "Naweza kukusaidia kwa lolote?")}</h4>
 
                     <div className="flex items-center justify-center space-x-4 mb-6 text-white/80">
                       <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/30">
                         <MessageSquare className="h-6 w-6" />
                       </div>
-                      <p className="text-lg font-medium">This is a safe space to share your thoughts and feelings</p>
+                      <p className="text-lg font-medium">{tr("This is a safe space to share your thoughts and feelings", "Hapa ni mahali salama pa kushiriki mawazo na hisia zako")}</p>
                     </div>
-                    <p className="text-white/70 text-base mb-16">Completely without judgement</p>
+                    <p className="text-white/70 text-base mb-16">{tr("Completely without judgement", "Bila hukumu yoyote")}</p>
                   </div>
 
                   {/* Input Area */}
@@ -690,7 +696,7 @@ export default function ChatPage() {
                         value={inputMessage}
                         onChange={(e) => setInputMessage(e.target.value)}
                         onKeyPress={handleKeyPress}
-                        placeholder="Type your message here... Share what's on your mind"
+                        placeholder={tr("Type your message here... Share what's on your mind", "Andika ujumbe wako hapa… Shiriki kilicho moyoni")}
                         className="w-full px-8 py-6 pr-16 rounded-2xl focus:ring-2 focus:ring-white/50 focus:outline-none resize-none bg-white/20 backdrop-blur-md text-white placeholder-white/60 shadow-xl border border-white/30 text-lg"
                         rows={2}
                         disabled={isTyping}
@@ -713,7 +719,7 @@ export default function ChatPage() {
                       ) : (
                         <>
                           <Send className="h-6 w-6" />
-                          <span>Send Message</span>
+                          <span>{tr("Send Message", "Tuma Ujumbe")}</span>
                         </>
                       )}
                     </button>
@@ -738,7 +744,7 @@ export default function ChatPage() {
                     <div className="flex items-center justify-center py-12">
                       <div className="flex items-center space-x-3 bg-white/20 backdrop-blur-md px-6 py-4 rounded-2xl border border-white/30">
                         <Loader2 className="h-6 w-6 animate-spin text-white" />
-                        <span className="text-white text-lg">Loading chat history...</span>
+                        <span className="text-white text-lg">{tr("Loading chat history...", "Inapakia historia ya mazungumzo...")}</span>
                       </div>
                     </div>
                   ) : (
@@ -750,7 +756,7 @@ export default function ChatPage() {
                         <div className={`flex items-start space-x-4 max-w-[75%] ${message.sender === 'user' ? 'flex-row-reverse space-x-reverse' : ''}`}>
                           {/* Avatar */}
                           <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 backdrop-blur-md border shadow-lg ${message.sender === 'user'
-                              ? 'bg-blue-500/80 border-blue-400/50'
+                              ? 'bg-[#2C4A4E]/80 border-[#2C4A4E]/50'
                               : 'bg-white/20 border-white/30'
                             }`}>
                             {message.sender === 'user' ?
@@ -761,19 +767,19 @@ export default function ChatPage() {
 
                           {/* Message Bubble */}
                           <div className={`px-6 py-4 rounded-2xl backdrop-blur-md border shadow-lg ${message.sender === 'user'
-                              ? 'bg-blue-500/80 text-white border-blue-400/50'
+                              ? 'bg-[#2C4A4E]/80 text-white border-[#2C4A4E]/50'
                               : 'bg-white/20 text-white border-white/30'
                             }`}>
                             {message.isLoading ? (
                               <div className="flex items-center space-x-3">
                                 <Loader2 className="h-5 w-5 animate-spin" />
-                                <span className="text-base">Thinking...</span>
+                                <span className="text-base">{tr("Thinking...", "Inafikiri...")}</span>
                               </div>
                             ) : (
                               <>
                                 <p className="text-base leading-relaxed break-words">{message.content}</p>
                                 <div className="flex items-center justify-between mt-3">
-                                  <p className={`text-sm ${message.sender === 'user' ? 'text-blue-100' : 'text-white/70'}`}>
+                                  <p className={`text-sm ${message.sender === 'user' ? 'text-[#ECE5DA]' : 'text-white/70'}`}>
                                     {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                   </p>
                                   {/* Audio indicator for AI messages */}
@@ -807,7 +813,7 @@ export default function ChatPage() {
                           ? 'bg-red-500/80 text-white border-red-400/50'
                           : 'bg-white/20 text-white/80 hover:bg-white/30 border-white/30'
                       }`}
-                      title={isRecording ? 'Stop recording' : 'Start voice message'}
+                      title={isRecording ? tr("Stop recording", "Acha kurekodi") : tr("Start voice message", "Anza ujumbe wa sauti")}
                     >
                       {isRecording ? <MicOff className="h-6 w-6" /> : <Mic className="h-6 w-6" />}
                     </button>
@@ -818,7 +824,7 @@ export default function ChatPage() {
                         value={inputMessage}
                         onChange={(e) => setInputMessage(e.target.value)}
                         onKeyPress={handleKeyPress}
-                        placeholder="Type your message..."
+                        placeholder={tr("Type your message...", "Andika ujumbe wako...")}
                         className="w-full px-6 py-4 border border-white/30 rounded-2xl focus:ring-2 focus:ring-white/50 focus:border-white/50 focus:outline-none resize-none bg-white/20 backdrop-blur-md text-white placeholder-white/60 shadow-lg text-base"
                         rows={1}
                         style={{
@@ -850,10 +856,10 @@ export default function ChatPage() {
                   {/* Quick Response Buttons */}
                   <div className="flex flex-wrap gap-3 mt-4">
                     {[
-                      { en: 'I need support', short: 'Support' },
-                      { en: 'Feeling unsafe', short: 'Unsafe' },
-                      { en: 'Need someone to talk to', short: 'Talk' },
-                      { en: 'Having a hard day', short: 'Hard day' }
+                      { en: tr('I need support', 'Nahitaji msaada'), short: tr('Support', 'Msaada') },
+                      { en: tr('Feeling unsafe', 'Sijisikii salama'), short: tr('Unsafe', 'Si salama') },
+                      { en: tr('Need someone to talk to', 'Nahitaji mtu wa kuongea naye'), short: tr('Talk', 'Ongea') },
+                      { en: tr('Having a hard day', 'Nina siku ngumu'), short: tr('Hard day', 'Siku ngumu') }
                     ].map((option, index) => (
                       <button
                         key={index}

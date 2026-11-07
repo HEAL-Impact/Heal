@@ -1,5 +1,7 @@
 'use client';
 
+import { useLang } from '@/lib/i18n';
+import { RESOURCES_SW } from '@/lib/resources-sw';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
@@ -214,6 +216,7 @@ const getStaticResourcesData = (): Resource[] => [
 ];
 
 export default function ResourcesPage() {
+  const { tr } = useLang();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedType, setSelectedType] = useState('all');
@@ -226,23 +229,23 @@ export default function ResourcesPage() {
   const router = useRouter();
 
   const categories = [
-    { id: 'all', name: 'All Resources', icon: BookOpen },
-    { id: 'anxiety', name: 'Anxiety', icon: Brain },
-    { id: 'depression', name: 'Depression', icon: Heart },
-    { id: 'stress', name: 'Stress Management', icon: TrendingUp },
-    { id: 'relationships', name: 'Relationships', icon: Users },
-    { id: 'self-care', name: 'Self-Care', icon: Star },
-    { id: 'Crisis Support', name: 'Crisis Support', icon: Phone }
+    { id: 'all', name: tr("All Resources", "Rasilimali Zote"), icon: BookOpen },
+    { id: 'anxiety', name: tr("Anxiety", "Wasiwasi"), icon: Brain },
+    { id: 'depression', name: tr("Depression", "Msongo wa Mawazo"), icon: Heart },
+    { id: 'stress', name: tr("Stress Management", "Kudhibiti Msongo"), icon: TrendingUp },
+    { id: 'relationships', name: tr("Relationships", "Mahusiano"), icon: Users },
+    { id: 'self-care', name: tr("Self-Care", "Kujitunza"), icon: Star },
+    { id: 'Crisis Support', name: tr("Crisis Support", "Msaada wa Dharura"), icon: Phone }
   ];
 
   const typeOptions = [
-    { value: 'all', label: 'All Types' },
-    { value: 'article', label: 'Articles' },
-    { value: 'video', label: 'Videos' },
-    { value: 'audio', label: 'Audio' },
-    { value: 'exercise', label: 'Exercises' },
-    { value: 'assessment', label: 'Assessments' },
-    { value: 'contact', label: 'Contacts' }
+    { value: 'all', label: tr("All Types", "Aina Zote") },
+    { value: 'article', label: tr("Articles", "Makala") },
+    { value: 'video', label: tr("Videos", "Video") },
+    { value: 'audio', label: tr("Audio", "Sauti") },
+    { value: 'exercise', label: tr("Exercises", "Mazoezi") },
+    { value: 'assessment', label: tr("Assessments", "Tathmini") },
+    { value: 'contact', label: tr("Contacts", "Mawasiliano") }
   ];
 
   useEffect(() => {
@@ -285,7 +288,7 @@ export default function ResourcesPage() {
       setResources(allResources);
     } catch (error) {
       console.error('Failed to fetch resources:', error);
-      setError('Failed to load resources. Please try again.');
+      setError(tr("Failed to load resources. Please try again.", "Imeshindikana kupakia rasilimali. Tafadhali jaribu tena."));
       setResources(getStaticResourcesData());
     } finally {
       setLoading(false);
@@ -314,7 +317,7 @@ export default function ResourcesPage() {
     switch (difficulty.toLowerCase()) {
       case 'beginner':
       case 'easy': 
-        return 'text-green-600 bg-green-100';
+        return 'text-[#2C4A4E] bg-[#2C4A4E]/10';
       case 'intermediate': 
         return 'text-yellow-600 bg-yellow-100';
       case 'advanced': 
@@ -326,9 +329,9 @@ export default function ResourcesPage() {
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'article': return 'bg-blue-100 text-blue-700';
+      case 'article': return 'bg-[#2C4A4E]/10 text-[#2C4A4E]';
       case 'video': return 'bg-purple-100 text-purple-700';
-      case 'audio': return 'bg-green-100 text-green-700';
+      case 'audio': return 'bg-[#2C4A4E]/10 text-[#2C4A4E]';
       case 'exercise': return 'bg-orange-100 text-orange-700';
       case 'assessment': return 'bg-pink-100 text-pink-700';
       case 'contact': return 'bg-red-100 text-red-700';
@@ -358,7 +361,7 @@ export default function ResourcesPage() {
         setPlayingAudio(null);
       }
 
-      const textToSpeak = prepareTextForSpeech(resource.content);
+      const textToSpeak = prepareTextForSpeech(tr(resource.content, RESOURCES_SW[resource.id]?.content));
       const maxLength = 1000; // Shorter for preview
       const truncatedText = textToSpeak.length > maxLength 
         ? textToSpeak.substring(0, maxLength) + '...'
@@ -436,7 +439,7 @@ export default function ResourcesPage() {
               </Link>
               <div className="flex items-center space-x-2">
                 <BookOpen className="h-6 w-6 heal-text-accent" />
-                <h1 className="text-xl font-bold heal-text-primary font-acme">Resource Library</h1>
+                <h1 className="text-xl font-bold heal-text-primary font-acme">{tr("Resource Library", "Maktaba ya Rasilimali")}</h1>
               </div>
             </div>
           </div>
@@ -446,7 +449,7 @@ export default function ResourcesPage() {
           <div className="flex items-center justify-center py-20">
             <div className="flex items-center space-x-3">
               <Loader2 className="h-6 w-6 animate-spin heal-text-accent" />
-              <span className="heal-text-secondary">Loading resources...</span>
+              <span className="heal-text-secondary">{tr("Loading resources...", "Inapakia rasilimali...")}</span>
             </div>
           </div>
         </div>
@@ -466,7 +469,7 @@ export default function ResourcesPage() {
               </Link>
               <div className="flex items-center space-x-2">
                 <BookOpen className="h-6 w-6 heal-text-accent" />
-                <h1 className="text-xl font-bold heal-text-primary font-acme">Resource Library</h1>
+                <h1 className="text-xl font-bold heal-text-primary font-acme">{tr("Resource Library", "Maktaba ya Rasilimali")}</h1>
               </div>
             </div>
             <div className="text-sm heal-text-secondary">
@@ -500,7 +503,7 @@ export default function ResourcesPage() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search resources..."
+                placeholder={tr("Search resources...", "Tafuta rasilimali...")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="heal-input-light pl-10"
@@ -527,7 +530,7 @@ export default function ResourcesPage() {
                 onClick={() => setSelectedCategory(category.id)}
                 className={`flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   selectedCategory === category.id
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-[#2C4A4E] text-white'
                     : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
                 }`}
               >
@@ -541,7 +544,7 @@ export default function ResourcesPage() {
         {/* Featured Resources */}
         {selectedCategory === 'all' && searchTerm === '' && (
           <div className="mb-8">
-            <h2 className="text-2xl font-bold heal-text-primary mb-6 font-acme">Featured Resources</h2>
+            <h2 className="text-2xl font-bold heal-text-primary mb-6 font-acme">{tr("Featured Resources", "Rasilimali Maalum")}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredResources.filter(r => r.featured).slice(0, 6).map((resource) => {
                 const IconComponent = getResourceIcon(resource.type);
@@ -551,8 +554,8 @@ export default function ResourcesPage() {
                 return (
                   <div key={resource.id} className="heal-card p-6 hover:shadow-lg transition-all duration-200 transform hover:scale-105 cursor-pointer">
                     <div className="flex items-start justify-between mb-4">
-                      <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <IconComponent className="h-6 w-6 text-blue-600" />
+                      <div className="w-12 h-12 bg-[#2C4A4E]/10 rounded-lg flex items-center justify-center">
+                        <IconComponent className="h-6 w-6 text-[#2C4A4E]" />
                       </div>
                       <div className="flex items-center space-x-1">
                         <Star className="h-4 w-4 text-yellow-500 fill-current" />
@@ -560,13 +563,13 @@ export default function ResourcesPage() {
                       </div>
                     </div>
                     
-                    <h3 className="font-semibold heal-text-primary mb-2 font-acme">{resource.title}</h3>
-                    <p className="text-gray-700 text-sm mb-4 line-clamp-2 font-medium">{resource.description}</p>
+                    <h3 className="font-semibold heal-text-primary mb-2 font-acme">{tr(resource.title, RESOURCES_SW[resource.id]?.title)}</h3>
+                    <p className="text-gray-700 text-sm mb-4 line-clamp-2 font-medium">{tr(resource.description, RESOURCES_SW[resource.id]?.description)}</p>
                     
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center space-x-2 heal-text-secondary">
                         <Clock className="h-4 w-4 text-gray-700" />
-                        <span className="text-gray-700 text-sm line-clamp-2 font-medium">{resource.duration_minutes} min</span>
+                        <span className="text-gray-700 text-sm line-clamp-2 font-medium">{tr(`${resource.duration_minutes} min`, `dakika ${resource.duration_minutes}`)}</span>
                       </div>
                       <div className="flex items-center space-x-2">
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(resource.difficulty)}`}>
@@ -584,7 +587,7 @@ export default function ResourcesPage() {
                         className="flex-1 heal-button-primary flex items-center justify-center space-x-2"
                       >
                         <Play className="h-4 w-4" />
-                        <span>{resource.type === 'contact' ? 'View Contact' : 'Start'}</span>
+                        <span>{resource.type === 'contact' ? tr("View Contact", "Ona Mawasiliano") : tr("Start", "Anza")}</span>
                       </button>
                       
                       {resource.content && process.env.NEXT_PUBLIC_ELEVENLABS_API_KEY && (
@@ -598,7 +601,7 @@ export default function ResourcesPage() {
                             }
                           }}
                           disabled={isGenerating}
-                          className="bg-green-600 hover:bg-green-700 text-white p-2 rounded-lg transition-colors disabled:opacity-50"
+                          className="bg-[#2C4A4E] hover:bg-[#2C4A4E]/90 text-white p-2 rounded-lg transition-colors disabled:opacity-50"
                           title="Listen to preview"
                         >
                           {isGenerating ? (
@@ -621,20 +624,20 @@ export default function ResourcesPage() {
         {/* All Resources */}
         <div>
           <h2 className="text-2xl font-bold heal-text-primary mb-6 font-acme">
-            {selectedCategory === 'all' ? 'All Resources' : `${categories.find(c => c.id === selectedCategory)?.name} Resources`}
+            {selectedCategory === 'all' ? tr("All Resources", "Rasilimali Zote") : tr(`${categories.find(c => c.id === selectedCategory)?.name} Resources`, `Rasilimali: ${categories.find(c => c.id === selectedCategory)?.name}`)}
           </h2>
           
           {filteredResources.length === 0 ? (
             <div className="heal-card p-12 text-center">
               <BookOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold heal-text-primary mb-2 font-acme">No resources found</h3>
-              <p className="heal-text-secondary">Try adjusting your search or filter criteria.</p>
+              <h3 className="text-lg font-semibold heal-text-primary mb-2 font-acme">{tr("No resources found", "Hakuna rasilimali zilizopatikana")}</h3>
+              <p className="heal-text-secondary">{tr("Try adjusting your search or filter criteria.", "Jaribu kubadilisha utafutaji au vichujio vyako.")}</p>
               {error && (
                 <button 
                   onClick={fetchResources}
                   className="mt-4 heal-button-primary"
                 >
-                  Reload Resources
+                  {tr("Reload Resources", "Pakia Rasilimali Tena")}
                 </button>
               )}
             </div>
@@ -648,13 +651,13 @@ export default function ResourcesPage() {
                 return (
                   <div key={resource.id} className="heal-card p-6 hover:shadow-lg transition-all duration-200 cursor-pointer">
                     <div className="flex items-start space-x-4">
-                      <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <IconComponent className="h-8 w-8 text-blue-600" />
+                      <div className="w-16 h-16 bg-[#2C4A4E]/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <IconComponent className="h-8 w-8 text-[#2C4A4E]" />
                       </div>
                       
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between mb-2">
-                          <h3 className="font-semibold heal-text-primary text-lg font-acme">{resource.title}</h3>
+                          <h3 className="font-semibold heal-text-primary text-lg font-acme">{tr(resource.title, RESOURCES_SW[resource.id]?.title)}</h3>
                           <div className="flex items-center space-x-2">
                             {resource.featured && (
                               <span className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">
@@ -667,12 +670,12 @@ export default function ResourcesPage() {
                           </div>
                         </div>
                         
-                        <p className="text-gray-700 mb-4 font-medium">{resource.description}</p>
+                        <p className="text-gray-700 mb-4 font-medium">{tr(resource.description, RESOURCES_SW[resource.id]?.description)}</p>
                         
                         <div className="flex items-center space-x-6 text-sm heal-text-secondary mb-4">
                           <div className="flex items-center space-x-1">
                             <Clock className="h-4 w-4" />
-                            <span>{resource.duration_minutes} min</span>
+                            <span>{tr(`${resource.duration_minutes} min`, `dakika ${resource.duration_minutes}`)}</span>
                           </div>
                           <div className="flex items-center space-x-1">
                             <Star className="h-4 w-4 text-yellow-500 fill-current" />
@@ -690,7 +693,7 @@ export default function ResourcesPage() {
                               className="heal-button-primary flex items-center space-x-2"
                             >
                               <Play className="h-4 w-4" />
-                              <span>{resource.type === 'contact' ? 'View Contact' : 'Start'}</span>
+                              <span>{resource.type === 'contact' ? tr("View Contact", "Ona Mawasiliano") : tr("Start", "Anza")}</span>
                             </button>
                             
                             {resource.content && process.env.NEXT_PUBLIC_ELEVENLABS_API_KEY && (
@@ -704,22 +707,22 @@ export default function ResourcesPage() {
                                   }
                                 }}
                                 disabled={isGenerating}
-                                className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center space-x-2 disabled:opacity-50"
+                                className="bg-[#2C4A4E] hover:bg-[#2C4A4E]/90 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center space-x-2 disabled:opacity-50"
                               >
                                 {isGenerating ? (
                                   <>
                                     <Loader2 className="h-4 w-4 animate-spin" />
-                                    <span>Generating...</span>
+                                    <span>{tr("Generating...", "Inatengeneza...")}</span>
                                   </>
                                 ) : isPlaying ? (
                                   <>
                                     <VolumeX className="h-4 w-4" />
-                                    <span>Stop</span>
+                                    <span>{tr("Stop", "Simamisha")}</span>
                                   </>
                                 ) : (
                                   <>
                                     <Volume2 className="h-4 w-4" />
-                                    <span>Listen</span>
+                                    <span>{tr("Listen", "Sikiliza")}</span>
                                   </>
                                 )}
                               </button>
@@ -727,7 +730,7 @@ export default function ResourcesPage() {
                             
                             <button className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors flex items-center space-x-2">
                               <Download className="h-4 w-4" />
-                              <span>Save</span>
+                              <span>{tr("Save", "Hifadhi")}</span>
                             </button>
                           </div>
                           <ChevronRight className="h-5 w-5 text-gray-400" />
@@ -744,11 +747,11 @@ export default function ResourcesPage() {
         {/* ElevenLabs Status */}
         <div className="mt-8 text-center">
           <div className="inline-flex items-center space-x-2 text-xs text-gray-500 bg-gray-100 px-3 py-2 rounded-full">
-            <div className={`w-2 h-2 rounded-full ${process.env.NEXT_PUBLIC_ELEVENLABS_API_KEY ? 'bg-green-500' : 'bg-red-500'}`}></div>
+            <div className={`w-2 h-2 rounded-full ${process.env.NEXT_PUBLIC_ELEVENLABS_API_KEY ? 'bg-[#2C4A4E]' : 'bg-red-500'}`}></div>
             <span>
               {process.env.NEXT_PUBLIC_ELEVENLABS_API_KEY 
-                ? 'AI Voice narration powered by ElevenLabs' 
-                : 'ElevenLabs API key required for voice narration'
+                ? tr('AI Voice narration powered by ElevenLabs', 'Usomaji wa sauti wa AI unaoendeshwa na ElevenLabs') 
+                : tr("ElevenLabs API key required for voice narration", "Ufunguo wa API wa ElevenLabs unahitajika kwa usomaji wa sauti")
               }
             </span>
           </div>
@@ -757,27 +760,27 @@ export default function ResourcesPage() {
         {/* Personalized Recommendations */}
         {!error && filteredResources.length > 0 && (
           <div className="mt-12 heal-card p-6">
-            <h3 className="text-lg font-semibold heal-text-primary mb-4 font-acme">Personalized Recommendations</h3>
+            <h3 className="text-lg font-semibold heal-text-primary mb-4 font-acme">{tr("Personalized Recommendations", "Mapendekezo Yako")}</h3>
             <p className="heal-text-secondary mb-4">
-              Based on your recent activities and preferences, we recommend these resources:
+              {tr("Based on your recent activities and preferences, we recommend these resources:", "Kulingana na shughuli na mapendeleo yako ya hivi karibuni, tunapendekeza rasilimali hizi:")}
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg">
-                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <Brain className="h-4 w-4 text-blue-600" />
+              <div className="flex items-center space-x-3 p-3 bg-[#2C4A4E]/10 rounded-lg">
+                <div className="w-8 h-8 bg-[#2C4A4E]/10 rounded-lg flex items-center justify-center">
+                  <Brain className="h-4 w-4 text-[#2C4A4E]" />
                 </div>
                 <div>
-                  <p className="font-medium heal-text-primary">Anxiety Management Techniques</p>
-                  <p className="text-sm heal-text-secondary">Based on your mood patterns</p>
+                  <p className="font-medium heal-text-primary">{tr("Anxiety Management Techniques", "Mbinu za Kudhibiti Wasiwasi")}</p>
+                  <p className="text-sm heal-text-secondary">{tr("Based on your mood patterns", "Kulingana na mwenendo wa hisia zako")}</p>
                 </div>
               </div>
-              <div className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg">
-                <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                  <Heart className="h-4 w-4 text-green-600" />
+              <div className="flex items-center space-x-3 p-3 bg-[#2C4A4E]/10 rounded-lg">
+                <div className="w-8 h-8 bg-[#2C4A4E]/10 rounded-lg flex items-center justify-center">
+                  <Heart className="h-4 w-4 text-[#2C4A4E]" />
                 </div>
                 <div>
-                  <p className="font-medium heal-text-primary">Self-Compassion Exercises</p>
-                  <p className="text-sm heal-text-secondary">Popular among similar users</p>
+                  <p className="font-medium heal-text-primary">{tr("Self-Compassion Exercises", "Mazoezi ya Kujihurumia")}</p>
+                  <p className="text-sm heal-text-secondary">{tr("Popular among similar users", "Maarufu miongoni mwa watumiaji kama wewe")}</p>
                 </div>
               </div>
             </div>

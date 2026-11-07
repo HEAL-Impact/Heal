@@ -1,4 +1,5 @@
 "use client"
+import { useLang } from '@/lib/i18n';
 import { createConversation } from "@/api/createConversation";
 import {
   DialogWrapper,
@@ -8,7 +9,8 @@ import {
 import { screenAtom } from "@/store/screens";
 import { conversationAtom } from "@/store/conversation";
 import React, { useCallback, useMemo, useState } from "react";
-import { useAtom } from "jotai";
+import { getDefaultStore, useAtom } from "jotai";
+import { settingsAtom } from "@/store/settings";
 import { AlertTriangle, Mic, Video } from "lucide-react";
 import { useDaily, useDailyEvent, useDevices } from "@daily-co/daily-react";
 import { ConversationError } from "./ConversationError";
@@ -48,6 +50,7 @@ const useCreateConversationMutation = () => {
 };
 
 export function Instructions() {
+  const { tr } = useLang();
   const daily = useDaily();
   const { currentMic } = useDevices();
   const { createConversationRequest, isLoading: isCreatingConversation, error: conversationError } = useCreateConversationMutation();
@@ -55,6 +58,7 @@ export function Instructions() {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingConversation, setIsLoadingConversation] = useState(false);
   const [error, setError] = useState(false);
+  const [setupMessage, setSetupMessage] = useState<string | null>(null);
   const [permissionsGranted, setPermissionsGranted] = useState(false);
   
   const audio = useMemo(() => {
@@ -103,13 +107,23 @@ export function Instructions() {
       setIsLoading(true);
       setError(false);
       
-      // Check if Tavus API key is available
+      // Video needs a Tavus API key and a PAL (Nia's video agent). Say exactly what is missing.
+      const settings = getDefaultStore().get(settingsAtom);
       if (!process.env.NEXT_PUBLIC_TAVUS_API_KEY) {
-        setError(true);
-        setGetUserMediaError(true);
-        console.error("Tavus API key not found in environment variables");
+        setSetupMessage(tr(
+          "Video with Nia isn’t set up yet: the Tavus API key (NEXT_PUBLIC_TAVUS_API_KEY) is missing. You can still chat with Nia by text.",
+          "Video na Nia bado haijawekwa: ufunguo wa Tavus (NEXT_PUBLIC_TAVUS_API_KEY) haupo. Bado unaweza kuongea na Nia kwa maandishi."
+        ));
         return;
       }
+      if (!process.env.NEXT_PUBLIC_TAVUS_PAL_ID?.trim() && !settings.persona?.trim()) {
+        setSetupMessage(tr(
+          "Video with Nia isn’t set up yet: Nia’s Tavus PAL ID (NEXT_PUBLIC_TAVUS_PAL_ID) is missing. You can still chat with Nia by text.",
+          "Video na Nia bado haijawekwa: kitambulisho cha PAL cha Nia kwenye Tavus (NEXT_PUBLIC_TAVUS_PAL_ID) hakipo. Bado unaweza kuongea na Nia kwa maandishi."
+        ));
+        return;
+      }
+      setSetupMessage(null);
       
       // First, request permissions if not already granted
       if (!permissionsGranted) {
@@ -159,6 +173,10 @@ export function Instructions() {
     }
   };
 
+  if (setupMessage) {
+    return <ConversationError onClick={handleClick} message={setupMessage} />;
+  }
+
   // Show error if conversation creation failed
   if (conversationError) {
     return <ConversationError onClick={handleClick} message={conversationError} />;
@@ -180,9 +198,9 @@ export function Instructions() {
           <div className="flex flex-col items-center justify-center gap-4">
             <QuantumLoader />
             <p className="text-white text-lg">
-              {isPlayingSound ? "Preparing..." : 
-               isCreatingConversation ? "Creating conversation..." : 
-               "Loading..."}
+              {isPlayingSound ? tr("Preparing...", "Inaandaa...") : 
+               isCreatingConversation ? tr("Creating conversation...", "Inaanzisha mazungumzo...") : 
+               tr("Loading...", "Inapakia...")}
             </p>
           </div>
         </AnimatedTextBlockWrapper>
@@ -207,11 +225,11 @@ export function Instructions() {
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" />
       <AnimatedTextBlockWrapper>
         <h1 className="mb-4 pt-1 text-center text-3xl sm:text-4xl lg:text-5xl font-semibold">
-          <span className="text-white">Need Support?</span>{" "}
-          <span style={{ color: '#9EEAFF' }}>I am Here.</span>
+          <span className="text-white">{tr("Need Support?", "Unahitaji Msaada?")}</span>{" "}
+          <span style={{ color: '#ECE5DA' }}>{tr("I am Here.", "Niko Hapa.")}</span>
         </h1>
         <p className="max-w-[650px] text-center text-base sm:text-lg text-gray-400 mb-12">
-          Have a face-to-face conversation with an AI mental health companion. I am here to listen, support, and help you through whatever you are experiencing.
+          {tr("Have a face-to-face conversation with an AI mental health companion. I am here to listen, support, and help you through whatever you are experiencing.", "Fanya mazungumzo ana kwa ana na msaidizi wa AI wa afya ya akili. Niko hapa kusikiliza, kusaidia, na kukusaidia kupitia chochote unachopitia.")}
         </p>
         
         {getUserMediaError && (
@@ -219,8 +237,8 @@ export function Instructions() {
             <AlertTriangle className="size-5 flex-shrink-0" />
             <p className="text-sm">
               {!process.env.NEXT_PUBLIC_TAVUS_API_KEY 
-                ? "Tavus API key not configured. Please check your environment variables."
-                : "Camera and microphone access required. Please allow permissions and try again."
+                ? tr("Tavus API key not configured. Please check your environment variables.", "Ufunguo wa API wa Tavus haujawekwa. Tafadhali angalia mipangilio ya mazingira.")
+                : tr("Camera and microphone access required. Please allow permissions and try again.", "Ruhusa ya kamera na kipaza sauti inahitajika. Tafadhali ruhusu kisha ujaribu tena.")
               }
             </p>
           </div>
@@ -234,32 +252,32 @@ export function Instructions() {
         >
           <Video className="size-5" />
           {!process.env.NEXT_PUBLIC_TAVUS_API_KEY 
-            ? "API Key Required"
+            ? tr("API Key Required", "Ufunguo wa API Unahitajika")
             : permissionsGranted 
-              ? "Start Video Chat" 
-              : "Allow Camera & Mic"
+              ? tr("Start Video Chat", "Anza Mazungumzo ya Video") 
+              : tr("Allow Camera & Mic", "Ruhusu Kamera na Kipaza Sauti")
           }
         </Button>
         
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:gap-8 text-gray-400 justify-center">
           <div className={`flex items-center gap-3 px-4 py-2 rounded-full transition-colors ${
-            permissionsGranted ? 'bg-green-500/30 text-green-200' : 'bg-gray-700/50 text-gray-400'
+            permissionsGranted ? 'bg-[#2C4A4E]/30 text-[#ECE5DA]' : 'bg-gray-700/50 text-gray-400'
           }`}>
             <Mic className="size-5" />
-            {permissionsGranted ? "Mic access granted" : "Mic access required"}
+            {permissionsGranted ? tr("Mic access granted", "Ruhusa ya kipaza sauti imetolewa") : tr("Mic access required", "Ruhusa ya kipaza sauti inahitajika")}
           </div>
           <div className={`flex items-center gap-3 px-4 py-2 rounded-full transition-colors ${
-            permissionsGranted ? 'bg-green-500/30 text-green-200' : 'bg-gray-700/50 text-gray-400'
+            permissionsGranted ? 'bg-[#2C4A4E]/30 text-[#ECE5DA]' : 'bg-gray-700/50 text-gray-400'
           }`}>
             <Video className="size-5" />
-            {permissionsGranted ? "Camera access granted" : "Camera access required"}
+            {permissionsGranted ? tr("Camera access granted", "Ruhusa ya kamera imetolewa") : tr("Camera access required", "Ruhusa ya kamera inahitajika")}
           </div>
         </div>
         
         <span className="absolute bottom-6 px-4 text-sm text-gray-500 sm:bottom-8 sm:px-8 text-center">
-          By starting a conversation, I accept the{' '}
-          <a href="#" className="text-primary hover:underline">Terms of Use</a> and acknowledge the{' '}
-          <a href="#" className="text-primary hover:underline">Privacy Policy</a>.
+          {tr('By starting a conversation, I accept the', 'Kwa kuanza mazungumzo, ninakubali')}{' '}
+          <a href="#" className="text-primary hover:underline">{tr("Terms of Use", "Masharti ya Matumizi")}</a> {tr('and acknowledge the', 'na ninatambua')}{' '}
+          <a href="#" className="text-primary hover:underline">{tr("Privacy Policy", "Sera ya Faragha")}</a>.
         </span>
       </AnimatedTextBlockWrapper>
     </DialogWrapper>

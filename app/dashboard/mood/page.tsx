@@ -1,5 +1,6 @@
 'use client';
 
+import { useLang } from '@/lib/i18n';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
@@ -46,16 +47,16 @@ interface MoodStats {
 }
 
 const moodEmojis = {
-  1: { emoji: '😢', label: 'Very Sad', color: 'text-red-500', bg: 'bg-red-50' },
-  2: { emoji: '😔', label: 'Sad', color: 'text-red-400', bg: 'bg-red-50' },
-  3: { emoji: '😐', label: 'Poor', color: 'text-orange-400', bg: 'bg-orange-50' },
-  4: { emoji: '😕', label: 'Low', color: 'text-orange-300', bg: 'bg-orange-50' },
-  5: { emoji: '😐', label: 'Neutral', color: 'text-yellow-500', bg: 'bg-yellow-50' },
-  6: { emoji: '🙂', label: 'Okay', color: 'text-yellow-400', bg: 'bg-yellow-50' },
-  7: { emoji: '😊', label: 'Good', color: 'text-green-400', bg: 'bg-green-50' },
-  8: { emoji: '😄', label: 'Great', color: 'text-green-500', bg: 'bg-green-50' },
-  9: { emoji: '😁', label: 'Excellent', color: 'text-green-600', bg: 'bg-green-50' },
-  10: { emoji: '🤩', label: 'Amazing', color: 'text-green-700', bg: 'bg-green-50' }
+  1: { emoji: '😢', label: { en: 'Very Sad', sw: 'Huzuni sana' }, color: 'text-red-500', bg: 'bg-red-50' },
+  2: { emoji: '😔', label: { en: 'Sad', sw: 'Huzuni' }, color: 'text-red-400', bg: 'bg-red-50' },
+  3: { emoji: '😐', label: { en: 'Poor', sw: 'Si vizuri' }, color: 'text-orange-400', bg: 'bg-orange-50' },
+  4: { emoji: '😕', label: { en: 'Low', sw: 'Chini' }, color: 'text-orange-300', bg: 'bg-orange-50' },
+  5: { emoji: '😐', label: { en: 'Neutral', sw: 'Kawaida' }, color: 'text-yellow-500', bg: 'bg-yellow-50' },
+  6: { emoji: '🙂', label: { en: 'Okay', sw: 'Sawa' }, color: 'text-yellow-400', bg: 'bg-yellow-50' },
+  7: { emoji: '😊', label: { en: 'Good', sw: 'Vizuri' }, color: 'text-[#2C4A4E]', bg: 'bg-[#2C4A4E]/10' },
+  8: { emoji: '😄', label: { en: 'Great', sw: 'Vizuri sana' }, color: 'text-[#2C4A4E]', bg: 'bg-[#2C4A4E]/10' },
+  9: { emoji: '😁', label: { en: 'Excellent', sw: 'Bora' }, color: 'text-[#2C4A4E]', bg: 'bg-[#2C4A4E]/10' },
+  10: { emoji: '🤩', label: { en: 'Amazing', sw: 'Ajabu' }, color: 'text-[#2C4A4E]', bg: 'bg-[#2C4A4E]/10' }
 };
 
 const moodIcons = {
@@ -72,6 +73,7 @@ const moodIcons = {
 };
 
 export default function MoodTrackerPage() {
+  const { tr } = useLang();
   const router = useRouter();
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   
@@ -203,13 +205,13 @@ export default function MoodTrackerPage() {
         calculateStats(updatedEntries);
         
         // Show success message
-        alert('Mood logged successfully!');
+        alert(tr("Mood logged successfully!", "Hisia imerekodiwa!"));
       } else {
-        alert('Failed to log mood. Please try again.');
+        alert(tr("Failed to log mood. Please try again.", "Imeshindikana kurekodi hisia. Tafadhali jaribu tena."));
       }
     } catch (error) {
       console.error('Failed to log mood:', error);
-      alert('Failed to log mood. Please try again.');
+      alert(tr("Failed to log mood. Please try again.", "Imeshindikana kurekodi hisia. Tafadhali jaribu tena."));
     } finally {
       setIsLogging(false);
     }
@@ -218,23 +220,23 @@ export default function MoodTrackerPage() {
   const getMoodColor = (score: number) => {
     if (score <= 3) return 'text-red-500';
     if (score <= 5) return 'text-yellow-500';
-    if (score <= 7) return 'text-green-400';
-    return 'text-green-600';
+    if (score <= 7) return 'text-[#2C4A4E]';
+    return 'text-[#2C4A4E]';
   };
 
   const getMoodBg = (score: number) => {
     if (score <= 3) return 'bg-red-50';
     if (score <= 5) return 'bg-yellow-50';
-    if (score <= 7) return 'bg-green-50';
-    return 'bg-green-50';
+    if (score <= 7) return 'bg-[#2C4A4E]/10';
+    return 'bg-[#2C4A4E]/10';
   };
 
   if ((authLoading || isLoading) && !user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="flex items-center space-x-2">
-          <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
-          <span className="text-white">Loading mood tracker...</span>
+          <Loader2 className="h-6 w-6 animate-spin text-[#2C4A4E]" />
+          <span className="text-white">{tr("Loading mood tracker...", "Inapakia hisia zangu...")}</span>
         </div>
       </div>
     );
@@ -256,7 +258,7 @@ export default function MoodTrackerPage() {
               </Link>
               <div className="flex items-center space-x-2">
                 <Heart className="h-6 w-6 text-pink-500" />
-                <h1 className="text-xl font-bold text-white font-acme">Mood Tracker</h1>
+                <h1 className="text-xl font-bold text-white font-acme">{tr("Mood Tracker", "Hisia Zangu")}</h1>
               </div>
             </div>
             
@@ -264,15 +266,15 @@ export default function MoodTrackerPage() {
               <button
                 onClick={() => setView('log')}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  view === 'log' ? 'bg-blue-600 text-white' : 'text-white bg-[#016A79] hover:bg-[#04aec9]'
+                  view === 'log' ? 'bg-[#2C4A4E] text-white' : 'text-white bg-[#2C4A4E] hover:bg-[#2C4A4E]/90'
                 }`}
               >
-                Log Mood
+                {tr("Log Mood", "Rekodi Hisia")}
               </button>
               <button
                 onClick={() => setView('history')}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  view === 'history' ? 'bg-blue-600 text-white' : 'text-white bg-[#016A79] hover:bg-[#04aec9]'
+                  view === 'history' ? 'bg-[#2C4A4E] text-white' : 'text-white bg-[#2C4A4E] hover:bg-[#2C4A4E]/90'
                 }`}
               >
                 History
@@ -280,7 +282,7 @@ export default function MoodTrackerPage() {
               <button
                 onClick={() => setView('analytics')}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  view === 'analytics' ? 'bg-blue-600 text-white' : 'text-white bg-[#016A79] hover:bg-[#04aec9]'
+                  view === 'analytics' ? 'bg-[#2C4A4E] text-white' : 'text-white bg-[#2C4A4E] hover:bg-[#2C4A4E]/90'
                 }`}
               >
                 Analytics
@@ -297,8 +299,8 @@ export default function MoodTrackerPage() {
             <div className="heal-card p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-white mb-1">Current Streak</p>
-                  <p className="text-2xl font-bold text-blue-600">{moodStats.streak} days</p>
+                  <p className="text-sm text-white mb-1">{tr("Current Streak", "Mfululizo wa Sasa")}</p>
+                  <p className="text-2xl font-bold text-[#2C4A4E]">{tr(`${moodStats.streak} days`, `siku ${moodStats.streak}`)}</p>
                 </div>
                 <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{backgroundColor: 'var(--heal-light-blue)'}}>
                   <Calendar className="h-6 w-6 heal-text-accent" />
@@ -309,7 +311,7 @@ export default function MoodTrackerPage() {
             <div className="heal-card p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-white mb-1">Average Mood</p>
+                  <p className="text-sm text-white mb-1">{tr("Average Mood", "Wastani wa Hisia")}</p>
                   <p className={`text-2xl font-bold ${getMoodColor(moodStats.averageMood)}`}>
                     {moodStats.averageMood.toFixed(1)}/10
                   </p>
@@ -323,8 +325,8 @@ export default function MoodTrackerPage() {
             <div className="heal-card p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-white mb-1">Total Entries</p>
-                  <p className="text-2xl font-bold text-green-600">{moodStats.totalEntries}</p>
+                  <p className="text-sm text-white mb-1">{tr("Total Entries", "Jumla ya Rekodi")}</p>
+                  <p className="text-2xl font-bold text-[#2C4A4E]">{moodStats.totalEntries}</p>
                 </div>
                 <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{backgroundColor: 'var(--heal-beige)'}}>
                   <BarChart3 className="h-6 w-6" style={{color: 'var(--heal-light-teal)'}} />
@@ -335,22 +337,22 @@ export default function MoodTrackerPage() {
             <div className="heal-card p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-white mb-1">Trend</p>
+                  <p className="text-sm text-white mb-1">{tr("Trend", "Mwelekeo")}</p>
                   <p className={`text-lg font-semibold ${
-                    moodStats.trend === 'up' ? 'text-green-600' : 
+                    moodStats.trend === 'up' ? 'text-[#2C4A4E]' : 
                     moodStats.trend === 'down' ? 'text-red-600' : 'text-white'
                   }`}>
-                    {moodStats.trend === 'up' ? '↗ Improving' : 
-                     moodStats.trend === 'down' ? '↘ Declining' : '→ Stable'}
+                    {moodStats.trend === 'up' ? tr('↗ Improving', '↗ Inaimarika') : 
+                     moodStats.trend === 'down' ? tr('↘ Declining', '↘ Inashuka') : tr('→ Stable', '→ Thabiti')}
                   </p>
                 </div>
                 <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                  moodStats.trend === 'up' ? 'bg-green-100' : 
+                  moodStats.trend === 'up' ? 'bg-[#2C4A4E]/10' : 
                   moodStats.trend === 'down' ? 'bg-red-100' : 'bg-gray-100'
                 }`}>
                   <TrendingUp className={`h-6 w-6 ${
-                    moodStats.trend === 'up' ? 'text-green-600' : 
-                    moodStats.trend === 'down' ? 'text-red-600' : 'text-green-600'
+                    moodStats.trend === 'up' ? 'text-[#2C4A4E]' : 
+                    moodStats.trend === 'down' ? 'text-red-600' : 'text-[#2C4A4E]'
                   }`} />
                 </div>
               </div>
@@ -362,7 +364,7 @@ export default function MoodTrackerPage() {
         {view === 'log' && (
           <div className="max-w-2xl mx-auto">
             <div className="heal-card p-8">
-              <h2 className="text-2xl font-bold text-white mb-6 text-center font-acme">How are you feeling today?</h2>
+              <h2 className="text-2xl font-bold text-white mb-6 text-center font-acme">{tr("How are you feeling today?", "Unajisikiaje leo?")}</h2>
               
               {/* Mood Scale */}
               <div className="mb-8">
@@ -375,14 +377,14 @@ export default function MoodTrackerPage() {
                         onClick={() => setSelectedMood(mood)}
                         className={`p-4 rounded-xl border-2 transition-all duration-200 transform hover:scale-105 ${
                           selectedMood === mood
-                            ? 'border-blue-500 bg-white/30 shadow-lg'
+                            ? 'border-[#2C4A4E] bg-white/30 shadow-lg'
                             : 'border-gray-700 hover:border-gray-600'
                         }`}
                       >
                         <div className="text-center">
                           <div className="text-3xl mb-2">{moodEmojis[mood as keyof typeof moodEmojis].emoji}</div>
                           <div className="text-xs font-medium text-white">{mood}</div>
-                          <div className="text-xs text-white">{moodEmojis[mood as keyof typeof moodEmojis].label}</div>
+                          <div className="text-xs text-white">{tr(moodEmojis[mood as keyof typeof moodEmojis].label)}</div>
                         </div>
                       </button>
                     );
@@ -391,7 +393,7 @@ export default function MoodTrackerPage() {
                 
                 <div className="text-center mb-6">
                   <p className="text-lg font-medium text-gray-200">
-                    Selected: <span className={getMoodColor(selectedMood)}>{selectedMood}/10 - {moodEmojis[selectedMood as keyof typeof moodEmojis].label}</span>
+                    {tr('Selected:', 'Umechagua:')} <span className={getMoodColor(selectedMood)}>{selectedMood}/10 - {tr(moodEmojis[selectedMood as keyof typeof moodEmojis].label)}</span>
                   </p>
                 </div>
               </div>
@@ -399,14 +401,14 @@ export default function MoodTrackerPage() {
               {/* Notes */}
               <div className="mb-6">
                 <label htmlFor="notes" className="block text-sm font-medium text-gray-200 mb-2">
-                  Notes (optional)
+                  {tr("Notes (optional)", "Maelezo (si lazima)")}
                 </label>
                 <textarea
                   id="notes"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  placeholder="What's contributing to your mood today? Any thoughts or feelings you'd like to record..."
-                  className="w-full px-4 py-3 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                  placeholder={tr("What's contributing to your mood today? Any thoughts or feelings you'd like to record...", "Nini kinachangia hisia zako leo? Mawazo au hisia zozote ungependa kurekodi...")}
+                  className="w-full px-4 py-3 border border-gray-600 rounded-lg focus:ring-2 focus:ring-[#2C4A4E] focus:border-transparent resize-none"
                   rows={4}
                 />
               </div>
@@ -420,12 +422,12 @@ export default function MoodTrackerPage() {
                 {isLogging ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    <span>Logging...</span>
+                    <span>{tr("Logging...", "Inarekodi...")}</span>
                   </>
                 ) : (
                   <>
                     <Save className="h-4 w-4" />
-                    <span>Log Mood</span>
+                    <span>{tr("Log Mood", "Rekodi Hisia")}</span>
                   </>
                 )}
               </button>
@@ -436,16 +438,16 @@ export default function MoodTrackerPage() {
         {view === 'history' && (
           <div>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-white font-acme">Mood History</h2>
+              <h2 className="text-2xl font-bold text-white font-acme">{tr("Mood History", "Historia ya Hisia")}</h2>
               <div className="flex items-center space-x-2">
                 <select
                   value={timeFilter}
                   onChange={(e) => setTimeFilter(e.target.value as 'week' | 'month' | 'all')}
-                  className="px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-[#2C4A4E] focus:border-transparent"
                 >
-                  <option value="week">Last Week</option>
-                  <option value="month">Last Month</option>
-                  <option value="all">All Time</option>
+                  <option value="week">{tr("Last Week", "Wiki Iliyopita")}</option>
+                  <option value="month">{tr("Last Month", "Mwezi Uliopita")}</option>
+                  <option value="all">{tr("All Time", "Muda Wote")}</option>
                 </select>
               </div>
             </div>
@@ -453,13 +455,13 @@ export default function MoodTrackerPage() {
             {moodEntries.length === 0 ? (
               <div className="heal-card p-12 text-center">
                 <Heart className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-white mb-2 font-acme">No mood entries yet</h3>
-                <p className="text-white mb-6">Start tracking your mood to see your history here.</p>
+                <h3 className="text-lg font-semibold text-white mb-2 font-acme">{tr("No mood entries yet", "Bado hakuna rekodi za hisia")}</h3>
+                <p className="text-white mb-6">{tr("Start tracking your mood to see your history here.", "Anza kufuatilia hisia zako ili kuona historia yako hapa.")}</p>
                 <button
                   onClick={() => setView('log')}
                   className="heal-button-primary"
                 >
-                  Log Your First Mood
+                  {tr("Log Your First Mood", "Rekodi Hisia Yako ya Kwanza")}
                 </button>
               </div>
             ) : (
@@ -477,7 +479,7 @@ export default function MoodTrackerPage() {
                               {entry.moodScore}/10
                             </span>
                             <span className="text-gray-300">•</span>
-                            <span className="text-white">{moodEmojis[entry.moodScore as keyof typeof moodEmojis].label}</span>
+                            <span className="text-white">{tr(moodEmojis[entry.moodScore as keyof typeof moodEmojis].label)}</span>
                           </div>
                           <p className="text-sm text-gray-300">
                             {new Date(entry.createdAt).toLocaleDateString('en-US', {
@@ -506,37 +508,37 @@ export default function MoodTrackerPage() {
 
         {view === 'analytics' && moodStats && (
           <div>
-            <h2 className="text-2xl font-bold text-white mb-6 font-acme">Mood Analytics</h2>
+            <h2 className="text-2xl font-bold text-white mb-6 font-acme">{tr("Mood Analytics", "Uchambuzi wa Hisia")}</h2>
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Detailed Stats */}
               <div className="heal-card p-6">
-                <h3 className="text-lg font-semibold text-white mb-4 font-acme">Detailed Statistics</h3>
+                <h3 className="text-lg font-semibold text-white mb-4 font-acme">{tr("Detailed Statistics", "Takwimu za Kina")}</h3>
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-white">Weekly Average:</span>
+                    <span className="text-white">{tr("Weekly Average:", "Wastani wa Wiki:")}</span>
                     <span className={`font-semibold ${getMoodColor(moodStats.weeklyAverage)}`}>
                       {moodStats.weeklyAverage.toFixed(1)}/10
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-white">Monthly Average:</span>
+                    <span className="text-white">{tr("Monthly Average:", "Wastani wa Mwezi:")}</span>
                     <span className={`font-semibold ${getMoodColor(moodStats.monthlyAverage)}`}>
                       {moodStats.monthlyAverage.toFixed(1)}/10
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-white">Overall Average:</span>
+                    <span className="text-white">{tr("Overall Average:", "Wastani wa Jumla:")}</span>
                     <span className={`font-semibold ${getMoodColor(moodStats.averageMood)}`}>
                       {moodStats.averageMood.toFixed(1)}/10
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-white">Current Streak:</span>
-                    <span className="font-semibold text-blue-600">{moodStats.streak} days</span>
+                    <span className="text-white">{tr("Current Streak:", "Mfululizo wa Sasa:")}</span>
+                    <span className="font-semibold text-[#2C4A4E]">{tr(`${moodStats.streak} days`, `siku ${moodStats.streak}`)}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-white">Total Entries:</span>
+                    <span className="text-white">{tr("Total Entries:", "Jumla ya Rekodi:")}</span>
                     <span className="font-semibold text-white">{moodStats.totalEntries}</span>
                   </div>
                 </div>
@@ -544,7 +546,7 @@ export default function MoodTrackerPage() {
 
               {/* Mood Distribution */}
               <div className="heal-card p-6">
-                <h3 className="text-lg font-semibold text-white mb-4 font-acme">Mood Distribution</h3>
+                <h3 className="text-lg font-semibold text-white mb-4 font-acme">{tr("Mood Distribution", "Mgawanyo wa Hisia")}</h3>
                 <div className="space-y-3">
                   {Object.entries(
                     moodEntries.reduce((acc, entry) => {
@@ -558,7 +560,7 @@ export default function MoodTrackerPage() {
                     const percentage = moodEntries.length > 0 ? (count / moodEntries.length) * 100 : 0;
                     const color = range.includes('Low') ? 'bg-red-500' :
                                  range.includes('Neutral') ? 'bg-yellow-500' :
-                                 range.includes('Good') ? 'bg-green-400' : 'bg-green-600';
+                                 range.includes('Good') ? 'bg-[#2C4A4E]/20' : 'bg-[#2C4A4E]';
                     
                     return (
                       <div key={range}>
@@ -581,40 +583,40 @@ export default function MoodTrackerPage() {
 
             {/* Insights */}
             <div className="heal-card p-6 mt-8">
-              <h3 className="text-lg font-semibold text-white mb-4 font-acme">Insights & Recommendations</h3>
+              <h3 className="text-lg font-semibold text-white mb-4 font-acme">{tr("Insights & Recommendations", "Maarifa na Mapendekezo")}</h3>
               <div className="space-y-4">
                 {moodStats.trend === 'up' && (
-                  <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                    <p className="text-green-800">
-                      🎉 Great news! Your mood has been trending upward. Keep up the positive momentum!
+                  <div className="p-4 bg-[#2C4A4E]/10 border border-[#2C4A4E]/20 rounded-lg">
+                    <p className="text-[#2C4A4E]">
+                      {tr("🎉 Great news! Your mood has been trending upward. Keep up the positive momentum!", "🎉 Habari njema! Hisia zako zimekuwa zikiimarika. Endelea hivyo!")}
                     </p>
                   </div>
                 )}
                 {moodStats.trend === 'down' && (
                   <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                     <p className="text-yellow-800">
-                      💛 Your mood has been declining recently. Consider reaching out for support or trying some self-care activities.
+                      {tr("💛 Your mood has been declining recently. Consider reaching out for support or trying some self-care activities.", "💛 Hisia zako zimekuwa zikishuka hivi karibuni. Fikiria kutafuta msaada au kujaribu shughuli za kujitunza.")}
                     </p>
                   </div>
                 )}
                 {moodStats.streak >= 7 && (
-                  <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p className="text-blue-800">
+                  <div className="p-4 bg-[#2C4A4E]/10 border border-[#2C4A4E]/20 rounded-lg">
+                    <p className="text-[#2C4A4E]">
                       🔥 Amazing! You've been consistently tracking your mood for {moodStats.streak} days. This self-awareness is a powerful tool for mental health.
                     </p>
                   </div>
                 )}
                 {moodStats.averageMood >= 7 && (
-                  <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                    <p className="text-green-800">
-                      ✨ Your overall mood average is excellent! You're doing great at maintaining positive mental health.
+                  <div className="p-4 bg-[#2C4A4E]/10 border border-[#2C4A4E]/20 rounded-lg">
+                    <p className="text-[#2C4A4E]">
+                      {tr("✨ Your overall mood average is excellent! You're doing great at maintaining positive mental health.", "✨ Wastani wa hisia zako ni bora sana! Unafanya vizuri kutunza afya chanya ya akili.")}
                     </p>
                   </div>
                 )}
                 {moodStats.averageMood < 5 && (
                   <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
                     <p className="text-red-800">
-                      🤗 Your mood has been lower than average. Remember that it's okay to have difficult times. Consider talking to a mental health professional.
+                      {tr("🤗 Your mood has been lower than average. Remember that it's okay to have difficult times. Consider talking to a mental health professional.", "🤗 Hisia zako zimekuwa chini ya wastani. Kumbuka ni sawa kupitia nyakati ngumu. Fikiria kuongea na mtaalamu wa afya ya akili.")}
                     </p>
                   </div>
                 )}

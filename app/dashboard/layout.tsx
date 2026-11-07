@@ -41,8 +41,8 @@ export default function DashboardLayout({
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-600">Loading...</div>
+      <div className="min-h-screen bg-[#ECE5DA] flex items-center justify-center">
+        <div className="text-[#2C4A4E]">Loading...</div>
       </div>
     );
   }

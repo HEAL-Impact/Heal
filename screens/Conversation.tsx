@@ -1,3 +1,4 @@
+import { useLang } from '@/lib/i18n';
 import { DialogWrapper } from "@/components/DialogWrapper";
 import {
   DailyAudio,
@@ -46,6 +47,7 @@ const outroPhrases = [
 ];
 
 export const Conversation: React.FC = () => {
+  const { tr } = useLang();
   const [conversation, setConversation] = useAtom(conversationAtom);
   const [, setScreenState] = useAtom(screenAtom);
 
@@ -210,7 +212,7 @@ export const Conversation: React.FC = () => {
         <div className="absolute inset-0 flex h-full items-center justify-center bg-black/50">
           <div className="flex flex-col items-center gap-4">
             <QuantumLoader />
-            <p className="text-white text-lg">Initializing video call...</p>
+            <p className="text-white text-lg">{tr("Initializing video call...", "Inaanzisha simu ya video...")}</p>
           </div>
         </div>
       </DialogWrapper>
@@ -240,7 +242,7 @@ export const Conversation: React.FC = () => {
         <div className="absolute inset-0 flex h-full items-center justify-center bg-black/50">
           <div className="flex flex-col items-center gap-4 text-center max-w-md">
             <div className="text-red-500 text-6xl">⚠️</div>
-            <h2 className="text-white text-xl font-semibold">Connection Failed</h2>
+            <h2 className="text-white text-xl font-semibold">{tr("Connection Failed", "Muunganisho Umeshindikana")}</h2>
             <p className="text-gray-300">{joinError}</p>
             <Button onClick={leaveConversation} className="mt-4">
               Try Again
@@ -272,7 +274,7 @@ export const Conversation: React.FC = () => {
           <div className="flex h-full items-center justify-center bg-black/50">
             <div className="flex flex-col items-center gap-4">
               <QuantumLoader />
-              <p className="text-white text-lg">Connecting to AI...</p>
+              <p className="text-white text-lg">{tr("Connecting to AI...", "Inaunganisha na AI...")}</p>
             </div>
           </div>
         )}
@@ -282,7 +284,7 @@ export const Conversation: React.FC = () => {
             id={localSessionId}
             tileClassName="!object-cover"
             className={cn(
-              "absolute bottom-20 right-4 aspect-video h-29 w-52 overflow-hidden rounded-lg border-2 border-[#22C5FE] shadow-[0_0_20px_rgba(34,197,254,0.3)] "
+              "absolute bottom-20 right-4 aspect-video h-29 w-52 overflow-hidden rounded-lg border-2 border-[#2C4A4E] shadow-[0_0_20px_rgba(34,197,254,0.3)] "
             )}
           />
         )}
@@ -290,7 +292,7 @@ export const Conversation: React.FC = () => {
         <div className="absolute bottom-8 right-1/2 z-10 flex translate-x-1/2 justify-center gap-4">
           <Button
             size="icon"
-            className="border border-[#22C5FE] shadow-[0_0_20px_rgba(34,197,254,0.2)] h-12 w-12"
+            className="border border-[#2C4A4E] shadow-[0_0_20px_rgba(34,197,254,0.2)] h-12 w-12"
             variant="secondary"
             onClick={toggleAudio}
           >
@@ -302,7 +304,7 @@ export const Conversation: React.FC = () => {
           </Button>
           <Button
             size="icon"
-            className="border border-[#22C5FE] shadow-[0_0_20px_rgba(34,197,254,0.2)] h-12 w-12"
+            className="border border-[#2C4A4E] shadow-[0_0_20px_rgba(34,197,254,0.2)] h-12 w-12"
             variant="secondary"
             onClick={toggleVideo}
           >

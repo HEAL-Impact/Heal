@@ -29,13 +29,13 @@ function Layout({ children, onToggle, sidebarCollapsed, user }: LayoutProps) {
   if (authLoading) {
     return (
       <div className="h-screen overflow-hidden bg-cover bg-center bg-no-repeat flex"
-      style={{ backgroundImage: "linear-gradient(rgba(254, 240, 211, 0.3), rgba(254, 240, 211, 0.3)), url('/images/forestbg.jpg')" }}> 
+      style={{ backgroundImage: "linear-gradient(rgba(236, 229, 218, 0.3), rgba(236, 229, 218, 0.3)), url('/images/forestbg.jpg')" }}> 
     </div>
     )
   }
   return (
     <div className="h-screen overflow-hidden bg-cover bg-center bg-no-repeat flex"
-      style={{ backgroundImage: "linear-gradient(rgba(254, 240, 211, 0.3), rgba(254, 240, 211, 0.3)), url('/images/forestbg.jpg')" }}>
+      style={{ backgroundImage: "linear-gradient(rgba(236, 229, 218, 0.3), rgba(236, 229, 218, 0.3)), url('/images/forestbg.jpg')" }}>
 
       <Sidebar onToggle={onToggle} user={user?.firstName || ''} />
 
