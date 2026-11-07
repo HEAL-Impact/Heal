@@ -1,618 +1,411 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import {
-  Heart,
-  Shield,
-  Menu,
-  X,
-  AlertTriangle,
-  Phone,
-  CheckCircle2,
-  Clock,
-  MapPin,
-} from 'lucide-react';
+import { Suspense, useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import NextImage from 'next/image';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from '@/components/ui/dialog';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
+import { useSearchParams } from 'next/navigation';
+import { ChevronLeft, MapPin, Loader2, Copy, Check, ShieldCheck, Lock } from 'lucide-react';
+import HelpShell from '@/components/help/HelpShell';
+import { RECIPIENTS, submitReport, type ReportDraft } from '@/lib/reports';
+import { saveCaseCode } from '@/lib/myspace/store';
+import { requestApproxLocation } from '@/lib/screening/location';
+import { useLang } from '@/lib/i18n';
 
+// Values are stored in English so services read consistent reports; labels follow her language.
+type Opt = { value: string; sw: string };
+const INCIDENT_TYPES: Opt[] = [
+  { value: 'Physical violence', sw: 'Ukatili wa kimwili' },
+  { value: 'Sexual violence', sw: 'Ukatili wa kingono' },
+  { value: 'Emotional or verbal abuse', sw: 'Unyanyasaji wa kihisia au kwa maneno' },
+  { value: 'Money or property being controlled', sw: 'Kudhibitiwa pesa au mali' },
+  { value: 'Online abuse or threats', sw: 'Unyanyasaji au vitisho mtandaoni' },
+  { value: 'Forced or child marriage', sw: 'Ndoa ya kulazimishwa au ya utotoni' },
+  { value: 'FGM', sw: 'Ukeketaji (FGM)' },
+  { value: 'Something else', sw: 'Kitu kingine' },
+];
+const WHEN: Opt[] = [
+  { value: 'In the last 3 days', sw: 'Ndani ya siku 3 zilizopita' },
+  { value: 'In the last week', sw: 'Ndani ya wiki iliyopita' },
+  { value: 'In the last month', sw: 'Ndani ya mwezi uliopita' },
+  { value: 'Longer ago', sw: 'Zamani zaidi' },
+  { value: 'It is still happening', sw: 'Bado kinaendelea' },
+];
+const SAFE: Opt[] = [
+  { value: 'Yes', sw: 'Ndiyo' },
+  { value: 'No', sw: 'Hapana' },
+  { value: 'Not sure', sw: 'Sina uhakika' },
+];
+const CONTACT_CHOICES: Opt[] = [
+  { value: 'Yes, contact me', sw: 'Ndiyo, wasiliana nami' },
+  { value: 'No, I will use my case code', sw: 'Hapana, nitatumia namba yangu ya kesi' },
+];
+const CONTACT_METHODS: Opt[] = [
+  { value: 'Phone call', sw: 'Simu' },
+  { value: 'SMS', sw: 'SMS' },
+  { value: 'WhatsApp', sw: 'WhatsApp' },
+];
+const label = (options: Opt[], value: string | undefined, lang: 'en' | 'sw') => {
+  const o = options.find((x) => x.value === value);
+  return o ? (lang === 'sw' ? o.sw : o.value) : value;
+};
 
-export default function ReportPage() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [showCountdownModal, setShowCountdownModal] = useState(false);
-  const [countdown, setCountdown] = useState(300); // 5 minutes in seconds
-  const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
-  const [formData, setFormData] = useState({
-    incidentType: '',
-    urgencyLevel: '',
-    description: '',
-    submitAnonymously: false,
-    phoneNumber: '',
-    contactPreference: '',
-  });
-  // Store submitted data for modal display before clearing form
-  const [submittedData, setSubmittedData] = useState({
-    submitAnonymously: false,
-    phoneNumber: '',
-    contactPreference: '',
-  });
+type Step = 'intro' | 'type' | 'when' | 'safe' | 'details' | 'where' | 'recipient' | 'contact' | 'review' | 'done';
+const STEPS: Step[] = ['intro', 'type', 'when', 'safe', 'details', 'where', 'recipient', 'contact', 'review'];
 
-  // Get user's location
-  useEffect(() => {
-    if ('geolocation' in navigator) {
-      console.log('Requesting location permission...');
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          console.log('Location granted:', position.coords);
-          setUserLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          });
-        },
-        (error) => {
-          console.log('Location access denied:', error.message);
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 5000,
-          maximumAge: 0
-        }
-      );
-    } else {
-      console.log('Geolocation not supported by browser');
-    }
-  }, []);
-
-  // Countdown timer effect
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (showCountdownModal && countdown > 0) {
-      interval = setInterval(() => {
-        setCountdown((prev) => prev - 1);
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [showCountdownModal, countdown]);
-
-  // Format countdown time as MM:SS
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  // Mask phone number to show only last 3 digits
-  const maskPhoneNumber = (phone: string) => {
-    if (!phone) return '';
-    const digits = phone.replace(/\D/g, ''); // Remove non-digit characters
-    const lastThree = digits.slice(-3);
-    return `(•••) •••-${lastThree}`;
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Mock form submission
-    console.log('Form submitted:', {
-      ...formData,
-      location: userLocation
-    });
-
-    // Save submitted data for modal display
-    setSubmittedData({
-      submitAnonymously: formData.submitAnonymously,
-      phoneNumber: formData.phoneNumber,
-      contactPreference: formData.contactPreference,
-    });
-
-    // Reset countdown and show modal
-    setCountdown(300);
-    setShowCountdownModal(true);
-
-    // Reset form data immediately after submission to improve anonymity
-    setFormData({
-      incidentType: '',
-      urgencyLevel: '',
-      description: '',
-      submitAnonymously: false,
-      phoneNumber: '',
-      contactPreference: '',
-    });
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
-    }));
-  };
-
-  const handleModalClose = (open: boolean) => {
-    setShowCountdownModal(open);
-    // If modal is being closed, ensure all data is cleared for anonymity
-    if (!open) {
-      setFormData({
-        incidentType: '',
-        urgencyLevel: '',
-        description: '',
-        submitAnonymously: false,
-        phoneNumber: '',
-        contactPreference: '',
-      });
-      setSubmittedData({
-        submitAnonymously: false,
-        phoneNumber: '',
-        contactPreference: '',
-      });
-    }
-  };
-
+function Choice({ options, value, onPick }: { options: Opt[]; value?: string; onPick: (v: string) => void }) {
+  const { lang } = useLang();
   return (
-    <div className="min-h-screen bg-[#FEF5E3] flex flex-col">
-      <Navbar />
-
-      {/* Main Content */}
-      <main className="flex-1 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-        <div className="max-w-4xl mx-auto relative min-h-[calc(100vh-10rem)]">
-          {/* Decoration elements - positioned relative to the main content area */}
-          <div className="absolute z-10 w-full h-full pointer-events-none">
-            {/* Top left */}
-            <div className="absolute top-[5%] left-[5%] transform -rotate-12">
-              <NextImage
-                src="/images/decoration.png"
-                alt=""
-                width={64}
-                height={64}
-                className="w-12 sm:w-20 sm:h-20"
-                priority
-              />
-            </div>
-
-            {/* Top right */}
-            <div className="absolute top-[15%] right-[5%] transform rotate-25">
-              <NextImage
-                src="/images/decoration.png"
-                alt=""
-                width={80}
-                height={80}
-                className="w-18 h-18 sm:w-20 sm:h-20"
-                priority
-              />
-            </div>
-
-            {/* Middle left */}
-            <div className="absolute top-[40%] left-[3%] transform -rotate-15">
-              <NextImage
-                src="/images/decoration.png"
-                alt=""
-                width={72}
-                height={72}
-                className="w-18 h-18 sm:w-20 sm:h-20"
-                priority
-              />
-            </div>
-
-            {/* Middle right */}
-            <div className="absolute bottom-[30%] right-[5%] transform rotate-15">
-              <NextImage
-                src="/images/decoration.png"
-                alt=""
-                width={64}
-                height={64}
-                className="w-18 h-18 sm:w-20 sm:h-20"
-                priority
-              />
-            </div>
-
-            {/* Bottom center */}
-            <div className="absolute bottom-[10%] left-1/2 -translate-x-1/2 transform rotate-12">
-              <NextImage
-                src="/images/decoration.png"
-                alt=""
-                width={56}
-                height={56}
-                className="w-18 h-18 sm:w-20 sm:h-20"
-                priority
-              />
-            </div>
-          </div>
-
-          {/* Header */}
-          <div className="relative z-20 text-center mb-8">
-            <h1 className="font-acme text-[72px] sm:text-5xl font-bold text-brand-primary mb-4">
-              Report A Case
-            </h1>
-            <p className="font-acme text-[48px] mb-2 text-black">
-              Your safety and privacy are our priority.
-            </p>
-            <p className="font-acme text-[48px] text-black whitespace-nowrap">
-              Submit a detailed report about any GBV incident.
-            </p>
-          </div>
-
-
-
-          {/* Emergency Situation Alert */}
-          <div className="relative z-20 bg-transparent p-6 pt-0 mb-8 ml-14">
-            <div className="flex items-start gap-3">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  <h3 className="font-acme text-[24px] text-red-900">Emergency Situation?</h3>
-                  <AlertTriangle className="h-6 w-6 text-red-600 flex-shrink-0" />
-                </div>
-                <p className="text-[20px] font-acme text-red-800 mb-4">
-                  If you are in immediate danger, please contact emergency services immediately.
-                </p>
-                <div className="flex justify-center justify-space-between items-center flex-wrap gap-20">
-                  <a
-                    href="tel:911"
-                    className="w-[30%] justify-center bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full font-acme text-[20px] transition-all shadow-md hover:shadow-lg inline-flex items-center gap-2"
-                  >
-                    <Phone className="h-18 w-18" />
-                    Call 911
-                  </a>
-                  <a
-                    href="tel:1195"
-                    className="w-[40%] justify-center bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-full font-acme text-[20px] transition-all shadow-md hover:shadow-lg inline-flex items-center gap-2"
-                  >
-                    <Phone className="h-18 w-18" />
-                    Call GBV Hotline: 1195
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Report Form */}
-          <div className="relative z-20 bg-transparent p-6 sm:p-8">
-            <div className="flex items-start gap-3 mb-6">
-              <Shield className="h-18 w-18 text-brand-teal flex-shrink-0 mt-1" strokeWidth={3} />
-              <div>
-                <h2 className="font-acme text-xl text-brand-primary mb-1">Incident Report Form</h2>
-                <p className="text-xl font-acme text-brand-secondary">
-                  Please provide as much detail as possible. All information is confidential.
-                </p>
-              </div>
-            </div>
-
-            {/* Location Status Indicator */}
-            <div className="mb-4">
-              {userLocation ? (
-                <div className="flex items-center gap-2 text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg p-3">
-                  <MapPin className="h-4 w-4" />
-                  <span className="">Location detected - Your report will include location data to help authorities</span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3">
-                  <MapPin className="h-4 w-4" />
-                  <span className="">Location not available - Please enable location services for better assistance</span>
-                </div>
-              )}
-            </div>
-
-            {/* Anonymous Submission Toggle */}
-            <div className="bg-brand-teal rounded-lg p-4 mb-6">
-              <label className="flex items-center gap-3 cursor-pointer">
-                <input
-                  type="checkbox"
-                  name="submitAnonymously"
-                  checked={formData.submitAnonymously}
-                  onChange={handleChange}
-                  className="w-5 h-5 text-brand-teal border-brand-teal/30 rounded focus:ring-brand-teal"
-                />
-                <span className="text-black text-lg">Submit this report anonymously</span>
-              </label>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Incident Information Section */}
-              <div>
-                <h3 className="font-acme text-lg text-brand-teal mb-4">Incident Information</h3>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                  {/* Type of Incident */}
-                  <div>
-                    <label className="block text-lg font-medium text-brand-primary mb-2">
-                      Type of Incident <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                      name="incidentType"
-                      value={formData.incidentType}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-2 bg-[#ECF5F7]  border border-brand-light rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent text-brand-primary"
-                    >
-                      <option value="">Select incident type</option>
-                      <option value="physical">Physical Violence</option>
-                      <option value="sexual">Sexual Violence</option>
-                      <option value="emotional">Emotional Abuse</option>
-                      <option value="financial">Financial Abuse</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-
-                  {/* Urgency Level */}
-                  <div>
-                    <label className="block text-lg font-medium text-brand-primary mb-2">
-                      Urgency Level <span className="text-red-500">*</span>
-                    </label>
-                    <select
-                      name="urgencyLevel"
-                      value={formData.urgencyLevel}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-2 bg-[#ECF5F7] border border-brand-light rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent text-brand-primary"
-                    >
-                      <option value="">Select urgency level</option>
-                      <option value="low">Low - Past incident</option>
-                      <option value="medium">Medium - Ongoing concern</option>
-                      <option value="high">High - Recent incident</option>
-                      <option value="critical">Critical - Immediate danger</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* Description */}
-                <div>
-                  <label className="block text-lg font-medium text-brand-primary mb-2">
-                    Description of Incident <span className="text-red-500">*</span>
-                  </label>
-                  <textarea
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    required
-                    rows={6}
-                    placeholder="Please tell us more about the incident"
-                    className="w-full px-4 py-3 bg-[#ECF5F7] border border-brand-light rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent resize-none text-brand-primary placeholder:text-brand-gray"
-                  />
-                </div>
-              </div>
-
-              {/* Contact Section */}
-              {!formData.submitAnonymously && (
-                <div>
-                  <h3 className="font-acme text-lg text-brand-teal mb-4">Contact Information</h3>
-                  <p className="text-lg text-brand-secondary mb-4">
-                    Provide your contact details so we can reach you for immediate support.
-                  </p>
-
-                  <div className="space-y-4">
-                    {/* Phone Number */}
-                    <div>
-                      <label className="block text-lg font-medium text-brand-primary mb-2">
-                        Phone Number <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="tel"
-                        name="phoneNumber"
-                        value={formData.phoneNumber}
-                        onChange={handleChange}
-                        required={!formData.submitAnonymously}
-                        placeholder="e.g., +254 712 345 678"
-                        className="w-full px-4 py-2 bg-[#ECF5F7] border border-brand-light rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent text-brand-primary placeholder:text-brand-gray"
-                      />
-                    </div>
-
-                    {/* Contact Preference */}
-                    <div>
-                      <label className="block text-lg font-medium text-brand-primary mb-2">
-                        Preferred Contact Method <span className="text-red-500">*</span>
-                      </label>
-                      <select
-                        name="contactPreference"
-                        value={formData.contactPreference}
-                        onChange={handleChange}
-                        required={!formData.submitAnonymously}
-                        className="w-full px-4 py-2 bg-[#ECF5F7] border border-brand-light rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent text-brand-primary"
-                      >
-                        <option value="">Select contact preference</option>
-                        <option value="call">Call me - I&apos;m comfortable with a phone call</option>
-                        <option value="text">Text me - I prefer text messages</option>
-                        <option value="both">Either call or text - I&apos;m comfortable with both</option>
-                      </select>
-                    </div>
-
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                      <div className="flex items-start gap-2">
-                        <Phone className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                        <p className="text-sm text-blue-800">
-                          Our support team will contact you within 5 minutes using your preferred method to provide immediate assistance.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Submit Button */}
-              <div className="flex items-center justify-between pt-4 border-t border-brand-light">
-                <div className="flex items-center gap-2 text-sm text-brand-secondary">
-                  <CheckCircle2 className="h-4 w-4 text-green-600" />
-                  <span>All reports are encrypted and secure</span>
-                </div>
-                <button
-                  type="submit"
-                  className="bg-brand-primary hover:bg-brand-accent text-white px-8 py-3 rounded-full font-acme text-base transition-all shadow-md hover:shadow-lg hover:scale-105"
-                >
-                  Submit Report
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </main>
-
-      {/* Footer - Same as landing page */}
-      <Footer />
-
-      {/* Countdown Modal */}
-      <Dialog open={showCountdownModal} onOpenChange={handleModalClose}>
-        <DialogContent className="sm:max-w-md bg-white">
-          <DialogHeader>
-            <DialogTitle className="font-acme text-2xl text-brand-primary flex items-center gap-2">
-              <CheckCircle2 className="h-6 w-6 text-green-600" />
-              Report Submitted Successfully
-            </DialogTitle>
-            <DialogDescription className="text-base text-brand-secondary pt-2">
-              Your safety is our priority. Our support team has been notified.
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-6 py-4">
-            {/* Countdown Display - Only for non-anonymous submissions */}
-            {!submittedData.submitAnonymously && (
-              <>
-                <div className="bg-gradient-to-br from-brand-teal/20 to-brand-primary/10 rounded-xl p-6 text-center">
-                  <div className="flex items-center justify-center gap-2 mb-3">
-                    <Clock className="h-6 w-6 text-brand-primary animate-pulse" />
-                    <p className="text-lg text-brand-primary">
-                      Expected Contact Time
-                    </p>
-                  </div>
-                  <div className="text-5xl font-bold text-brand-primary font-mono">
-                    {formatTime(countdown)}
-                  </div>
-                  <p className="text-sm text-brand-secondary mt-2">
-                    minutes remaining
-                  </p>
-                </div>
-
-                {/* Confirmation Details */}
-                {submittedData.phoneNumber && (
-                  <div className="w-full bg-gray-50 rounded-lg p-4 mt-4 text-center">
-                    <p className="text-slate-600 text-sm">
-                      We will contact you at{' '}
-                      <span className="font-semibold text-slate-800">{maskPhoneNumber(submittedData.phoneNumber)}</span> via{' '}
-                      <span className="font-semibold text-slate-800">
-                        {submittedData.contactPreference === 'call' && 'Phone Call'}
-                        {submittedData.contactPreference === 'text' && 'Text Message'}
-                        {submittedData.contactPreference === 'both' && 'Phone Call or Text Message'}
-                      </span>.
-                    </p>
-                  </div>
-                )}
-              </>
-            )}
-
-            {/* Anonymous Submission Confirmation */}
-            {submittedData.submitAnonymously && (
-              <div className="bg-gradient-to-br from-green-50 to-teal-50 rounded-xl p-6 text-center">
-                <div className="flex items-center justify-center gap-2 mb-3">
-                  <Shield className="h-8 w-8 text-brand-teal" />
-                </div>
-                <h3 className="font-acme text-xl text-brand-primary font-semibold mb-2">
-                  Anonymous Report Received
-                </h3>
-                <p className="text-sm text-brand-secondary">
-                  Your report has been securely submitted. Your identity and location are protected.
-                </p>
-              </div>
-            )}
-
-            {/* What Happens Next */}
-            <div className="space-y-3">
-              <h4 className="font-acme text-lg text-brand-primary font-semibold">
-                What happens next:
-              </h4>
-              {submittedData.submitAnonymously ? (
-                <ul className="space-y-2 text-sm text-brand-secondary">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="">Your report has been securely submitted and encrypted</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="">Your location has been recorded to help local authorities</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="">A trained support specialist is reviewing your case</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="">Resources and support are available through our platform</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="">Your identity remains completely anonymous</span>
-                  </li>
-                </ul>
-              ) : (
-                <ul className="space-y-2 text-sm text-brand-secondary">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="">Your report has been securely submitted and encrypted</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="">Your location has been recorded to help local authorities</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="">A trained support specialist is reviewing your case</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-                    <span className="">You will be contacted within 5 minutes for immediate assistance</span>
-                  </li>
-                </ul>
-              )}
-            </div>
-
-            {/* Emergency Notice */}
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <div className="flex items-start gap-2">
-                <AlertTriangle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm font-semibold text-red-900 mb-1">
-                    In Immediate Danger?
-                  </p>
-                  <p className="text-sm text-red-800 mb-2">
-                    If you are in immediate danger, please call emergency services:
-                  </p>
-                  <div className="flex gap-2">
-                    <a
-                      href="tel:911"
-                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-1.5 rounded-full font-acme text-sm transition-all inline-flex items-center gap-1"
-                    >
-                      <Phone className="h-3 w-3" />
-                      911
-                    </a>
-                    <a
-                      href="tel:1195"
-                      className="bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-full font-acme text-sm transition-all inline-flex items-center gap-1"
-                    >
-                      <Phone className="h-3 w-3" />
-                      GBV Hotline: 1195
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Close Button */}
-            <div className="text-center pt-2">
-              <button
-                onClick={() => setShowCountdownModal(false)}
-                className="text-sm text-brand-secondary hover:text-brand-primary font-acme underline"
-              >
-                Close this window (you can safely close this)
-              </button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+    <div className="mt-6 space-y-3">
+      {options.map((o) => (
+        <button
+          key={o.value}
+          type="button"
+          onClick={() => onPick(o.value)}
+          className={`w-full rounded-2xl border px-5 py-4 text-left font-medium transition-colors ${
+            value === o.value ? 'border-[#2C4A4E] bg-[#2C4A4E]/10' : 'border-transparent bg-white hover:border-[#2C4A4E]/40'
+          } text-[#2C4A4E]`}
+        >
+          {lang === 'sw' ? o.sw : o.value}
+        </button>
+      ))}
     </div>
   );
 }
 
+function GuidedReport() {
+  const { lang, tr } = useLang();
+  const counselling = useSearchParams().get('reason') === 'counselling';
+  const [step, setStep] = useState<Step>('intro');
+  const [draft, setDraft] = useState<ReportDraft>(
+    counselling ? { incidentType: 'Asking to be connected with a counsellor', recipient: 'heal', wantsContact: true } : {}
+  );
+  const [locating, setLocating] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [result, setResult] = useState<{ caseCode: string; sent: boolean } | null>(null);
+  const [kept, setKept] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const set = (patch: Partial<ReportDraft>) => setDraft((d) => ({ ...d, ...patch }));
+  const index = STEPS.indexOf(step);
+  const next = () => setStep(STEPS[Math.min(index + 1, STEPS.length - 1)]);
+  const back = () => setStep(STEPS[Math.max(index - 1, 0)]);
+  const pickAndNext = (patch: Partial<ReportDraft>) => {
+    set(patch);
+    next();
+  };
+
+  const addLocation = async () => {
+    setLocating(true);
+    try {
+      const loc = await requestApproxLocation();
+      set({ latitude: loc.latitude, longitude: loc.longitude, county: loc.county ?? draft.county });
+    } catch {
+      /* she can type a place instead */
+    } finally {
+      setLocating(false);
+    }
+  };
+
+  const send = async () => {
+    setSending(true);
+    const r = await submitReport(draft);
+    setResult(r);
+    setSending(false);
+    setStep('done');
+  };
+
+  const recentSexualViolence = draft.incidentType === 'Sexual violence' && draft.whenHappened === 'In the last 3 days';
+  const notSafe = draft.safeNow === 'No';
+
+  if (step === 'done' && result) {
+    return (
+      <section className="py-8 space-y-4">
+        <div className="rounded-3xl bg-white p-6 sm:p-8 shadow-sm text-center">
+          <ShieldCheck className="mx-auto h-10 w-10 text-[#2C4A4E]" aria-hidden="true" />
+          <h1 className="mt-3 text-3xl font-acme text-[#2C4A4E]">{tr("Thank you for trusting us", "Asante kwa kutuamini")}</h1>
+          <p className="mt-2 text-gray-600">
+            {result.sent
+              ? tr("Your report was received and is stored encrypted.", "Ripoti yako imepokelewa na imehifadhiwa kwa usimbaji fiche.")
+              : tr("You seem to be offline. Your report is saved on this phone and will be sent automatically when you are back online.", "Inaonekana huna mtandao. Ripoti yako imehifadhiwa kwenye simu hii na itatumwa yenyewe ukirudi mtandaoni.")}
+          </p>
+          <p className="mt-6 text-sm font-semibold uppercase tracking-wider text-gray-500">{tr("Your case code", "Namba yako ya kesi")}</p>
+          <p className="mt-1 font-mono text-4xl font-bold tracking-wider text-[#2C4A4E]">{result.caseCode}</p>
+          <p className="mt-2 text-sm text-gray-600">
+            {tr("Use it to check progress without giving your name. Write it down somewhere safe.", "Itumie kufuatilia maendeleo bila kutoa jina lako. Iandike mahali salama.")}
+          </p>
+          <div className="mt-5 flex flex-wrap justify-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                navigator.clipboard?.writeText(result.caseCode);
+                setCopied(true);
+              }}
+              className="inline-flex items-center gap-2 rounded-full border border-[#2C4A4E] px-4 py-2 text-sm font-semibold text-[#2C4A4E]"
+            >
+              {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />} {copied ? tr("Copied", "Imenakiliwa") : tr("Copy code", "Nakili namba")}
+            </button>
+            <button
+              type="button"
+              disabled={kept}
+              onClick={() => {
+                saveCaseCode(result.caseCode, result.sent ? 'received' : 'waiting');
+                setKept(true);
+              }}
+              className="inline-flex items-center gap-2 rounded-full bg-[#2C4A4E] px-4 py-2 text-sm font-semibold text-white disabled:opacity-70"
+            >
+              <Lock className="h-4 w-4" /> {kept ? tr("Kept in My Space", "Imehifadhiwa kwenye Nafasi Yangu") : tr("Keep this code in My Space", "Hifadhi namba hii kwenye Nafasi Yangu")}
+            </button>
+          </div>
+        </div>
+        <div className="rounded-3xl bg-[#2C4A4E]/10 p-6">
+          <h2 className="text-xl font-acme text-[#2C4A4E]">{tr("What happens next", "Kinachofuata")}</h2>
+          <ol className="mt-3 space-y-2 text-sm text-gray-700">
+            <li>1. {tr("Received: your report is safely stored.", "Imepokelewa: ripoti yako imehifadhiwa salama.")}</li>
+            <li>2. {draft.wantsContact ? tr("Contacted: someone reaches out the way you asked, at a safe time.", "Kuwasiliana: mtu atawasiliana nawe kwa njia uliyoomba, wakati salama.") : tr("Contacted: you chose not to be contacted; you can check your code any time.", "Kuwasiliana: ulichagua usiwasiliane nawe; unaweza kukagua namba yako wakati wowote.")}</li>
+            <li>3. {tr("Seen: you get support from the service you chose.", "Kuonwa: unapata msaada kutoka kwa huduma uliyochagua.")}</li>
+          </ol>
+          <Link href={`/report/status?code=${result.caseCode}`} className="mt-4 inline-block text-sm font-semibold underline">
+            {tr("Check status", "Kagua hali")}
+          </Link>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section className="py-8">
+      {step !== 'intro' && (
+        <div className="flex items-center gap-1.5" aria-label={tr(`Step ${index} of ${STEPS.length - 1}`, `Hatua ${index} kati ya ${STEPS.length - 1}`)}>
+          {STEPS.slice(1).map((s, i) => (
+            <span key={s} className={`h-1.5 flex-1 rounded-full ${i < index ? 'bg-[#2C4A4E]' : 'bg-black/10'}`} />
+          ))}
+        </div>
+      )}
+
+      {step === 'intro' && (
+        <div className="rounded-3xl bg-white p-6 sm:p-8 shadow-sm">
+          <h1 className="text-3xl font-acme text-[#2C4A4E]">{tr("Make a safe report", "Toa ripoti kwa usalama")}</h1>
+          <ul className="mt-4 space-y-2 text-gray-700">
+            <li>• {tr("You can skip any question.", "Unaweza kuruka swali lolote.")}</li>
+            <li>• {tr("You don’t need to give your name.", "Huhitaji kutoa jina lako.")}</li>
+            <li>• {tr("Nothing is sent until you press Send at the end.", "Hakuna kinachotumwa hadi ubonyeze Tuma mwishoni.")}</li>
+            <li>• {tr("Your report is encrypted, and you get a case code to follow up.", "Ripoti yako inasimbwa kwa usiri, na unapata namba ya kesi ya kufuatilia.")}</li>
+          </ul>
+          <button type="button" onClick={next} className="mt-6 w-full rounded-2xl bg-[#2C4A4E] px-5 py-4 font-semibold text-white hover:bg-[#2C4A4E]/90">
+            {tr("Start", "Anza")}
+          </button>
+          <Link href="/report/status" className="mt-4 block text-center text-sm text-gray-600 underline">
+            {tr("I already have a case code", "Tayari nina namba ya kesi")}
+          </Link>
+        </div>
+      )}
+
+      {step === 'type' && (
+        <>
+          <h1 className="mt-6 text-2xl sm:text-3xl font-acme text-[#2C4A4E]">{tr("What happened?", "Nini kilitokea?")}</h1>
+          <p className="mt-1 text-sm text-gray-600">{tr("Choose what fits best.", "Chagua kinachofaa zaidi.")}</p>
+          <Choice options={INCIDENT_TYPES} value={draft.incidentType} onPick={(v) => pickAndNext({ incidentType: v })} />
+        </>
+      )}
+
+      {step === 'when' && (
+        <>
+          <h1 className="mt-6 text-2xl sm:text-3xl font-acme text-[#2C4A4E]">{tr("When did it happen?", "Kilitokea lini?")}</h1>
+          <Choice options={WHEN} value={draft.whenHappened} onPick={(v) => pickAndNext({ whenHappened: v })} />
+        </>
+      )}
+
+      {step === 'safe' && (
+        <>
+          {recentSexualViolence && (
+            <div className="mt-6 rounded-2xl bg-[#2C4A4E]/10 p-4 text-sm text-[#2C4A4E]">
+              <strong>{tr("Time matters:", "Muda ni muhimu:")}</strong>{' '}
+              {tr("within 72 hours a clinic can give PEP to prevent HIV, and emergency contraception. Call GVRC on", "ndani ya saa 72 kliniki inaweza kukupa PEP kuzuia VVU, na kidonge cha dharura cha kuzuia mimba. Piga GVRC")}{' '}
+              <a className="underline" href="tel:0709400200">0709 400 200</a> {tr("or 1195.", "au 1195.")}
+            </div>
+          )}
+          <h1 className="mt-6 text-2xl sm:text-3xl font-acme text-[#2C4A4E]">{tr("Are you safe right now?", "Je, uko salama sasa hivi?")}</h1>
+          <Choice options={SAFE} value={draft.safeNow} onPick={(v) => (v === 'No' ? set({ safeNow: v }) : pickAndNext({ safeNow: v }))} />
+          {notSafe && (
+            <div className="mt-4 rounded-2xl bg-[#2C4A4E] p-5 text-white">
+              <p className="font-semibold">{tr("Please call for help now if you can. It’s free.", "Tafadhali piga simu kuomba msaada sasa kama unaweza. Ni bure.")}</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <a href="tel:1195" className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#2C4A4E]">{tr("Call 1195", "Piga 1195")}</a>
+                <a href="tel:999" className="rounded-full border border-white/60 px-4 py-2 text-sm font-semibold">{tr("Call 999", "Piga 999")}</a>
+                <button type="button" onClick={next} className="rounded-full border border-white/60 px-4 py-2 text-sm font-semibold">
+                  {tr("Continue the report", "Endelea na ripoti")}
+                </button>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
+      {step === 'details' && (
+        <>
+          <h1 className="mt-6 text-2xl sm:text-3xl font-acme text-[#2C4A4E]">{tr("Tell us more, if you want to", "Tueleze zaidi, ukipenda")}</h1>
+          <p className="mt-1 text-sm text-gray-600">{tr("Only share what feels okay. You can leave this empty.", "Shiriki tu kile unachoona ni sawa. Unaweza kuacha hapa wazi.")}</p>
+          <textarea
+            value={draft.description ?? ''}
+            onChange={(e) => set({ description: e.target.value })}
+            rows={7}
+            maxLength={5000}
+            className="mt-6 w-full rounded-2xl border border-transparent bg-white p-4 text-[#2C4A4E] focus:border-[#2C4A4E] focus:outline-none"
+            placeholder={tr("What would you like us to know?", "Ungependa tujue nini?")}
+            aria-label={tr("Details", "Maelezo")}
+          />
+          <button type="button" onClick={next} className="mt-4 w-full rounded-2xl bg-[#2C4A4E] px-5 py-4 font-semibold text-white hover:bg-[#2C4A4E]/90">
+            {tr('Next', 'Endelea')}
+          </button>
+        </>
+      )}
+
+      {step === 'where' && (
+        <>
+          <h1 className="mt-6 text-2xl sm:text-3xl font-acme text-[#2C4A4E]">{tr("Where are you, roughly?", "Uko wapi, kwa takriban?")}</h1>
+          <p className="mt-1 text-sm text-gray-600">
+            {tr("Optional. It helps us suggest the nearest service. Only your approximate area (about 1 km) is used.", "Si lazima. Inatusaidia kupendekeza huduma iliyo karibu zaidi. Ni eneo lako la takriban tu (karibu kilomita 1) linalotumika.")}
+          </p>
+          <input
+            value={draft.county ?? ''}
+            onChange={(e) => set({ county: e.target.value })}
+            className="mt-6 w-full rounded-2xl border border-transparent bg-white p-4 text-[#2C4A4E] focus:border-[#2C4A4E] focus:outline-none"
+            placeholder={tr("County or town, e.g. Kisumu", "Kaunti au mji, mf. Kisumu")}
+            aria-label={tr("County or town", "Kaunti au mji")}
+          />
+          <button
+            type="button"
+            onClick={addLocation}
+            disabled={locating || draft.latitude != null}
+            className="mt-3 inline-flex items-center gap-2 rounded-full border border-[#2C4A4E] px-4 py-2 text-sm font-semibold text-[#2C4A4E] disabled:opacity-60"
+          >
+            {locating ? <Loader2 className="h-4 w-4 animate-spin" /> : <MapPin className="h-4 w-4 text-[#2C4A4E]" />}
+            {draft.latitude != null ? tr("Approximate location added", "Mahali pa takriban pameongezwa") : tr("Use my approximate location", "Tumia mahali nilipo kwa takriban")}
+          </button>
+          <button type="button" onClick={next} className="mt-6 w-full rounded-2xl bg-[#2C4A4E] px-5 py-4 font-semibold text-white hover:bg-[#2C4A4E]/90">
+            {tr('Next', 'Endelea')}
+          </button>
+        </>
+      )}
+
+      {step === 'recipient' && (
+        <>
+          <h1 className="mt-6 text-2xl sm:text-3xl font-acme text-[#2C4A4E]">{tr("Who should receive your report?", "Nani apokee ripoti yako?")}</h1>
+          <div className="mt-6 space-y-3">
+            {RECIPIENTS.map((r) => (
+              <button
+                key={r.id}
+                type="button"
+                onClick={() => pickAndNext({ recipient: r.id })}
+                className={`w-full rounded-2xl border px-5 py-4 text-left transition-colors ${
+                  draft.recipient === r.id ? 'border-[#2C4A4E] bg-[#2C4A4E]/10' : 'border-transparent bg-white hover:border-[#2C4A4E]/40'
+                }`}
+              >
+                <span className="block font-semibold text-[#2C4A4E]">{lang === 'sw' ? r.labelSw : r.label}</span>
+                <span className="block text-sm text-gray-600">{lang === 'sw' ? r.noteSw : r.note}</span>
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+
+      {step === 'contact' && (
+        <>
+          <h1 className="mt-6 text-2xl sm:text-3xl font-acme text-[#2C4A4E]">{tr("Can someone contact you?", "Je, mtu anaweza kuwasiliana nawe?")}</h1>
+          <p className="mt-1 text-sm text-gray-600">{tr("Only if it is safe for you. You can always use your case code instead.", "Ikiwa tu ni salama kwako. Unaweza kutumia namba yako ya kesi badala yake.")}</p>
+          <Choice
+            options={CONTACT_CHOICES}
+            value={draft.wantsContact === undefined ? undefined : draft.wantsContact ? CONTACT_CHOICES[0].value : CONTACT_CHOICES[1].value}
+            onPick={(v) => (v.startsWith('Yes') ? set({ wantsContact: true }) : pickAndNext({ wantsContact: false }))}
+          />
+          {draft.wantsContact && (
+            <div className="mt-4 space-y-3 rounded-2xl bg-white p-5">
+              <div className="flex flex-wrap gap-2">
+                {CONTACT_METHODS.map((m) => (
+                  <button
+                    key={m.value}
+                    type="button"
+                    onClick={() => set({ contactMethod: m.value })}
+                    className={`rounded-full px-4 py-2 text-sm font-semibold ${draft.contactMethod === m.value ? 'bg-[#2C4A4E] text-white' : 'bg-[#2C4A4E]/10 text-[#2C4A4E]'}`}
+                  >
+                    {lang === 'sw' ? m.sw : m.value}
+                  </button>
+                ))}
+              </div>
+              <input
+                type="tel"
+                value={draft.contactDetail ?? ''}
+                onChange={(e) => set({ contactDetail: e.target.value })}
+                className="w-full rounded-xl border border-gray-200 p-3"
+                placeholder={tr("Phone number", "Namba ya simu")}
+                aria-label={tr("Phone number", "Namba ya simu")}
+              />
+              <input
+                value={draft.safeTimes ?? ''}
+                onChange={(e) => set({ safeTimes: e.target.value })}
+                className="w-full rounded-xl border border-gray-200 p-3"
+                placeholder={tr("When is it safe to reach you? e.g. weekdays 10am–2pm", "Ni lini salama kukufikia? mf. siku za kazi saa 4 asubuhi–8 mchana")}
+                aria-label={tr("Safe times to contact you", "Nyakati salama za kuwasiliana nawe")}
+              />
+              <button type="button" onClick={next} className="w-full rounded-2xl bg-[#2C4A4E] px-5 py-3 font-semibold text-white hover:bg-[#2C4A4E]/90">
+                {tr('Next', 'Endelea')}
+              </button>
+            </div>
+          )}
+        </>
+      )}
+
+      {step === 'review' && (
+        <>
+          <h1 className="mt-6 text-2xl sm:text-3xl font-acme text-[#2C4A4E]">{tr("Ready to send?", "Uko tayari kutuma?")}</h1>
+          <dl className="mt-6 divide-y divide-gray-100 rounded-2xl bg-white p-5 text-sm">
+            {[
+              [tr('What happened', 'Kilichotokea'), label(INCIDENT_TYPES, draft.incidentType, lang)],
+              [tr('When', 'Lini'), label(WHEN, draft.whenHappened, lang)],
+              [tr('Safe now', 'Salama sasa'), label(SAFE, draft.safeNow, lang)],
+              [tr('Details', 'Maelezo'), draft.description ? `${draft.description.slice(0, 80)}${draft.description.length > 80 ? '…' : ''}` : undefined],
+              [tr('Area', 'Eneo'), draft.county || (draft.latitude != null ? tr('Approximate location', 'Mahali pa takriban') : undefined)],
+              [tr('Sent to', 'Inatumwa kwa'), (() => { const r = RECIPIENTS.find((x) => x.id === (draft.recipient ?? 'heal')); return r && (lang === 'sw' ? r.labelSw : r.label); })()],
+              [tr('Contact', 'Mawasiliano'), draft.wantsContact ? `${label(CONTACT_METHODS, draft.contactMethod, lang) ?? tr('Yes', 'Ndiyo')}${draft.safeTimes ? `, ${draft.safeTimes}` : ''}` : tr('No, case code only', 'Hapana, namba ya kesi tu')],
+            ].map(([k, v]) => (
+              <div key={k} className="flex justify-between gap-4 py-2">
+                <dt className="text-gray-500">{k}</dt>
+                <dd className="text-right text-[#2C4A4E]">{v || <span className="text-gray-400">{tr("Skipped", "Imerukwa")}</span>}</dd>
+              </div>
+            ))}
+          </dl>
+          <button
+            type="button"
+            onClick={send}
+            disabled={sending}
+            className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-[#2C4A4E] px-5 py-4 font-semibold text-white hover:bg-[#2C4A4E]/90 disabled:opacity-70"
+          >
+            {sending && <Loader2 className="h-4 w-4 animate-spin" />} {tr("Send my report", "Tuma ripoti yangu")}
+          </button>
+        </>
+      )}
+
+      {step !== 'intro' && (
+        <div className="mt-6 flex items-center justify-between text-sm">
+          <button type="button" onClick={back} className="inline-flex items-center gap-1 text-gray-600">
+            <ChevronLeft className="h-4 w-4" /> {tr("Back", "Rudi")}
+          </button>
+          {step !== 'review' && (
+            <button type="button" onClick={next} className="text-gray-600 underline">
+              {tr("Skip this question", "Ruka swali hili")}
+            </button>
+          )}
+        </div>
+      )}
+    </section>
+  );
+}
+
+export default function ReportPage() {
+  return (
+    <HelpShell back="/help" showLanguage={false}>
+      <Suspense fallback={null}>
+        <GuidedReport />
+      </Suspense>
+    </HelpShell>
+  );
+}

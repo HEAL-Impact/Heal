@@ -5,22 +5,28 @@ import { ArrowLeft, Send, Mic, Shield, Phone, MessageCircle, ClipboardList } fro
 import Link from 'next/link';
 import { geminiService } from '@/lib/ai-services';
 import PtsdScreeningFlow from '@/components/screening/PtsdScreeningFlow';
+import { checkMessageRisk, type RiskFlag } from '@/lib/help/risk';
+import { useLang } from '@/lib/i18n';
+import LanguageToggle from '@/components/LanguageToggle';
 
 type GuestTab = 'chat' | 'screening';
 
-const TABS: { id: GuestTab; label: string; icon: typeof MessageCircle }[] = [
-  { id: 'chat', label: 'AI Companion', icon: MessageCircle },
-  { id: 'screening', label: 'PTSD Screening', icon: ClipboardList },
+const TABS: { id: GuestTab; label: { en: string; sw: string }; icon: typeof MessageCircle }[] = [
+  { id: 'chat', label: { en: 'Talk with Nia', sw: 'Ongea na Nia' }, icon: MessageCircle },
+  { id: 'screening', label: { en: 'Trauma check', sw: 'Ukaguzi wa kiwewe' }, icon: ClipboardList },
 ];
 
 interface Message {
   id: string;
   content: string;
-  sender: 'user' | 'ai';
+  sender: 'user' | 'ai' | 'risk' | 'error';
   timestamp: Date;
+  /** Set on 'risk' messages: a support card shown when a message suggests danger. */
+  flag?: RiskFlag;
 }
 
 export default function AnonymousPage() {
+  const { tr } = useLang();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -58,7 +64,13 @@ export default function AnonymousPage() {
       timestamp: new Date(),
     };
 
-    setMessages((prev) => [...prev, userMessage]);
+    // Checked on the device, so it works even if Nia can't be reached.
+    const flag = checkMessageRisk(userMessage.content);
+    const riskMessage: Message[] = flag
+      ? [{ id: `${userMessage.id}-risk`, content: '', sender: 'risk', timestamp: new Date(), flag }]
+      : [];
+
+    setMessages((prev) => [...prev, userMessage, ...riskMessage]);
     setInputMessage('');
     setIsTyping(true);
 
@@ -77,8 +89,8 @@ export default function AnonymousPage() {
       console.error('Error sending message:', error);
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: 'I apologize, but I encountered an error. Please try again or contact one of the emergency hotlines above if you need immediate assistance.',
-        sender: 'ai',
+        content: '',
+        sender: 'error',
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMessage]);
@@ -95,50 +107,53 @@ export default function AnonymousPage() {
   };
 
   return (
-    <main className="min-h-screen bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "linear-gradient(rgba(254, 245, 227, 0.85), rgba(254, 245, 227, 0.85)), url('/images/forestbg.jpg')" }}>
+    <main className="min-h-screen pb-20 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "linear-gradient(rgba(254, 245, 227, 0.85), rgba(254, 245, 227, 0.85)), url('/images/forestbg.jpg')" }}>
       {/* Header */}
       <header className="bg-white/80 backdrop-blur-sm border-b border-brand-light/30 px-4 py-3 flex items-center justify-between shadow-sm">
         <Link
-          href="/"
+          href="/help"
           className="flex items-center gap-2 text-brand-primary hover:text-brand-dark transition-colors"
         >
           <ArrowLeft className="h-5 w-5" />
-          <span className="text-lg">Home</span>
+          <span className="text-lg">{tr('Back', 'Rudi')}</span>
         </Link>
 
-        <Link
-          href="/auth/signup"
-          className="bg-brand-primary hover:bg-brand-accent text-white px-6 py-2 rounded-full font-acme text-sm transition-all shadow-md hover:shadow-lg hover:scale-105"
-        >
-          Sign Up for Full Access
-        </Link>
+        <div className="flex items-center gap-2">
+          <LanguageToggle />
+          <Link
+            href="/my-space"
+            className="bg-brand-primary hover:bg-brand-accent text-white px-4 sm:px-6 py-2 rounded-full font-acme text-sm transition-all shadow-md hover:shadow-lg hover:scale-105"
+          >
+            {tr('My Space', 'Nafasi Yangu')}
+          </Link>
+        </div>
       </header>
 
       {/* Emergency Contacts Bar */}
       <div className="bg-white/70 backdrop-blur-sm border-b border-brand-light/30 px-4 py-3 shadow-sm">
         <div className="max-w-6xl mx-auto">
-          <p className="text-sm text-brand-primary mb-2 font-medium">Emergency Contacts:</p>
+          <p className="text-sm text-brand-primary mb-2 font-medium">{tr('Free help lines:', 'Simu za msaada bure:')}</p>
           <div className="flex flex-wrap gap-3">
             <a
               href="tel:1195"
               className="flex items-center gap-2 bg-brand-light/50 hover:bg-brand-light transition-colors px-4 py-2 rounded-lg text-sm shadow-sm hover:shadow-md"
             >
               <Phone className="h-4 w-4 text-brand-primary" />
-              <span className="text-brand-primary font-medium">National GBV Hotline: 1195</span>
+              <span className="text-brand-primary font-medium">{tr('National GBV Hotline', 'Simu ya Kitaifa ya GBV')}: 1195</span>
             </a>
             <a
               href="tel:0709400200"
               className="flex items-center gap-2 bg-brand-light/50 hover:bg-brand-light transition-colors px-4 py-2 rounded-lg text-sm shadow-sm hover:shadow-md"
             >
               <Phone className="h-4 w-4 text-brand-primary" />
-              <span className="text-brand-primary font-medium">Gender Violence Recovery Centre: 0709 400 200</span>
+              <span className="text-brand-primary font-medium">{tr('Gender Violence Recovery Centre', 'Kituo cha Kupona Ukatili wa Kijinsia')}: 0709 400 200</span>
             </a>
             <a
               href="tel:999"
               className="flex items-center gap-2 bg-brand-light/50 hover:bg-brand-light transition-colors px-4 py-2 rounded-lg text-sm shadow-sm hover:shadow-md"
             >
               <Phone className="h-4 w-4 text-brand-primary" />
-              <span className="text-brand-primary font-medium">Police Gender Desk: 999</span>
+              <span className="text-brand-primary font-medium">{tr('Police Gender Desk', 'Dawati la Jinsia la Polisi')}: 999</span>
             </a>
           </div>
         </div>
@@ -146,7 +161,7 @@ export default function AnonymousPage() {
 
       {/* Guest Mode Tabs */}
       <nav className="bg-white/60 backdrop-blur-sm border-b border-brand-light/30 px-4 py-3">
-        <div role="tablist" aria-label="Guest mode" className="max-w-4xl mx-auto flex justify-center gap-2">
+        <div role="tablist" aria-label={tr('Choose', 'Chagua')} className="max-w-4xl mx-auto flex justify-center gap-2">
           {TABS.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
@@ -163,7 +178,7 @@ export default function AnonymousPage() {
               }`}
             >
               <Icon className="h-4 w-4" />
-              {label}
+              {tr(label)}
             </button>
           ))}
         </div>
@@ -185,12 +200,12 @@ export default function AnonymousPage() {
                 <Shield className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-acme text-brand-primary">AI Support Companion</h1>
-                <p className="text-sm text-brand-secondary">Safe, anonymous space to share - available 24/7</p>
+                <h1 className="text-2xl font-acme text-brand-primary">{tr('Nia, your AI companion', 'Nia, msaidizi wako wa AI')}</h1>
+                <p className="text-sm text-brand-secondary">{tr('A safe, anonymous space to share, any time', 'Mahali salama bila jina pa kushiriki, wakati wowote')}</p>
               </div>
             </div>
             <div className="bg-brand-teal text-white px-4 py-1 rounded-full text-sm font-medium shadow-sm">
-              Private
+              {tr('Private', 'Faragha')}
             </div>
           </div>
         </div>
@@ -203,15 +218,32 @@ export default function AnonymousPage() {
                 <Shield className="h-12 w-12 text-brand-primary" />
               </div>
               <h2 className="text-xl font-acme text-brand-primary mb-2">
-                This is a safe space to share your thoughts and feelings
+                {tr('This is a safe space to share your thoughts and feelings', 'Hapa ni mahali salama pa kushiriki mawazo na hisia zako')}
               </h2>
               <p className="text-brand-secondary max-w-md">
-                Completely anonymous and confidential
+                {tr('You can write in English or Kiswahili. Anonymous and confidential.', 'Unaweza kuandika kwa Kiswahili au Kiingereza. Bila jina na kwa siri.')}
               </p>
             </div>
           ) : (
             <div className="space-y-4">
-              {messages.map((message) => (
+              {messages.map((message) =>
+                message.sender === 'risk' && message.flag ? (
+                  <div key={message.id} className="rounded-2xl bg-[#2C4A4E] p-4 text-white shadow-md" role="alert">
+                    <p className="font-acme text-lg">{tr(message.flag.title)}</p>
+                    <p className="mt-1 text-sm text-white/85">{tr(message.flag.message)}</p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {message.flag.actions.map((a, i) => (
+                        <a
+                          key={a.href}
+                          href={a.href}
+                          className={`rounded-full px-4 py-1.5 text-sm font-semibold ${i === 0 ? 'bg-white text-[#2C4A4E]' : 'border border-white/60 text-white'}`}
+                        >
+                          {tr(a.label)}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
                 <div
                   key={message.id}
                   className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
@@ -223,13 +255,21 @@ export default function AnonymousPage() {
                         : 'bg-brand-light/70 text-brand-primary border border-brand-light'
                     }`}
                   >
-                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                    <p className="text-sm whitespace-pre-wrap">
+                      {message.sender === 'error'
+                        ? tr(
+                            'Sorry, I couldn’t reply just now. Please try again, or call 1195 if you need help right away.',
+                            'Samahani, sikuweza kujibu sasa hivi. Tafadhali jaribu tena, au piga 1195 kama unahitaji msaada mara moja.'
+                          )
+                        : message.content}
+                    </p>
                     <span className="text-xs opacity-70 mt-1 block">
                       {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
                 </div>
-              ))}
+                )
+              )}
               {isTyping && (
                 <div className="flex justify-start">
                   <div className="bg-brand-light/70 text-brand-primary rounded-2xl px-4 py-3 shadow-md border border-brand-light">
@@ -251,7 +291,8 @@ export default function AnonymousPage() {
           <div className="flex items-end gap-3">
             <button
               className="p-3 hover:bg-brand-light/50 rounded-full transition-colors flex-shrink-0"
-              title="Voice input (coming soon)"
+              title={tr('Voice input (coming soon)', 'Kuongea kwa sauti (inakuja hivi karibuni)')}
+              aria-label={tr('Voice input (coming soon)', 'Kuongea kwa sauti (inakuja hivi karibuni)')}
             >
               <Mic className="h-5 w-5 text-brand-gray" />
             </button>
@@ -260,7 +301,8 @@ export default function AnonymousPage() {
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Type your message here... Share what's on your mind"
+              placeholder={tr('Type your message here…', 'Andika ujumbe wako hapa…')}
+              aria-label={tr('Your message', 'Ujumbe wako')}
               className="flex-1 resize-none border border-brand-light bg-white/50 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent min-h-[50px] max-h-[120px] text-brand-primary placeholder:text-brand-gray"
               rows={1}
             />
@@ -268,6 +310,7 @@ export default function AnonymousPage() {
             <button
               onClick={handleSendMessage}
               disabled={!inputMessage.trim() || isTyping}
+              aria-label={tr('Send', 'Tuma')}
               className="bg-brand-primary hover:bg-brand-accent disabled:bg-gray-300 disabled:cursor-not-allowed text-white p-3 rounded-full transition-all flex-shrink-0 shadow-md hover:shadow-lg hover:scale-105 disabled:hover:scale-100"
             >
               <Send className="h-5 w-5" />
@@ -278,8 +321,16 @@ export default function AnonymousPage() {
           <div className="mt-4 flex items-start gap-2 text-xs text-brand-secondary">
             <Shield className="h-4 w-4 text-purple-500 flex-shrink-0 mt-0.5" />
             <p>
-              This AI companion provides emotional support. For crisis situations, please use the emergency hotlines above.
+              {tr(
+                'Nia is an AI, not a person or a doctor. She listens and helps you find options; she can make mistakes. Nothing you type is linked to your name.',
+                'Nia ni AI, si mtu wala daktari. Anasikiliza na kukusaidia kupata njia; anaweza kukosea. Unachoandika hakihusishwi na jina lako.'
+              )}
             </p>
+          </div>
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
+            <span className="text-brand-secondary">{tr('Prefer a person?', 'Ungependa kuongea na mtu?')}</span>
+            <a href="tel:1195" className="rounded-full bg-brand-light/60 px-3 py-1 font-semibold text-brand-primary">{tr('Call 1195', 'Piga 1195')}</a>
+            <a href="tel:+254722178177" className="rounded-full bg-brand-light/60 px-3 py-1 font-semibold text-brand-primary">Befrienders Kenya</a>
           </div>
         </div>
         </div>
