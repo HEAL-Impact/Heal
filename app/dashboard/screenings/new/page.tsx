@@ -1,5 +1,6 @@
 'use client';
 
+import { useLang } from '@/lib/i18n';
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, ClipboardList } from 'lucide-react';
@@ -8,6 +9,7 @@ import PtsdScreeningFlow from '@/components/screening/PtsdScreeningFlow';
 import { startScreeningSync } from '@/lib/screening/sync';
 
 export default function NewScreeningPage() {
+  const { tr } = useLang();
   const { user } = useAuth();
 
   useEffect(() => {
@@ -24,8 +26,8 @@ export default function NewScreeningPage() {
             <ArrowLeft className="h-5 w-5 text-white" />
           </Link>
           <div className="flex items-center space-x-2">
-            <ClipboardList className="h-6 w-6 text-teal-300" />
-            <h1 className="text-xl font-bold text-white font-acme">New screening</h1>
+            <ClipboardList className="h-6 w-6 text-[#ECE5DA]" />
+            <h1 className="text-xl font-bold text-white font-acme">{tr("New screening", "Ukaguzi mpya")}</h1>
           </div>
         </div>
       </div>

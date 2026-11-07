@@ -66,3 +66,39 @@ export function scoreAnswers(answers: number[]): { totalScore: number; band: Ban
   const totalScore = answers.reduce((sum, value) => sum + value, 0);
   return { totalScore, band: bandFor(totalScore) };
 }
+
+// Kiswahili for the placeholder questions above (same order and values). Like the
+// English, these are for testing the workflow only; a validated instrument and
+// its validated Kiswahili version replace both.
+export const QUESTION_STEM_SW = 'Katika mwezi uliopita, ni kwa kiasi gani umesumbuliwa na:';
+
+export const ANSWER_OPTIONS_SW = ['Hata kidogo', 'Kidogo', 'Kwa kiasi', 'Sana', 'Kupita kiasi'];
+
+export const QUESTIONS_SW: Record<string, string> = {
+  q1: 'Kumbukumbu za mara kwa mara, zinazosumbua na usizozitaka, za tukio lililokuletea dhiki?',
+  q2: 'Ndoto za mara kwa mara zinazosumbua kuhusu tukio lililokuletea dhiki?',
+  q3: 'Kusumbuka sana kitu kilipokukumbusha tukio lililokuletea dhiki?',
+  q4: 'Kuepuka watu, mahali, au shughuli zinazokukumbusha tukio lililokuletea dhiki?',
+  q5: 'Kujihisi mbali au kutengwa na watu wengine?',
+  q6: 'Kuwa na hisia kali mbaya kama hofu, hasira, hatia, au aibu?',
+  q7: 'Kuwa macho kupita kiasi, mwangalifu sana, au kujihami kila wakati?',
+  q8: 'Kuwa na shida ya kupata usingizi au kuendelea kulala?',
+};
+
+export const BANDS_SW: Record<Band, { label: string; summary: string; advice: string }> = {
+  low: {
+    label: 'Chini',
+    summary: 'Majibu yako yanaonyesha dalili chache zinazohusiana na kiwewe kwa sasa.',
+    advice: 'Endelea kujitunza. Mambo yakibadilika, unaweza kujikagua tena wakati wowote.',
+  },
+  moderate: {
+    label: 'Wastani',
+    summary: 'Majibu yako yanaonyesha baadhi ya dalili zinazohusiana na kiwewe ambazo huenda zinakuathiri.',
+    advice: 'Kuongea na mtu kunaweza kusaidia. Fikiria kuwasiliana na mshauri au mhudumu wa afya wa jamii.',
+  },
+  high: {
+    label: 'Juu',
+    summary: 'Majibu yako yanaonyesha dalili kubwa zinazohusiana na kiwewe.',
+    advice: 'Tafadhali tafuta msaada mapema. Simu zilizo hapa chini ni bure na zinapatikana saa 24.',
+  },
+};

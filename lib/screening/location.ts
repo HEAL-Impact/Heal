@@ -65,6 +65,9 @@ const COUNTY_HQS: { county: string; lat: number; lng: number }[] = [
   { county: 'West Pokot', lat: 1.24, lng: 35.11 },
 ];
 
+/** The 47 counties, for pickers. */
+export const COUNTIES = COUNTY_HQS.map((c) => c.county);
+
 // Rough bounding box of Kenya; positions outside it get no county.
 const KENYA_BOUNDS = { minLat: -4.72, maxLat: 5.03, minLng: 33.9, maxLng: 41.91 };
 
