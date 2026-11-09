@@ -10,6 +10,14 @@ export interface User {
   updatedAt: string;
 }
 
+export interface AuthResult {
+  success: boolean;
+  error?: string;
+  /** invalid_credentials, email_taken, too_many_attempts, invalid_input, password_mismatch, server_error, network, timeout, offline */
+  code?: string;
+  retryAfter?: number;
+}
+
 export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
@@ -26,6 +34,13 @@ class AuthManager {
 
   constructor() {
     this.initializeAuth();
+    // Fallback timeout to ensure loading state doesn't persist
+    setTimeout(() => {
+      if (this.state.isLoading) {
+        console.warn('Auth initialization timeout, setting loading to false');
+        this.setState({ isLoading: false });
+      }
+    }, 5000);
   }
 
   private async initializeAuth() {
@@ -43,12 +58,22 @@ class AuthManager {
           isLoading: false,
         });
 
-        // Verify token is still valid
-        const profileResponse = await apiClient.getUserProfile();
-        if (profileResponse.error) {
-          this.logout();
+        // Verify token is still valid (optional background check)
+        try {
+          const profileResponse = await apiClient.getUserProfile();
+          if (profileResponse.error) {
+            // Only logout if it's an auth error, not network error
+            if (profileResponse.error.includes('401') || profileResponse.error.includes('unauthorized')) {
+              this.logout();
+            }
+          }
+        } catch (error) {
+          // Don't logout on network errors, keep user logged in
+          console.warn('Profile verification failed, but keeping user logged in:', error);
         }
       } catch (error) {
+        // Only logout if user data is corrupted
+        console.error('Failed to parse user data:', error);
         this.logout();
       }
     } else {
@@ -76,7 +101,7 @@ class AuthManager {
     return this.state;
   }
 
-  async login(email: string, password: string): Promise<{ success: boolean; error?: string }> {
+  async login(email: string, password: string): Promise<AuthResult> {
     this.setState({ isLoading: true });
 
     try {
@@ -84,7 +109,7 @@ class AuthManager {
       
       if (response.error) {
         this.setState({ isLoading: false });
-        return { success: false, error: response.error };
+        return { success: false, error: response.error, code: response.code, retryAfter: response.retryAfter };
       }
 
       if (response.data) {
@@ -100,10 +125,10 @@ class AuthManager {
         return { success: true };
       }
 
-      return { success: false, error: 'Login failed' };
+      return { success: false, error: 'Login failed', code: 'server_error' };
     } catch (error) {
       this.setState({ isLoading: false });
-      return { success: false, error: 'Network error occurred' };
+      return { success: false, error: 'Network error occurred', code: 'network' };
     }
   }
 
@@ -113,7 +138,7 @@ class AuthManager {
     confirmPassword: string;
     firstName: string;
     lastName: string;
-  }): Promise<{ success: boolean; error?: string }> {
+  }): Promise<AuthResult> {
     this.setState({ isLoading: true });
 
     try {
@@ -121,7 +146,12 @@ class AuthManager {
       
       if (response.error) {
         this.setState({ isLoading: false });
-        return { success: false, error: response.error };
+        // Handle specific error cases
+        let errorMessage = response.error;
+        if (response.error.includes('already exists') || response.error.includes('conflict')) {
+          errorMessage = 'An account with this email already exists. Please try signing in instead.';
+        }
+        return { success: false, error: errorMessage, code: response.code, retryAfter: response.retryAfter };
       }
 
       if (response.data) {
@@ -137,10 +167,10 @@ class AuthManager {
         return { success: true };
       }
 
-      return { success: false, error: 'Registration failed' };
+      return { success: false, error: 'Registration failed', code: 'server_error' };
     } catch (error) {
       this.setState({ isLoading: false });
-      return { success: false, error: 'Network error occurred' };
+      return { success: false, error: 'Network error occurred', code: 'network' };
     }
   }
 
@@ -172,8 +202,14 @@ class AuthManager {
     if (!refreshToken) return false;
 
     try {
-      // Implement refresh token logic here
-      // For now, just logout if token is invalid
+      const response = await apiClient.refreshAccessToken(refreshToken);
+      if (response.data) {
+        const { user } = response.data;
+        apiClient.setCurrentUser(user);
+        this.setState({ user, isAuthenticated: true });
+        return true;
+      }
+      this.logout();
       return false;
     } catch (error) {
       this.logout();

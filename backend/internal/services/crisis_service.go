@@ -24,7 +24,7 @@ func (s *CrisisService) CreateCrisisAlert(userID, severity, message, location st
 
 	_, err := s.db.Exec(`
 		INSERT INTO crisis_alerts (id, user_id, severity, message, location, status, created_at)
-		VALUES (?, ?, ?, ?, ?, ?, ?)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
 	`, alertID, userID, severity, message, location, "active", now)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create crisis alert: %w", err)
@@ -45,7 +45,7 @@ func (s *CrisisService) GetEmergencyContacts(userID string) ([]models.EmergencyC
 	query := `
 		SELECT id, user_id, name, phone, relationship, is_primary, created_at
 		FROM emergency_contacts
-		WHERE user_id = ?
+		WHERE user_id = $1
 		ORDER BY is_primary DESC, created_at ASC
 	`
 
@@ -75,7 +75,7 @@ func (s *CrisisService) AddEmergencyContact(userID, name, phone, relationship st
 
 	// If this is set as primary, unset other primary contacts
 	if isPrimary {
-		_, err := s.db.Exec("UPDATE emergency_contacts SET is_primary = FALSE WHERE user_id = ?", userID)
+		_, err := s.db.Exec("UPDATE emergency_contacts SET is_primary = false WHERE user_id = $1", userID)
 		if err != nil {
 			return nil, fmt.Errorf("failed to update existing primary contacts: %w", err)
 		}
@@ -83,7 +83,7 @@ func (s *CrisisService) AddEmergencyContact(userID, name, phone, relationship st
 
 	_, err := s.db.Exec(`
 		INSERT INTO emergency_contacts (id, user_id, name, phone, relationship, is_primary, created_at)
-		VALUES (?, ?, ?, ?, ?, ?, ?)
+		VALUES ($1, $2, $3, $4, $5, $6, $7)
 	`, contactID, userID, name, phone, relationship, isPrimary, now)
 	if err != nil {
 		return nil, fmt.Errorf("failed to add emergency contact: %w", err)
@@ -149,15 +149,15 @@ func (s *CrisisService) CreateSafetyPlan(userID string, plan map[string]interfac
 
 	// Check if user already has a safety plan
 	var existingID string
-	err := s.db.QueryRow("SELECT id FROM safety_plans WHERE user_id = ?", userID).Scan(&existingID)
-	
+	err := s.db.QueryRow("SELECT id FROM safety_plans WHERE user_id = $1", userID).Scan(&existingID)
+
 	if err == sql.ErrNoRows {
 		// Create new safety plan
 		_, err = s.db.Exec(`
 			INSERT INTO safety_plans (id, user_id, warning_signs, coping_strategies, 
 			                         support_contacts, professional_contacts, environment_safety, 
 			                         created_at, updated_at)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 		`, planID, userID, string(warningSigns), string(copingStrategies),
 			string(supportContacts), string(professionalContacts), string(environmentSafety),
 			now, now)
@@ -166,9 +166,9 @@ func (s *CrisisService) CreateSafetyPlan(userID string, plan map[string]interfac
 		planID = existingID
 		_, err = s.db.Exec(`
 			UPDATE safety_plans 
-			SET warning_signs = ?, coping_strategies = ?, support_contacts = ?, 
-			    professional_contacts = ?, environment_safety = ?, updated_at = ?
-			WHERE id = ?
+			SET warning_signs = $1, coping_strategies = $2, support_contacts = $3, 
+			    professional_contacts = $4, environment_safety = $5, updated_at = $6
+			WHERE id = $7
 		`, string(warningSigns), string(copingStrategies), string(supportContacts),
 			string(professionalContacts), string(environmentSafety), now, planID)
 	}
@@ -195,11 +195,11 @@ func (s *CrisisService) GetSafetyPlan(userID string) (*models.SafetyPlan, error)
 	err := s.db.QueryRow(`
 		SELECT id, user_id, warning_signs, coping_strategies, support_contacts,
 		       professional_contacts, environment_safety, created_at, updated_at
-		FROM safety_plans WHERE user_id = ?
+		FROM safety_plans WHERE user_id = $1
 	`, userID).Scan(&plan.ID, &plan.UserID, &plan.WarningSigns, &plan.CopingStrategies,
 		&plan.SupportContacts, &plan.ProfessionalContacts, &plan.EnvironmentSafety,
 		&plan.CreatedAt, &plan.UpdatedAt)
-	
+
 	if err != nil {
 		return nil, err
 	}

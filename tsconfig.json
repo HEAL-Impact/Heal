@@ -31,5 +31,5 @@
     "types/**/*.d.ts",
     "global.d.ts"
   ],
-  "exclude": ["node_modules", "server"]
+  "exclude": ["node_modules", "server", "public/sw.js", "public/swe-worker-*.js"]
 }

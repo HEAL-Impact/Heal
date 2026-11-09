@@ -15,7 +15,7 @@ export function FloatingBoltLogo() {
     >
       {/* Logo Container */}
       <div className={`
-        relative w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-blue-600 to-purple-600 
+        relative w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-[#2C4A4E] to-purple-600 
         rounded-full shadow-lg hover:shadow-xl transition-all duration-300 
         flex items-center justify-center
         ${isHovered ? 'scale-110 shadow-2xl' : 'scale-100'}
@@ -29,7 +29,7 @@ export function FloatingBoltLogo() {
 
         {/* Glow Effect */}
         <div className={`
-          absolute inset-0 bg-gradient-to-br from-blue-600 to-purple-600 
+          absolute inset-0 bg-gradient-to-br from-[#2C4A4E] to-purple-600 
           rounded-full transition-opacity duration-300
           ${isHovered ? 'opacity-20 scale-150' : 'opacity-0 scale-100'}
         `} />

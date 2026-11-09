@@ -4,11 +4,11 @@ import (
 	"database/sql"
 	"fmt"
 
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/lib/pq"
 )
 
 func Initialize(databaseURL string) (*sql.DB, error) {
-	db, err := sql.Open("sqlite3", databaseURL)
+	db, err := sql.Open("postgres", databaseURL)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %w", err)
 	}
@@ -33,8 +33,8 @@ func createTables(db *sql.DB) error {
 			first_name TEXT NOT NULL,
 			last_name TEXT NOT NULL,
 			email_verified BOOLEAN DEFAULT FALSE,
-			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 		)`,
 
 		`CREATE TABLE IF NOT EXISTS user_profiles (
@@ -52,8 +52,8 @@ func createTables(db *sql.DB) error {
 			id TEXT PRIMARY KEY,
 			user_id TEXT NOT NULL,
 			title TEXT,
-			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 		)`,
 
@@ -65,7 +65,7 @@ func createTables(db *sql.DB) error {
 			sender_type TEXT NOT NULL, -- 'user' or 'ai'
 			message_type TEXT DEFAULT 'text', -- 'text', 'audio', 'video'
 			metadata TEXT, -- JSON for additional data
-			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			FOREIGN KEY (session_id) REFERENCES chat_sessions(id) ON DELETE CASCADE,
 			FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 		)`,
@@ -81,8 +81,8 @@ func createTables(db *sql.DB) error {
 			duration_minutes INTEGER,
 			rating REAL DEFAULT 0,
 			featured BOOLEAN DEFAULT FALSE,
-			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 		)`,
 
 		`CREATE TABLE IF NOT EXISTS user_resource_progress (
@@ -92,7 +92,7 @@ func createTables(db *sql.DB) error {
 			progress REAL DEFAULT 0, -- 0-100
 			completed BOOLEAN DEFAULT FALSE,
 			favorited BOOLEAN DEFAULT FALSE,
-			last_accessed DATETIME DEFAULT CURRENT_TIMESTAMP,
+			last_accessed TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
 			FOREIGN KEY (resource_id) REFERENCES resources(id) ON DELETE CASCADE,
 			UNIQUE(user_id, resource_id)
@@ -103,7 +103,7 @@ func createTables(db *sql.DB) error {
 			user_id TEXT NOT NULL,
 			mood_score INTEGER NOT NULL, -- 1-10
 			notes TEXT,
-			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 		)`,
 
@@ -114,8 +114,8 @@ func createTables(db *sql.DB) error {
 			message TEXT,
 			location TEXT, -- JSON with lat/lng
 			status TEXT DEFAULT 'active', -- 'active', 'resolved', 'escalated'
-			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-			resolved_at DATETIME,
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			resolved_at TIMESTAMP,
 			FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 		)`,
 
@@ -127,8 +127,8 @@ func createTables(db *sql.DB) error {
 			support_contacts TEXT, -- JSON array
 			professional_contacts TEXT, -- JSON array
 			environment_safety TEXT, -- JSON
-			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 		)`,
 
@@ -139,9 +139,150 @@ func createTables(db *sql.DB) error {
 			phone TEXT NOT NULL,
 			relationship TEXT,
 			is_primary BOOLEAN DEFAULT FALSE,
-			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 		)`,
+
+		`CREATE TABLE IF NOT EXISTS ptsd_screenings (
+			id TEXT PRIMARY KEY, -- generated on the device, so offline retries are idempotent
+			user_id TEXT NOT NULL,
+			instrument TEXT NOT NULL,
+			mode TEXT NOT NULL, -- 'text', 'audio', 'avatar'
+			county TEXT,
+			latitude DOUBLE PRECISION, -- rounded to 2 decimals (~1 km), never an exact position
+			longitude DOUBLE PRECISION,
+			answers JSONB NOT NULL,
+			total_score INTEGER NOT NULL,
+			band TEXT NOT NULL, -- 'low', 'moderate', 'high'
+			referral_status TEXT NOT NULL DEFAULT 'none', -- for later CHV / hospital forwarding
+			completed_at TIMESTAMPTZ NOT NULL,
+			created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+			FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+		)`,
+
+		`CREATE INDEX IF NOT EXISTS idx_ptsd_screenings_user ON ptsd_screenings (user_id, completed_at DESC)`,
+
+		// Anonymous GBV reports. Contents are AES-GCM encrypted by the app; only
+		// the status timeline is readable, and only with the case code.
+		`CREATE TABLE IF NOT EXISTS gbv_reports (
+			case_code TEXT PRIMARY KEY, -- HEAL-XXX-XX, generated on the device
+			recipient TEXT NOT NULL,
+			status TEXT NOT NULL DEFAULT 'received', -- 'received', 'contacted', 'seen', 'closed'
+			payload_encrypted TEXT NOT NULL,
+			received_at TIMESTAMPTZ,
+			contacted_at TIMESTAMPTZ,
+			seen_at TIMESTAMPTZ,
+			closed_at TIMESTAMPTZ,
+			created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+		)`,
+
+		// Care network: every service a case can be routed to. Alerts go to the
+		// partner's WhatsApp group. is_default marks the route used when a case
+		// has no usable location (anonymous) or no local partner of that type.
+		`CREATE TABLE IF NOT EXISTS partners (
+			id TEXT PRIMARY KEY,
+			name TEXT NOT NULL,
+			type TEXT NOT NULL, -- 'chp', 'rescue_centre', 'facility', 'police_desk', 'counsellor', 'legal_aid', 'coordinator'
+			county TEXT NOT NULL DEFAULT '',
+			ward TEXT NOT NULL DEFAULT '',
+			phone TEXT NOT NULL DEFAULT '',
+			whatsapp_group_id TEXT NOT NULL DEFAULT '',
+			focal_person TEXT NOT NULL DEFAULT '',
+			is_default BOOLEAN NOT NULL DEFAULT FALSE,
+			active BOOLEAN NOT NULL DEFAULT TRUE,
+			created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+		)`,
+
+		// Partner staff sign in separately from survivors. role: 'admin' (manages
+		// partners and accounts), 'coordinator' (sees every case), 'partner' (sees
+		// only cases routed to its own partner).
+		`CREATE TABLE IF NOT EXISTS partner_accounts (
+			id TEXT PRIMARY KEY,
+			email TEXT UNIQUE NOT NULL,
+			password_hash TEXT NOT NULL,
+			name TEXT NOT NULL,
+			role TEXT NOT NULL,
+			partner_id TEXT REFERENCES partners(id),
+			active BOOLEAN NOT NULL DEFAULT TRUE,
+			last_login_at TIMESTAMPTZ,
+			created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+		)`,
+
+		// One case per survivor request for care. Contact details and any summary
+		// the survivor approved are AES-GCM sealed and bound to the case code.
+		`CREATE TABLE IF NOT EXISTS cases (
+			id TEXT PRIMARY KEY,
+			case_code TEXT UNIQUE NOT NULL,
+			source TEXT NOT NULL, -- 'screening', 'emergency', 'report', 'nia', 'chp'
+			pathway TEXT NOT NULL, -- 'emergency', 'facility_today', 'refer', 'chp_follow_up', 'report'
+			urgent BOOLEAN NOT NULL DEFAULT FALSE,
+			needs JSONB NOT NULL DEFAULT '[]',
+			consent JSONB NOT NULL DEFAULT '[]', -- responder types the survivor agreed to
+			county TEXT NOT NULL DEFAULT '',
+			ward TEXT NOT NULL DEFAULT '',
+			latitude DOUBLE PRECISION,
+			longitude DOUBLE PRECISION,
+			language TEXT NOT NULL DEFAULT 'en',
+			screening JSONB, -- instrument, band, score (no answers)
+			contact_encrypted TEXT,
+			summary_encrypted TEXT,
+			status TEXT NOT NULL DEFAULT 'created',
+			outcome TEXT NOT NULL DEFAULT '',
+			failed_attempts INTEGER NOT NULL DEFAULT 0,
+			follow_up_at TIMESTAMPTZ,
+			follow_up_reminded_at TIMESTAMPTZ,
+			feedback_helped BOOLEAN,
+			created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+			updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+			closed_at TIMESTAMPTZ
+		)`,
+
+		`CREATE TABLE IF NOT EXISTS case_alerts (
+			id TEXT PRIMARY KEY,
+			case_id TEXT NOT NULL REFERENCES cases(id) ON DELETE CASCADE,
+			partner_id TEXT NOT NULL REFERENCES partners(id),
+			responder_type TEXT NOT NULL,
+			status TEXT NOT NULL DEFAULT 'alerted', -- 'alerted', 'accepted', 'passed', 'expired', 'withdrawn', 'done'
+			escalation_level INTEGER NOT NULL DEFAULT 0,
+			deadline_at TIMESTAMPTZ NOT NULL,
+			reminded_at TIMESTAMPTZ,
+			responded_at TIMESTAMPTZ,
+			note TEXT NOT NULL DEFAULT '',
+			created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+		)`,
+
+		`CREATE INDEX IF NOT EXISTS idx_case_alerts_open ON case_alerts (status, deadline_at)`,
+		`CREATE INDEX IF NOT EXISTS idx_case_alerts_partner ON case_alerts (partner_id, created_at DESC)`,
+
+		// Every change and every partner view of a case: the audit log and the timeline.
+		`CREATE TABLE IF NOT EXISTS case_events (
+			id TEXT PRIMARY KEY,
+			case_id TEXT NOT NULL REFERENCES cases(id) ON DELETE CASCADE,
+			actor TEXT NOT NULL, -- 'survivor', 'system', 'account:<id>'
+			kind TEXT NOT NULL,
+			detail TEXT NOT NULL DEFAULT '',
+			created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+		)`,
+
+		`CREATE INDEX IF NOT EXISTS idx_case_events_case ON case_events (case_id, created_at)`,
+
+		// Partner self-registration and location (added Nov 2026). A partner
+		// signs up as 'pending' and HEAL approves it before it can see any case.
+		// services: extra responder types it also offers (e.g. an NGO with
+		// counselling and legal aid). Coordinates are approximate (~1 km).
+		`ALTER TABLE partners ADD COLUMN IF NOT EXISTS org_type TEXT NOT NULL DEFAULT ''`,
+		`ALTER TABLE partners ADD COLUMN IF NOT EXISTS services JSONB NOT NULL DEFAULT '[]'`,
+		`ALTER TABLE partners ADD COLUMN IF NOT EXISTS sub_county TEXT NOT NULL DEFAULT ''`,
+		`ALTER TABLE partners ADD COLUMN IF NOT EXISTS landmark TEXT NOT NULL DEFAULT ''`,
+		`ALTER TABLE partners ADD COLUMN IF NOT EXISTS latitude DOUBLE PRECISION`,
+		`ALTER TABLE partners ADD COLUMN IF NOT EXISTS longitude DOUBLE PRECISION`,
+		`ALTER TABLE partners ADD COLUMN IF NOT EXISTS email TEXT NOT NULL DEFAULT ''`,
+		`ALTER TABLE partners ADD COLUMN IF NOT EXISTS hours TEXT NOT NULL DEFAULT ''`,
+		`ALTER TABLE partners ADD COLUMN IF NOT EXISTS registration_number TEXT NOT NULL DEFAULT ''`,
+		`ALTER TABLE partners ADD COLUMN IF NOT EXISTS status TEXT NOT NULL DEFAULT 'approved'`,
+		`ALTER TABLE partners ADD COLUMN IF NOT EXISTS reviewed_at TIMESTAMPTZ`,
+		`ALTER TABLE partners ADD COLUMN IF NOT EXISTS review_note TEXT NOT NULL DEFAULT ''`,
+		`CREATE INDEX IF NOT EXISTS idx_partners_location ON partners (county, ward)`,
 	}
 
 	for _, query := range queries {
@@ -274,7 +415,7 @@ func insertSampleData(db *sql.DB) error {
 	for _, r := range resources {
 		_, err := db.Exec(`
 			INSERT INTO resources (id, title, description, content, type, category, difficulty, duration_minutes, rating, featured)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 		`, r.id, r.title, r.description, r.content, r.rType, r.category, r.difficulty, r.duration, r.rating, r.featured)
 		if err != nil {
 			return err

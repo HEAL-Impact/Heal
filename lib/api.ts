@@ -1,10 +1,18 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://hackathon-heal.onrender.com/api/v1';
 
 interface ApiResponse<T = any> {
   data?: T;
   error?: string;
   message?: string;
+  /** Stable error code from the API (e.g. invalid_credentials), or a client one: network, timeout, offline. */
+  code?: string;
+  status?: number;
+  /** Seconds to wait, when the API rate-limits. */
+  retryAfter?: number;
 }
+
+// Free hosting can take a while to wake up; give up after this long.
+const REQUEST_TIMEOUT_MS = 45000;
 
 // Define specific response types
 interface ChatSessionsResponse {
@@ -74,6 +82,29 @@ interface MoodHistoryResponse {
   logs: Array<MoodEntry>;
 }
 
+export interface ScreeningPayload {
+  id: string;
+  instrument: string;
+  mode: string;
+  county: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  answers: number[];
+  completedAt: string;
+}
+
+export interface ScreeningRecord extends ScreeningPayload {
+  userId: string;
+  totalScore: number;
+  band: 'low' | 'moderate' | 'high';
+  referralStatus: string;
+  createdAt: string;
+}
+
+interface ScreeningsResponse {
+  screenings: Array<ScreeningRecord>;
+}
+
 class ApiClient {
   private baseURL: string;
 
@@ -83,7 +114,8 @@ class ApiClient {
 
   private async request<T>(
     endpoint: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
+    isRetry: boolean = false
   ): Promise<ApiResponse<T>> {
     const url = `${this.baseURL}${endpoint}`;
     
@@ -104,19 +136,79 @@ class ApiClient {
       };
     }
 
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+      return { error: 'You are offline', code: 'offline' };
+    }
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
     try {
-      const response = await fetch(url, config);
-      const data = await response.json();
+      const response = await fetch(url, { ...config, signal: controller.signal });
+      // Some failures (proxies, a waking server) return HTML, not JSON.
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        return { error: data.error || 'An error occurred' };
+        // On 401, attempt a token refresh once then retry
+        if (response.status === 401 && !isRetry && !endpoint.includes('/auth/')) {
+          const refreshed = await this.attemptTokenRefresh();
+          if (refreshed) {
+            return this.request<T>(endpoint, options, true);
+          }
+          // Refresh failed – clear stored credentials
+          this.removeToken();
+          return { error: 'Session expired. Please sign in again.', code: 'session_expired', status: 401 };
+        }
+
+        let errorMessage = data.error || data.message || 'An error occurred';
+        let code: string | undefined = data.code;
+
+        // Older API versions send no code; infer one from the status.
+        if (!code) {
+          if (response.status === 409) code = 'email_taken';
+          else if (response.status === 401) code = 'invalid_credentials';
+          else if (response.status === 429) code = 'too_many_attempts';
+          else if (response.status === 400) code = 'invalid_input';
+          else if (response.status >= 500) code = 'server_error';
+        }
+        if (response.status === 409) errorMessage = 'An account with this email already exists';
+
+        return { error: errorMessage, code, status: response.status, retryAfter: data.retryAfter ?? (Number(response.headers.get('Retry-After')) || undefined) };
       }
 
-      return { data };
+      return { data, status: response.status };
     } catch (error) {
+      const timedOut = error instanceof DOMException && error.name === 'AbortError';
       console.error('API request failed:', error);
-      return { error: 'Network error occurred' };
+      return { error: timedOut ? 'The server took too long to respond' : 'Network error occurred', code: timedOut ? 'timeout' : 'network' };
+    } finally {
+      clearTimeout(timer);
     }
+  }
+
+  private async attemptTokenRefresh(): Promise<boolean> {
+    if (typeof window === 'undefined') return false;
+    const refreshToken = localStorage.getItem('heal_refresh_token');
+    if (!refreshToken) return false;
+
+    try {
+      const response = await fetch(`${this.baseURL}/auth/refresh`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken }),
+      });
+
+      if (!response.ok) return false;
+
+      const data = await response.json();
+      if (data.accessToken) {
+        this.setToken(data.accessToken);
+        localStorage.setItem('heal_refresh_token', data.refreshToken);
+        return true;
+      }
+    } catch {
+      // network error during refresh
+    }
+    return false;
   }
 
   private getToken(): string | null {
@@ -184,6 +276,17 @@ class ApiClient {
     });
     this.removeToken();
     return response;
+  }
+
+  async refreshAccessToken(refreshToken: string) {
+    return this.request<{
+      user: any;
+      accessToken: string;
+      refreshToken: string;
+    }>('/auth/refresh', {
+      method: 'POST',
+      body: JSON.stringify({ refreshToken }),
+    }, true); // isRetry=true to skip recursive refresh loops
   }
 
   // User methods
@@ -322,6 +425,18 @@ class ApiClient {
 
   async getSafetyPlan() {
     return this.request('/crisis/safety-plan');
+  }
+
+  // Screening methods
+  async createScreening(screening: ScreeningPayload): Promise<ApiResponse<ScreeningRecord>> {
+    return this.request<ScreeningRecord>('/screenings', {
+      method: 'POST',
+      body: JSON.stringify(screening),
+    });
+  }
+
+  async getScreenings(): Promise<ApiResponse<ScreeningsResponse>> {
+    return this.request<ScreeningsResponse>('/screenings');
   }
 
   // Utility methods
