@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
@@ -9,9 +10,15 @@ import { ResourcesModule } from './resources/resources.module';
 import { MoodModule } from './mood/mood.module';
 import { CrisisModule } from './crisis/crisis.module';
 import { HealthModule } from './health/health.module';
+import { UssdModule } from './ussd/ussd.module';
 
 @Module({
   imports: [
+    // Load environment variables from .env file
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: 'heal.db',
@@ -31,6 +38,7 @@ import { HealthModule } from './health/health.module';
     MoodModule,
     CrisisModule,
     HealthModule,
+    UssdModule,
   ],
 })
 export class AppModule {}

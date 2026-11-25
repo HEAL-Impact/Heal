@@ -47,8 +47,8 @@ export function MoodWidget() {
   const getMoodColor = (score: number) => {
     if (score <= 3) return 'text-red-500';
     if (score <= 5) return 'text-yellow-500';
-    if (score <= 7) return 'text-green-400';
-    return 'text-green-600';
+    if (score <= 7) return 'text-[#2C4A4E]';
+    return 'text-[#2C4A4E]';
   };
 
   if (isLoading) {
@@ -74,7 +74,7 @@ export function MoodWidget() {
           <Heart className="h-5 w-5 text-pink-500" />
           <h3 className="font-semibold text-gray-900">Mood Tracker</h3>
         </div>
-        <Link href="/mood" className="text-blue-600 hover:text-blue-700 text-sm font-medium">
+        <Link href="/mood" className="text-[#2C4A4E] hover:text-[#2C4A4E] text-sm font-medium">
           View All
         </Link>
       </div>
@@ -83,7 +83,7 @@ export function MoodWidget() {
         <div className="text-center py-6">
           <div className="text-4xl mb-2">😊</div>
           <p className="text-gray-600 text-sm mb-4">Start tracking your daily mood</p>
-          <Link href="/mood" className="inline-flex items-center space-x-2 text-blue-600 hover:text-blue-700 text-sm font-medium">
+          <Link href="/mood" className="inline-flex items-center space-x-2 text-[#2C4A4E] hover:text-[#2C4A4E] text-sm font-medium">
             <Plus className="h-4 w-4" />
             <span>Log Mood</span>
           </Link>
@@ -98,8 +98,8 @@ export function MoodWidget() {
               </p>
             </div>
             <div className="flex items-center space-x-1">
-              <TrendingUp className="h-4 w-4 text-green-500" />
-              <span className="text-sm text-green-600">Tracking</span>
+              <TrendingUp className="h-4 w-4 text-[#2C4A4E]" />
+              <span className="text-sm text-[#2C4A4E]">Tracking</span>
             </div>
           </div>
 
@@ -127,7 +127,7 @@ export function MoodWidget() {
 
           <Link
             href="/mood"
-            className="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 font-medium py-2 px-4 rounded-lg transition-colors text-center block text-sm"
+            className="w-full bg-[#2C4A4E]/10 hover:bg-[#2C4A4E]/10 text-[#2C4A4E] font-medium py-2 px-4 rounded-lg transition-colors text-center block text-sm"
           >
             Log Today's Mood
           </Link>

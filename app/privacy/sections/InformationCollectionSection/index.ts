@@ -1,0 +1,1 @@
+export { InformationCollectionSection } from "./InformationCollectionSection";

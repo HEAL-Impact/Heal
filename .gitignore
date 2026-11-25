@@ -43,3 +43,14 @@ next-env.d.ts
 
 # Local Netlify folder
 .netlify
+
+# AWS CLI files
+aws/
+awscliv2.zip
+
+THEME_GUIDE.md
+
+# Generated service worker (Serwist)
+public/sw.js
+public/sw.js.map
+public/swe-worker-*.js

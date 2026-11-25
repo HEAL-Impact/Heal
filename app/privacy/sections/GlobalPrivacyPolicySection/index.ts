@@ -1,0 +1,1 @@
+export { GlobalPrivacyPolicySection } from "./GlobalPrivacyPolicySection";

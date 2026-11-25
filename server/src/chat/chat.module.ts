@@ -10,5 +10,6 @@ import { User } from '../users/entities/user.entity';
   imports: [TypeOrmModule.forFeature([ChatSession, ChatMessage, User])],
   providers: [ChatService],
   controllers: [ChatController],
+  exports: [ChatService], // Export so UssdModule can use it
 })
 export class ChatModule {}

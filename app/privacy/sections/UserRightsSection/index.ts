@@ -1,0 +1,1 @@
+export { UserRightsSection } from "./UserRightsSection";

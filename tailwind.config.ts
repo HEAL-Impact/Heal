@@ -10,6 +10,13 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        // Fonts are loaded once in app/layout.tsx via next/font.
+        // Acme: headings, navigation, buttons. Inter: everything else.
+        'acme': ['var(--font-acme)', 'Acme', 'cursive'],
+        'inter': ['var(--font-inter)', 'Inter', 'system-ui', 'sans-serif'],
+        'sans': ['var(--font-inter)', 'Inter', 'system-ui', 'sans-serif'],
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
@@ -23,6 +30,19 @@ const config: Config = {
       colors: {
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
+        // Brand colors
+        brand: {
+          primary: '#2C4A4E',    // HEAL teal (primary)
+          secondary: '#2C4A4E',  // HEAL teal
+          teal: '#2C4A4E',       // HEAL teal
+          gray: '#2C4A4E',       // HEAL teal
+          light: '#EAEDED',      // 10% HEAL teal tint
+          dark: '#000000',       // Black
+          accent: '#2C4A4E',     // HEAL teal
+          white: '#ECE5DA',      // HEAL cream
+          cream: '#ECE5DA',      // HEAL cream (background)
+          offwhite: '#FFFFFF',   // Pure white
+        },
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',

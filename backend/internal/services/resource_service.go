@@ -2,7 +2,7 @@ package services
 
 import (
 	"database/sql"
-	// "fmt"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/heal/internal/models"
@@ -24,23 +24,27 @@ func (s *ResourceService) GetResources(category, resourceType, difficulty string
 		WHERE 1=1
 	`
 	args := []interface{}{}
+	argCount := 1
 
 	if category != "" && category != "all" {
-		query += " AND category = ?"
+		query += fmt.Sprintf(" AND category = $%d", argCount)
 		args = append(args, category)
+		argCount++
 	}
 
 	if resourceType != "" && resourceType != "all" {
-		query += " AND type = ?"
+		query += fmt.Sprintf(" AND type = $%d", argCount)
 		args = append(args, resourceType)
+		argCount++
 	}
 
 	if difficulty != "" && difficulty != "all" {
-		query += " AND difficulty = ?"
+		query += fmt.Sprintf(" AND difficulty = $%d", argCount)
 		args = append(args, difficulty)
+		argCount++
 	}
 
-	query += " ORDER BY featured DESC, rating DESC, created_at DESC LIMIT ? OFFSET ?"
+	query += fmt.Sprintf(" ORDER BY featured DESC, rating DESC, created_at DESC LIMIT $%d OFFSET $%d", argCount, argCount+1)
 	args = append(args, limit, offset)
 
 	rows, err := s.db.Query(query, args...)
@@ -70,7 +74,7 @@ func (s *ResourceService) GetResource(id string) (*models.Resource, error) {
 	err := s.db.QueryRow(`
 		SELECT id, title, description, content, type, category, difficulty,
 		       duration_minutes, rating, featured, created_at, updated_at
-		FROM resources WHERE id = ?
+		FROM resources WHERE id = $1
 	`, id).Scan(&resource.ID, &resource.Title, &resource.Description,
 		&resource.Content, &resource.Type, &resource.Category, &resource.Difficulty,
 		&resource.DurationMinutes, &resource.Rating, &resource.Featured,
@@ -103,7 +107,7 @@ func (s *ResourceService) GetCategories() ([]string, error) {
 func (s *ResourceService) UpdateProgress(userID, resourceID string, progress float64) error {
 	// Check if progress record exists
 	var existingID string
-	err := s.db.QueryRow("SELECT id FROM user_resource_progress WHERE user_id = ? AND resource_id = ?",
+	err := s.db.QueryRow("SELECT id FROM user_resource_progress WHERE user_id = $1 AND resource_id = $2",
 		userID, resourceID).Scan(&existingID)
 
 	completed := progress >= 100.0
@@ -113,7 +117,7 @@ func (s *ResourceService) UpdateProgress(userID, resourceID string, progress flo
 		progressID := uuid.New().String()
 		_, err = s.db.Exec(`
 			INSERT INTO user_resource_progress (id, user_id, resource_id, progress, completed)
-			VALUES (?, ?, ?, ?, ?)
+			VALUES ($1, $2, $3, $4, $5)
 		`, progressID, userID, resourceID, progress, completed)
 		return err
 	} else if err != nil {
@@ -123,8 +127,8 @@ func (s *ResourceService) UpdateProgress(userID, resourceID string, progress flo
 	// Update existing progress record
 	_, err = s.db.Exec(`
 		UPDATE user_resource_progress 
-		SET progress = ?, completed = ?, last_accessed = CURRENT_TIMESTAMP
-		WHERE user_id = ? AND resource_id = ?
+		SET progress = $1, completed = $2, last_accessed = CURRENT_TIMESTAMP
+		WHERE user_id = $3 AND resource_id = $4
 	`, progress, completed, userID, resourceID)
 	return err
 }
@@ -135,10 +139,10 @@ func (s *ResourceService) GetRecommendations(userID string, limit int) ([]models
 		SELECT DISTINCT r.id, r.title, r.description, r.content, r.type, r.category, 
 		       r.difficulty, r.duration_minutes, r.rating, r.featured, r.created_at, r.updated_at
 		FROM resources r
-		LEFT JOIN user_resource_progress urp ON r.id = urp.resource_id AND urp.user_id = ?
+		LEFT JOIN user_resource_progress urp ON r.id = urp.resource_id AND urp.user_id = $1
 		WHERE urp.id IS NULL OR urp.completed = FALSE
 		ORDER BY r.rating DESC, r.featured DESC
-		LIMIT ?
+		LIMIT $2
 	`
 
 	rows, err := s.db.Query(query, userID, limit)
@@ -167,7 +171,7 @@ func (s *ResourceService) ToggleFavorite(userID, resourceID string) error {
 	// Check if progress record exists
 	var existingID string
 	var favorited bool
-	err := s.db.QueryRow("SELECT id, favorited FROM user_resource_progress WHERE user_id = ? AND resource_id = ?",
+	err := s.db.QueryRow("SELECT id, favorited FROM user_resource_progress WHERE user_id = $1 AND resource_id = $2",
 		userID, resourceID).Scan(&existingID, &favorited)
 
 	if err == sql.ErrNoRows {
@@ -175,7 +179,7 @@ func (s *ResourceService) ToggleFavorite(userID, resourceID string) error {
 		progressID := uuid.New().String()
 		_, err = s.db.Exec(`
 			INSERT INTO user_resource_progress (id, user_id, resource_id, favorited)
-			VALUES (?, ?, ?, ?)
+			VALUES ($1, $2, $3, $4)
 		`, progressID, userID, resourceID, true)
 		return err
 	} else if err != nil {
@@ -185,8 +189,8 @@ func (s *ResourceService) ToggleFavorite(userID, resourceID string) error {
 	// Toggle favorite status
 	_, err = s.db.Exec(`
 		UPDATE user_resource_progress 
-		SET favorited = ?, last_accessed = CURRENT_TIMESTAMP
-		WHERE user_id = ? AND resource_id = ?
+		SET favorited = $1, last_accessed = CURRENT_TIMESTAMP
+		WHERE user_id = $2 AND resource_id = $3
 	`, !favorited, userID, resourceID)
 	return err
 }
